@@ -1,174 +1,212 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>med_ok — натуральний мед із пасіки</title>
   <meta name="description" content="Натуральний мед напряму з пасіки. Доставка по всій Україні." />
 
   <style>
-    /* ===== базове ===== */
-    *{box-sizing:border-box} html,body{margin:0;padding:0}
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#111;background:#fff}
+    /* Base */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#fff;color:#111;line-height:1.5;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
 
-    header{position:sticky;top:0;z-index:10;background:#fffdf7cc;backdrop-filter:blur(8px);border-bottom:1px solid #eee}
-    .container{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
-    .brand{display:flex;gap:10px;align-items:center;font-weight:800}
-    nav a{color:#111;text-decoration:none;margin:0 8px}
-    .cta{display:inline-block;padding:10px 16px;border-radius:999px;background:#ffcc33;font-weight:800}
-
-    /* ===== HERO (кросфейд, без темних масок) ===== */
-    .hero{position:relative;min-height:78vh;overflow:hidden;color:#fff}
+    /* HERO slider (fullscreen) */
+    .hero{
+      position:relative; height:100vh; min-height:520px; overflow:hidden; color:#fff;
+    }
     .slide{
-      position:absolute;inset:0;
-      background-size:cover;background-position:center;background-repeat:no-repeat;
-      opacity:0;transition:opacity .8s ease;
-      display:flex;align-items:center;
+      position:absolute; inset:0;
+      display:grid; place-items:center;
+      background-size:cover; background-position:center;
+      opacity:0; transition:opacity .9s ease;    /* crossfade */
     }
-    .slide.active{opacity:1;z-index:1}
+    .slide.active{ opacity:1 }
 
-    /* ПРЯМІ шляхи до файлів (уважно до розширень!) */
-    .slide--linden   { background-image:url("assets/hero-linden.jpg"); }
-    .slide--acacia   { background-image:url("assets/hero-acacia.jpeg"); }
-    .slide--buckwheat{ background-image:url("assets/hero-buckwheat.jpg"); }
+    /* images */
+    .slide[data-flavor="linden"]   { background-image:url("assets/hero-linden.jpg"); }
+    .slide[data-flavor="acacia"]   { background-image:url("assets/hero-acacia.jpeg"); }
+    .slide[data-flavor="buckwheat"]{ background-image:url("assets/hero-buckwheat.jpg"); }
 
-    /* легка дуже світла «димка», щоб текст видно, НЕ сірий екран */
+    /* soft overlay for readability */
     .slide::before{
-      content:"";position:absolute;inset:0;
-      background:linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.10));
+      content:""; position:absolute; inset:0;
+      background: radial-gradient(1200px 500px at 18% 30%, rgba(0,0,0,.15), transparent 60%),
+                  radial-gradient(800px 400px at 90% 80%, rgba(0,0,0,.18), transparent 60%),
+                  rgba(0,0,0,.25);
     }
 
-    .hero-inner{position:relative;z-index:2;width:min(1100px,92%);margin:0 auto;padding:20px}
+    /* text block */
+    .content{
+      position:relative; z-index:2; text-align:left;
+      width:min(1100px, 92%); margin:0 auto; transform:translateY(-4vh);
+    }
     .bigword{
-      margin:0 0 8px 0;line-height:.92;font-weight:900;letter-spacing:.02em;
-      font-size:clamp(42px, 14vw, 160px);
-      color:transparent;-webkit-text-stroke:4px rgba(255,255,255,.95);
-      text-shadow:0 10px 28px rgba(0,0,0,.25);
+      font-size:clamp(42px, 16vw, 160px);
+      font-weight:900; line-height:.9; letter-spacing:.02em;
+      color:transparent; -webkit-text-stroke:4px rgba(255,255,255,.95);
+      text-shadow:0 14px 32px rgba(0,0,0,.25);
+      margin:0 0 10px 0;
     }
-    .subtitle{font-size:clamp(16px,2.2vw,26px);font-weight:600;color:#fff}
+    .subtitle{font-size:clamp(16px,2.2vw,28px);font-weight:600;margin:6px 0 16px}
 
-    /* велика кнопка по центру внизу */
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;font-weight:800}
+    .btn-primary{background:#fff;color:#111}
+    .btn-ghost{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fff}
+
+    /* big center CTA */
     .hero-cta{
-      position:absolute;left:50%;bottom:24px;transform:translateX(-50%);
-      background:#ffcc33;color:#111;border-radius:999px;
-      padding:14px 28px;min-width:240px;font-weight:900;font-size:18px;text-decoration:none;
-      box-shadow:0 12px 24px rgba(0,0,0,.25);
+      position:absolute; left:50%; bottom:clamp(14px,4vh,32px); transform:translateX(-50%);
+      z-index:3; display:inline-flex; align-items:center; justify-content:center;
+      padding:clamp(14px,2.5vw,18px) clamp(26px,4vw,36px);
+      min-width:clamp(220px,36vw,360px); border-radius:999px;
+      background:#ffcc33; color:#111; font-weight:900; font-size:clamp(16px,2.2vw,22px);
+      letter-spacing:.3px; box-shadow:0 14px 28px rgba(0,0,0,.28), inset 0 -2px 0 rgba(0,0,0,.08);
+      transition:transform .15s ease, background .15s ease;
     }
+    .hero-cta:hover{background:#ffaa00; transform:translateX(-50%) scale(1.02)}
+    .hero-cta:active{transform:translateX(-50%) scale(.99)}
 
-    /* стрілочки */
-    .slider-nav{position:absolute;left:50%;transform:translateX(-50%);bottom:86px;display:flex;gap:12px;z-index:3}
-    .navbtn{width:46px;height:46px;border-radius:999px;border:0;background:#ffffffcc;cursor:pointer;font-size:26px}
+    /* arrows */
+    .slider-nav{position:absolute; left:50%; transform:translateX(-50%); bottom:80px; z-index:3; display:flex; gap:12px}
+    .navbtn{width:48px;height:48px;border-radius:999px;border:none;cursor:pointer;display:grid;place-items:center;background:rgba(255,255,255,.9);font-size:28px}
+    .navbtn:hover{background:#ffcc33}
 
-    /* мобільні дрібниці */
-    @media (max-width:700px){
-      .bigword{-webkit-text-stroke:3px rgba(255,255,255,.98)}
-      .slider-nav{bottom:84px}
-      .navbtn{width:42px;height:42px;font-size:22px}
-      .hero-cta{bottom:18px;padding:12px 24px}
-    }
-
-    /* нижче просто щоб була якірна секція #contact */
-    #contact{padding:32px 20px}
-    #contact h2{margin:0 0 8px 0}
+    /* simple contact section so #contact exists */
+    section#contact{padding:48px 20px; max-width:900px; margin:0 auto; text-align:center}
+    #contact h2{font-size:28px;margin-bottom:8px}
     #contact p{color:#555}
+
+    /* mobile polish */
+    @media (max-width:700px){
+      .content{transform:none}
+      .bigword{-webkit-text-stroke:3px rgba(255,255,255,.98)}
+      .slider-nav{bottom:86px}
+      .navbtn{width:42px;height:42px;font-size:24px}
+    }
   </style>
 </head>
 <body>
-<header>
-  <div class="container">
-    <div class="brand">med_ok</div>
-    <nav>
-      <a href="#products">Продукція</a>
-      <a href="#about">Про пасіку</a>
-      <a href="#why">Чому ми</a>
-      <a class="cta" href="#contact">Замовити</a>
-    </nav>
-  </div>
-</header>
 
-<section class="hero" id="hero">
-  <!-- ЛИПА -->
-  <article class="slide slide--linden active" aria-label="Липовий мед">
-    <div class="hero-inner">
-      <h1 class="bigword">ЛИПА</h1>
-      <p class="subtitle">Запашний липовий мед — класика з дитинства</p>
+  <!-- HERO -->
+  <section class="hero" aria-label="Слайдер з медом">
+    <!-- LINDEN -->
+    <article class="slide active" data-flavor="linden">
+      <div class="content">
+        <h1 class="bigword">ЛИПА</h1>
+        <p class="subtitle">Запашний липовий мед — класика з дитинства</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#contact">Замовити</a>
+          <a class="btn btn-ghost" href="tel:+380637825176">📞 +380 (63) 782 51 76</a>
+          <a class="btn btn-ghost" href="viber://chat?number=%2B380637825176">💬 Viber</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ACACIA -->
+    <article class="slide" data-flavor="acacia">
+      <div class="content">
+        <h1 class="bigword">АКАЦІЯ</h1>
+        <p class="subtitle">Ніжний акацієвий мед — довго рідкий, ідеальний для чаю</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#contact">Замовити</a>
+          <a class="btn btn-ghost" href="tel:+380637825176">📞 +380 (63) 782 51 76</a>
+          <a class="btn btn-ghost" href="viber://chat?number=%2B380637825176">💬 Viber</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- BUCKWHEAT -->
+    <article class="slide" data-flavor="buckwheat">
+      <div class="content">
+        <h1 class="bigword">ГРЕЧАНИЙ</h1>
+        <p class="subtitle">Темний виразний гречаний мед — для поціновувачів</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#contact">Замовити</a>
+          <a class="btn btn-ghost" href="tel:+380637825176">📞 +380 (63) 782 51 76</a>
+          <a class="btn btn-ghost" href="viber://chat?number=%2B380637825176">💬 Viber</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- arrows -->
+    <div class="slider-nav">
+      <button class="navbtn" id="prev" aria-label="Попередній">‹</button>
+      <button class="navbtn" id="next" aria-label="Наступний">›</button>
     </div>
-  </article>
 
-  <!-- АКАЦІЯ -->
-  <article class="slide slide--acacia" aria-label="Акацієвий мед">
-    <div class="hero-inner">
-      <h1 class="bigword">АКАЦІЯ</h1>
-      <p class="subtitle">Ніжний акацієвий мед — довго рідкий, ідеальний для чаю</p>
-    </div>
-  </article>
+    <!-- big center CTA -->
+    <a class="hero-cta" href="#contact">Замовити мед</a>
+  </section>
 
-  <!-- ГРЕЧАНИЙ -->
-  <article class="slide slide--buckwheat" aria-label="Гречаний мед">
-    <div class="hero-inner">
-      <h1 class="bigword">ГРЕЧАНИЙ</h1>
-      <p class="subtitle">Темний виразний гречаний мед — для поціновувачів</p>
-    </div>
-  </article>
+  <!-- simple contact section target -->
+  <section id="contact">
+    <h2>Замовлення та запитання</h2>
+    <p>Телефонуйте: <a href="tel:+380637825176">+380 (63) 782 51 76</a> або пишіть у
+      <a href="viber://chat?number=%2B380637825176">Viber</a>.</p>
+  </section>
 
-  <!-- стрілки -->
-  <div class="slider-nav">
-    <button class="navbtn" id="prev" aria-label="Попередній">‹</button>
-    <button class="navbtn" id="next" aria-label="Наступний">›</button>
-  </div>
+  <!-- JS: стабільний автоплей 3с, без накладень -->
+  <script>
+    (function(){
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const prevBtn = document.getElementById('prev');
+      const nextBtn = document.getElementById('next');
 
-  <a class="hero-cta" href="#contact">Замовити мед</a>
-</section>
+      let i = 0;
+      let timer = null;
+      let paused = false;
 
-<section id="contact" class="container">
-  <h2>Замовлення та запитання</h2>
-  <p>Телефонуйте: <a href="tel:+380637825176">+380 (63) 782 51 76</a> або пишіть у
-    <a href="viber://chat?number=%2B380637825176">Viber</a>.</p>
-</section>
+      const DURATION = 3000;
 
-<script>
-  // ===== простий і стабільний автоплей (кожні 3 c) з кросфейдом =====
-  (function(){
-    const slides = Array.from(document.querySelectorAll('.slide'));
-    const prevBtn = document.getElementById('prev');
-    const nextBtn = document.getElementById('next');
-    let i = 0, t = null, paused = false;
-
-    const show = idx => {
-      slides.forEach((s,k)=>s.classList.toggle('active', k===idx));
-      i = idx;
-    };
-    const next = () => show((i+1)%slides.length);
-    const prev = () => show((i-1+slides.length)%slides.length);
-
-    const schedule = ()=>{ clearTimeout(t); if(!paused) t = setTimeout(()=>{ next(); schedule(); }, 3000); };
-    prevBtn.addEventListener('click', ()=>{ prev(); schedule(); });
-    nextBtn.addEventListener('click', ()=>{ next(); schedule(); });
-
-    const hero = document.getElementById('hero');
-    hero.addEventListener('mouseenter', ()=>{ paused=true; clearTimeout(t); });
-    hero.addEventListener('mouseleave', ()=>{ paused=false; schedule(); });
-
-    // тач-свайп
-    let x0=null;
-    hero.addEventListener('touchstart', e=>{ x0=e.touches[0].clientX; paused=true; clearTimeout(t); }, {passive:true});
-    hero.addEventListener('touchend', e=>{
-      if(x0!=null){
-        const dx=e.changedTouches[0].clientX-x0;
-        if(Math.abs(dx)>40) (dx>0?prev():next());
-        x0=null;
+      function show(idx){
+        slides.forEach((s,k)=>s.classList.toggle('active', k===idx));
+        i = idx;
       }
-      paused=false; schedule();
-    }, {passive:true});
+      const next = ()=> show((i+1) % slides.length);
+      const prev = ()=> show((i-1+slides.length) % slides.length);
 
-    document.addEventListener('visibilitychange', ()=>{ paused=document.hidden; schedule(); });
+      function start(){
+        stop();
+        timer = setTimeout(function loop(){
+          if(!paused) next();
+          timer = setTimeout(loop, DURATION);
+        }, DURATION);
+      }
+      function stop(){ if(timer){ clearTimeout(timer); timer=null; } }
+      function restart(){ stop(); start(); }
 
-    // попереднє завантаження картинок (для GitHub Pages буває корисно)
-    ["assets/hero-linden.jpg","assets/hero-acacia.jpeg","assets/hero-buckwheat.jpg"]
-      .forEach(src=>{ const img=new Image(); img.src=src; });
+      nextBtn.addEventListener('click', ()=>{ next(); restart(); });
+      prevBtn.addEventListener('click', ()=>{ prev(); restart(); });
 
-    schedule();
-  })();
-</script>
+      // pause on hover / resume on leave
+      const hero = document.querySelector('.hero');
+      hero.addEventListener('mouseenter', ()=>{ paused = true; });
+      hero.addEventListener('mouseleave', ()=>{ paused = false; });
+
+      // swipe on touch
+      let x0=null;
+      hero.addEventListener('touchstart', e=>{ x0 = e.touches[0].clientX; paused=true; }, {passive:true});
+      hero.addEventListener('touchend',   e=>{
+        if(x0!=null){
+          const dx = e.changedTouches[0].clientX - x0;
+          if(Math.abs(dx)>40) (dx>0?prev():next());
+          x0=null;
+        }
+        setTimeout(()=>{ paused=false; }, 600);
+        restart();
+      }, {passive:true});
+
+      // pause when tab hidden (avoid jumps)
+      document.addEventListener('visibilitychange', ()=>{
+        paused = document.hidden;
+      });
+
+      start();
+    })();
+  </script>
 </body>
 </html>
