@@ -33,7 +33,7 @@
         .hero-slider{position:relative;min-height:80vh;overflow:hidden}
         .slide{
             position:absolute;inset:0;display:grid;grid-template-columns:1fr;align-items:center;gap:24px;padding:24px 20px;
-            opacity:0;transform:translateX(6%);transition:opacity .5s ease,transform .6s ease;color:#fff;
+            opacity:0;transform:translateX(6%);transition:opacity .6s ease,transform .6s ease;color:#fff;
             background-size:cover;background-position:center;background-repeat:no-repeat;
         }
         .slide.active{opacity:1;transform:translateX(0)}
@@ -62,9 +62,9 @@
         .slide::before{
             content:"";position:absolute;inset:0;
             background:
-                    radial-gradient(1200px 500px at 20% 30%, rgba(0,0,0,.10), transparent 60%),
-                    radial-gradient(800px 400px at 90% 80%, rgba(0,0,0,.18), transparent 60%),
-                    rgba(0,0,0,var(--mask));
+                radial-gradient(1200px 500px at 20% 30%, rgba(0,0,0,.10), transparent 60%),
+                radial-gradient(800px 400px at 90% 80%, rgba(0,0,0,.18), transparent 60%),
+                rgba(0,0,0,var(--mask));
             pointer-events:none;
         }
 
@@ -224,7 +224,7 @@
             <div class="col-6 card product"><svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#f4b400" d="M18 10h28l6 8v22л-6 8H18л-6-8V18z"/></svg><div><h3>Акація <span class="price">—  <span class="muted">₴___ / кг</span></span></h3><div class="muted">Довго залишається рідким, ніжний аромат. Ідеальний для чаю.</div></div></div>
             <div class="col-6 card product"><svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#f4b400" d="M18 10h28l6 8v22л-6 8H18л-6-8V18z"/></svg><div><h3>Липовий <span class="price">—  <span class="muted">₴___ / кг</span></span></h3><div class="muted">Запашний, насичений смак. Класика з дитинства.</div></div></div>
             <div class="col-6 card product"><svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#f4b400" d="M18 10h28л6 8v22л-6 8H18л-6-8V18z"/></svg><div><h3>Гречаний <span class="price">—  <span class="muted">₴___ / кг</span></span></h3><div class="muted">Темний колір і виразний смак для поціновувачів.</div></div></div>
-            <div class="col-6 card product"><svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#f4b400" d="M18 10h28л6 8v22л-6 8H18л-6-8V18z"/></svg><div><h3>Різнотрав’я <span class="price">—  <span class="muted">₴___ / кг</span></span></h3><div class="muted">Квітковий букет із пасік поблизу лугів і гаїв.</div></div></div>
+            <div class="col-6 card product"><svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#f4b400" d="M18 10h28л6 8v22л-6 8H18л-6-8V18з"/></svg><div><h3>Різнотрав’я <span class="price">—  <span class="muted">₴___ / кг</span></span></h3><div class="muted">Квітковий букет із пасік поблизу лугів і гаїв.</div></div></div>
         </div>
         <p class="note">Заміни “₴___ / кг” на свої ціни; за потреби додай варіанти 0.5 кг та 3 кг.</p>
     </section>
@@ -278,79 +278,49 @@
         window.location.href = `mailto:${ORDER_EMAIL}?subject=${subject}&body=${body}`;
     });
 
-    // ===== HERO SLIDER (стабільний автоплей 3с, без «стрибків») =====
+    // ===== HERO SLIDER: простий стабільний автоплей 3с =====
     (function(){
         const slides = Array.from(document.querySelectorAll('.hero-slider .slide'));
         const prevBtn = document.getElementById('prev');
         const nextBtn = document.getElementById('next');
-        const hero = document.querySelector('.hero-slider');
-
-        const AUTOPLAY_MS = 3000;
-        const ANIM_MS = 650; // має бути >= transition у CSS (.6s)
+        const hero    = document.querySelector('.hero-slider');
 
         let i = 0;
-        let isAnimating = false;
-        let autoplayId = null;
-        let paused = false;
+        let intervalId = null;
+        const INTERVAL = 3000; // 3 секунди
 
         const show = (idx) => {
-            if (isAnimating || idx === i) return;
-            isAnimating = true;
-
             slides.forEach((s, k) => s.classList.toggle('active', k === idx));
             i = idx;
-
-            // знімаємо блокування після завершення анімації
-            setTimeout(()=>{ isAnimating = false; }, ANIM_MS);
         };
-
         const next = () => show((i + 1) % slides.length);
         const prev = () => show((i - 1 + slides.length) % slides.length);
 
-        // ЄДИНИЙ автоплей через setTimeout (без множинних інтервалів)
-        const schedule = () => {
-            if (paused) return;
-            clearTimeout(autoplayId);
-            autoplayId = setTimeout(() => {
-                next();
-                schedule();
-            }, AUTOPLAY_MS);
-        };
-        const stop = () => { clearTimeout(autoplayId); autoplayId = null; };
-        const restart = () => { stop(); schedule(); };
+        const start = () => { stop(); intervalId = setInterval(next, INTERVAL); };
+        const stop  = () => { if (intervalId) clearInterval(intervalId); intervalId = null; };
 
-        // Клік по стрілках — з повагою до анімації
-        prevBtn.addEventListener('click', () => { prev(); restart(); });
-        nextBtn.addEventListener('click', () => { next(); restart(); });
+        nextBtn.addEventListener('click', ()=>{ next(); start(); });
+        prevBtn.addEventListener('click', ()=>{ prev(); start(); });
 
-        // Пауза на ховер мишею
-        hero.addEventListener('mouseenter', () => { paused = true; stop(); });
-        hero.addEventListener('mouseleave', () => { paused = false; schedule(); });
+        hero.addEventListener('mouseenter', stop);
+        hero.addEventListener('mouseleave', start);
 
-        // Свайп на тачі (пауза на час взаємодії + ще трохи)
-        let x0 = null;
-        hero.addEventListener('touchstart', e => {
-            paused = true; stop();
-            x0 = e.touches[0].clientX;
-        }, {passive:true});
-        hero.addEventListener('touchend', e => {
-            if (x0 != null) {
-                const dx = e.changedTouches[0].clientX - x0;
-                if (Math.abs(dx) > 40) (dx > 0 ? prev() : next());
-                x0 = null;
+        // свайп на мобілці
+        let x0=null;
+        hero.addEventListener('touchstart', e=>{ x0=e.touches[0].clientX; stop(); }, {passive:true});
+        hero.addEventListener('touchend', e=>{
+            if(x0!=null){
+                const dx=e.changedTouches[0].clientX-x0;
+                if(Math.abs(dx)>40) (dx>0?prev():next());
+                x0=null;
             }
-            // невелика затримка перед відновленням автоплею
-            setTimeout(()=>{ paused = false; schedule(); }, 800);
+            start();
         }, {passive:true});
 
-        // Старт
-        schedule();
+        // пауза коли вкладка неактивна
+        document.addEventListener('visibilitychange', ()=>{ document.hidden ? stop() : start(); });
 
-        // На зміну вкладки — пауза/відновлення (щоб не «скакав» у бекграунді)
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden){ paused = true; stop(); }
-            else { paused = false; schedule(); }
-        });
+        start();
     })();
 </script>
 
