@@ -67,9 +67,10 @@ header{position:sticky; top:0; z-index:10; backdrop-filter: blur(8px); backgroun
 
 /* Фото + легка маска */
 .slide{--mask:0.10}
-.slide[data-flavor="acacia"]{--mask:0.09;background-image:url("assets/hero-acacia.jpeg")}
-.slide[data-flavor="linden"]{--mask:0.08;background-image:url("assets/hero-linden.jpg")}
-.slide[data-flavor="buckwheat"]{--mask:0.12;background-image:url("assets/sunflover.jpg")}
+.slide[data-flavor="acacia"]{--mask:0.09; background-image:url("assets/hero-acacia.jpeg")}
+.slide[data-flavor="linden"]{--mask:0.08; background-image:url("assets/hero-linden.jpg")}
+/* було: buckwheat + sunflover.jpg — помилка у назві */
+.slide[data-flavor="sunflower"]{--mask:0.10; background-image:url("assets/hero-sunflower.jpg")}
 .slide::before{
     content:""; position:absolute; inset:0;
     background:
