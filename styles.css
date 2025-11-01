@@ -85,7 +85,7 @@ button.btn:hover{background:var(--brand-dark)}
 /* фон слайдів (зміни під твої назви файлів) */
 .slide[data-flavor="acacia"]{background-image:url("assets/hero-acacia.jpeg"); --mask:.22}
 .slide[data-flavor="linden"]{background-image:url("assets/hero-linden.jpg"); --mask:.22}
-.slide[data-flavor="buckwheat"]{background-image:url("assets/hero-sunflower.jpg"); --mask:.24}
+.slide[data-flavor="sunflower"]{background-image:url("assets/hero-sunflower.jpg");--mask:.24;}
 /* затемнення фото */
 .slide::before{
     content:""; position:absolute; inset:0;
