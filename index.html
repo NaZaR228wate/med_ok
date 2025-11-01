@@ -22,7 +22,13 @@
             </svg>
             <span>med_ok</span>
         </div>
-        <nav>
+        <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
+            <span class="menu-toggle__bar"></span>
+            <span class="menu-toggle__bar"></span>
+            <span class="menu-toggle__bar"></span>
+            <span class="visually-hidden">Відкрити меню</span>
+        </button>
+        <nav id="primary-nav" data-open="true" aria-hidden="false">
             <a href="#products">Продукція</a>
             <a href="#about">Про пасіку</a>
             <a href="#why">Чому ми</a>
@@ -229,11 +235,73 @@
         window.location.href = `mailto:${ORDER_EMAIL}?subject=${subject}&body=${body}`;
     });
 
+    // ===== МОБІЛЬНЕ МЕНЮ =====
+    (function(){
+        const toggle = document.getElementById('menu-toggle');
+        const nav = document.getElementById('primary-nav');
+        if (!toggle || !nav) return;
+
+        const close = () => {
+            nav.dataset.open = 'false';
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.classList.remove('is-open');
+            nav.setAttribute('aria-hidden', 'true');
+        };
+
+        const open = () => {
+            nav.dataset.open = 'true';
+            toggle.setAttribute('aria-expanded', 'true');
+            toggle.classList.add('is-open');
+            nav.setAttribute('aria-hidden', 'false');
+        };
+
+        const showDesktop = () => {
+            nav.dataset.open = 'true';
+            nav.setAttribute('aria-hidden', 'false');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.classList.remove('is-open');
+        };
+
+        const mql = window.matchMedia('(max-width: 900px)');
+        const syncState = () => {
+            if (mql.matches) {
+                close();
+            } else {
+                showDesktop();
+            }
+        };
+
+        syncState();
+        mql.addEventListener('change', syncState);
+
+        toggle.addEventListener('click', () => {
+            const isOpen = nav.dataset.open === 'true';
+            (isOpen ? close : open)();
+        });
+
+        nav.querySelectorAll('a').forEach(link => link.addEventListener('click', close));
+
+        document.addEventListener('click', (event) => {
+            if (!mql.matches) return;
+            if (nav.dataset.open !== 'true') return;
+            if (nav.contains(event.target) || toggle.contains(event.target)) return;
+            close();
+        });
+
+        // Закриваємо меню при натисканні Escape
+        document.addEventListener('keydown', (e) => {
+            if (!mql.matches) return;
+            if (e.key === 'Escape') close();
+        });
+    })();
+
     // ===== HERO SLIDER: автоплей КОЖНІ 3с без зупинок =====
     (function(){
         const slides = Array.from(document.querySelectorAll('.hero-slider .slide'));
         const prevBtn = document.getElementById('prev');
         const nextBtn = document.getElementById('next');
+
+        if (!slides.length || !prevBtn || !nextBtn) return;
 
         const AUTOPLAY_MS = 3000;           // 3 секунди
         const ANIM_MS = 650;                // дорівнює CSS-переходу ~0.6s
