@@ -13,7 +13,7 @@
     --safe-bottom: env(safe-area-inset-bottom, 0px);
 
     /* CTA кольори */
-    --accent-green:#087B04;   /* зелений у спокої */
+    --accent-green:#3B9103;   /* зелений у спокої */
     --accent-yellow:#f4b400;  /* жовтий при наведенні */
 }
 
