@@ -2,24 +2,29 @@
 <html lang="uk">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Замовлення — med_ok</title>
-    <link rel="stylesheet" href="styles.css?v=1">
-    <meta name="description" content="Оформлення замовлення натурального меду з пасіки med_ok. Доставка по Україні." />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Оформлення замовлення — med_ok</title>
+    <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
-<a class="visually-hidden" href="#main">Перейти до контенту</a>
-
 <header>
     <div class="container nav">
         <div class="brand">
             <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-                <path fill="#f4b400" d="M22 10h20l10 12v20l-10 12H22L12 42V22z"></path>
-                <path fill="#fff" opacity=".6" d="M26 18h12l6 7v14l-6 7H26l-6-7V25z"></path>
+                <path fill="#f4b400" d="M22 10h20л10 12v20л-10 12H22Л12 42V22z"/>
+                <path fill="#fff" opacity=".6" d="M26 18h12л6 7v14л-6 7H26л-6-7V25z"/>
             </svg>
             <span>med_ok</span>
         </div>
-        <nav>
+
+        <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
+            <span class="menu-toggle__bar"></span>
+            <span class="menu-toggle__bar"></span>
+            <span class="menu-toggle__bar"></span>
+            <span class="visually-hidden">Відкрити меню</span>
+        </button>
+
+        <nav id="primary-nav" data-open="false" aria-hidden="true">
             <a href="index.html#products">Продукція</a>
             <a href="index.html#about">Про пасіку</a>
             <a href="index.html#why">Чому ми</a>
@@ -28,11 +33,11 @@
     </div>
 </header>
 
-<main id="main" class="container section">
-    <h1 style="margin-top:0">Оформлення замовлення</h1>
-    <p class="muted">Заповніть форму нижче. Після натискання «Надіслати» відкриється ваш поштовий клієнт із заповненим листом.</p>
+<main class="container" style="padding-top:28px">
+    <h1>Оформлення замовлення</h1>
+    <p>Заповніть форму нижче. Після натискання «Надіслати» відкриється ваш поштовий клієнт із заповненим листом.</p>
 
-    <div class="card" style="max-width:760px">
+    <div class="card" style="max-width:720px;margin:auto">
         <form id="order">
             <div class="two">
                 <div>
@@ -51,27 +56,30 @@
                     <select id="type">
                         <option>Акація</option>
                         <option>Липовий</option>
-                        <option>Соняшник</option>
                         <option>Гречаний</option>
                         <option>Різнотрав’я</option>
                     </select>
                 </div>
                 <div>
                     <label for="qty">Кількість (кг)</label>
-                    <input id="qty" type="number" min="0.5" step="0.5" value="1">
+                    <input id="qty" type="number" min="1" value="1">
                 </div>
             </div>
 
-            <label for="delivery">Спосіб доставки</label>
-            <select id="delivery">
-                <option>Нова пошта — відділення</option>
-                <option>Нова пошта — поштомат</option>
-                <option>Кур’єр НП</option>
-                <option>Самовивіз</option>
-            </select>
-
-            <label for="address">Адреса / Відділення</label>
-            <input id="address" placeholder="Місто, Відділення №… або адреса для кур’єра">
+            <div class="two">
+                <div>
+                    <label for="ship">Спосіб доставки</label>
+                    <select id="ship">
+                        <option>Нова пошта — відділення</option>
+                        <option>Нова пошта — кур’єр</option>
+                        <option>Самовивіз</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="addr">Адреса / Відділення</label>
+                    <input id="addr" placeholder="Місто, Відділення №... або адреса для кур’єра">
+                </div>
+            </div>
 
             <label for="note">Коментар</label>
             <textarea id="note" rows="3" placeholder="Зручний час дзвінка, деталі замовлення тощо"></textarea>
@@ -81,45 +89,50 @@
         </form>
     </div>
 
-    <p style="margin-top:18px">
-        <a href="index.html">← На головну</a>
-    </p>
+    <p style="margin-top:16px"><a href="index.html">← На головну</a></p>
 </main>
 
-<footer class="container">
-    © <span id="y"></span> med_ok
-</footer>
+<footer class="container">© <span id="y"></span> med_ok</footer>
 
 <script>
-    // куди надсилати
     const ORDER_EMAIL = "Veter010709@gmail.com";
-
-    // рік у футері
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // форма
-    document.getElementById('order').addEventListener('submit', (e) => {
+    // бургер
+    (function(){
+        const toggle = document.getElementById('menu-toggle');
+        const nav = document.getElementById('primary-nav');
+        const close = ()=>{ nav.dataset.open='false'; toggle.setAttribute('aria-expanded','false'); toggle.classList.remove('is-open'); nav.setAttribute('aria-hidden','true'); };
+        const open  = ()=>{ nav.dataset.open='true';  toggle.setAttribute('aria-expanded','true');  toggle.classList.add('is-open');  nav.setAttribute('aria-hidden','false'); };
+        close();
+        toggle.addEventListener('click', ()=> (nav.dataset.open==='true'?close():open()));
+        nav.querySelectorAll('a').forEach(a=>a.addEventListener('click', close));
+        document.addEventListener('click', e=>{ if(nav.dataset.open!=='true')return; if(nav.contains(e.target)||toggle.contains(e.target))return; close(); });
+        document.addEventListener('keydown', e=>{ if(e.key==='Escape') close(); });
+    })();
+
+    // форма -> email
+    document.getElementById('order')?.addEventListener('submit', function(e){
         e.preventDefault();
         const name = document.getElementById('name').value.trim();
         const phone = document.getElementById('phone').value.trim();
         const type = document.getElementById('type').value;
         const qty  = document.getElementById('qty').value;
-        const delivery = document.getElementById('delivery').value;
-        const address = document.getElementById('address').value.trim();
+        const ship = document.getElementById('ship').value;
+        const addr = document.getElementById('addr').value.trim();
         const note = document.getElementById('note').value.trim();
 
-        const subject = encodeURIComponent('Заявка на мед — med_ok');
+        const subject = encodeURIComponent('Заявка на мед (order.html)');
         const body = encodeURIComponent(
             `Ім’я: ${name}\n` +
             `Телефон: ${phone}\n` +
             `Вид меду: ${type}\n` +
             `Кількість: ${qty} кг\n` +
-            `Доставка: ${delivery}\n` +
-            (address ? `Адреса/Відділення: ${address}\n` : ``) +
-            (note ? `Коментар: ${note}\n` : ``) +
-            `---\nНадіслано зі сторінки замовлення med_ok`
+            `Доставка: ${ship}\n` +
+            (addr?`Адреса/Відділення: ${addr}\n`:'') +
+            (note?`Коментар: ${note}\n`:'') +
+            `---\nНадіслано з order.html (med_ok)`
         );
-
         window.location.href = `mailto:${ORDER_EMAIL}?subject=${subject}&body=${body}`;
     });
 </script>
