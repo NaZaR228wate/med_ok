@@ -416,17 +416,26 @@ button.btn:active{transform:scale(.98)}
 /* Hover для кнопки "Замовити" в хедері */
 header .nav a.cta:hover,
 #primary-nav .cta:hover {
-  background: var(--accent) !important; /* жовтий */
-  filter: none; /* прибираємо затемнення */
+    background: var(--accent) !important; /* жовтий */
+    filter: none; /* прибираємо затемнення */
 }
-/* Вимкнути анімації для центральної кнопки HERO */
-.hero-cta {
-  transition: none !important;   /* без плавних переходів */
+/* HERO CTA — завжди центрована і з м'яким ховером */
+.hero-cta{
+    position:absolute;
+    left:50%;
+    transform: translateX(-50%);               /* базове центрування */
+    bottom: calc(30px + var(--safe-bottom));
+    transition: background .15s ease, transform .15s ease;
+    will-change: transform;
 }
 
-.hero-cta:hover,
-.hero-cta:focus,
-.hero-cta:active {
-  transform: none !important;    /* без "підстрибування"/масштабу */
-  /* колір на hover залишиться як у тебе задано; прибрати теж? тоді додай: background: var(--brand) !important; */
+/* на hover тільки колір (і зберігаємо translateX) */
+.hero-cta:hover{
+    background: var(--accent);
+    transform: translateX(-50%);
+}
+
+/* на active робимо scale, але РАЗОМ з translateX */
+.hero-cta:active{
+    transform: translateX(-50%) scale(.98);
 }
