@@ -1,18 +1,18 @@
 :root{
-  --bg:#fffdf7; --ink:#1b1b1b; --muted:#6b6b6b;
-  --brand:#f4b400; --brand-dark:#c38e00;
-  --accent-green:#087B04;            /* твій зелений */
-  --accent-yellow:#f4b400;           /* колір hover */
-  --card:#ffffff; --shadow:0 8px 24px rgba(0,0,0,.08); --radius:14px;
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --bg:#fffdf7; --ink:#1b1b1b; --muted:#6b6b6b;
+    --brand:#f4b400; --brand-dark:#c38e00;
+    --accent-green:#087B04;            /* твій зелений */
+    --accent-yellow:#f4b400;           /* колір hover */
+    --card:#ffffff; --shadow:0 8px 24px rgba(0,0,0,.08); --radius:14px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* ===== БАЗА ===== */
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  font-family: system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Cantarell,"Noto Sans","Helvetica Neue",Arial;
-  background:var(--bg); color:var(--ink); line-height:1.55;
+    font-family: system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Cantarell,"Noto Sans","Helvetica Neue",Arial;
+    background:var(--bg); color:var(--ink); line-height:1.55;
 }
 a{color:inherit; text-decoration:none}
 .visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -26,15 +26,15 @@ header{position:sticky; top:0; z-index:10; backdrop-filter: blur(8px); backgroun
 
 /* кнопка-бергер */
 .menu-toggle{
-  display:flex; flex-direction:column; justify-content:center; align-items:center;
-  width:46px; height:46px; border-radius:999px; border:1px solid rgba(0,0,0,.06);
-  background:rgba(255,255,255,.65); box-shadow:0 6px 18px rgba(0,0,0,.12);
-  cursor:pointer; padding:10px; transition:background .2s ease;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    width:46px; height:46px; border-radius:999px; border:1px solid rgba(0,0,0,.06);
+    background:rgba(255,255,255,.65); box-shadow:0 6px 18px rgba(0,0,0,.12);
+    cursor:pointer; padding:10px; transition:background .2s ease;
 }
 .menu-toggle:is(:hover,:focus-visible){background:rgba(255,255,255,.92)}
 .menu-toggle__bar{
-  display:block; width:100%; height:3px; background:var(--ink);
-  border-radius:999px; transition:transform .25s ease, opacity .25s ease;
+    display:block; width:100%; height:3px; background:var(--ink);
+    border-radius:999px; transition:transform .25s ease, opacity .25s ease;
 }
 .menu-toggle__bar + .menu-toggle__bar{margin-top:6px}
 .menu-toggle.is-open .menu-toggle__bar:nth-child(1){transform:translateY(9px) rotate(45deg)}
@@ -43,12 +43,12 @@ header{position:sticky; top:0; z-index:10; backdrop-filter: blur(8px); backgroun
 
 /* Випадаюче меню (мобільне) */
 .nav nav{
-  position:absolute; top:calc(100% + 10px); right:20px;
-  display:flex; flex-direction:column; align-items:stretch; gap:6px;
-  padding:14px; border-radius:16px; border:1px solid rgba(0,0,0,.06);
-  background:rgba(255,255,255,.96); box-shadow:0 18px 40px rgba(0,0,0,.18);
-  min-width:210px; width:min(260px, calc(100vw - 40px));
-  transition:opacity .2s ease, transform .2s ease; z-index:50;
+    position:absolute; top:calc(100% + 10px); right:20px;
+    display:flex; flex-direction:column; align-items:stretch; gap:6px;
+    padding:14px; border-radius:16px; border:1px solid rgba(0,0,0,.06);
+    background:rgba(255,255,255,.96); box-shadow:0 18px 40px rgba(0,0,0,.18);
+    min-width:210px; width:min(260px, calc(100vw - 40px));
+    transition:opacity .2s ease, transform .2s ease; z-index:50;
 }
 .nav nav[data-open="false"]{opacity:0; pointer-events:none; transform:translateY(-8px)}
 .nav nav[data-open="true"]{opacity:1; transform:translateY(0)}
@@ -71,46 +71,46 @@ header{position:sticky; top:0; z-index:10; backdrop-filter: blur(8px); backgroun
 
 /* Слайд */
 .slide{
-  position:absolute; inset:0;
-  display:grid; grid-template-columns:1fr; align-items:center;
-  gap:24px; padding:24px 20px;
-  opacity:0; transform:translateX(6%);
-  transition:opacity .55s ease, transform .6s ease;
-  color:#fff;
-  background-size:cover; background-position:center; background-repeat:no-repeat;
-  --mask:.22;
+    position:absolute; inset:0;
+    display:grid; grid-template-columns:1fr; align-items:center;
+    gap:24px; padding:24px 20px;
+    opacity:0; transform:translateX(6%);
+    transition:opacity .55s ease, transform .6s ease;
+    color:#fff;
+    background-size:cover; background-position:center; background-repeat:no-repeat;
+    --mask:.22;
 }
 .slide.active{opacity:1; transform:translateX(0)}
 .slide .left{max-width:820px; margin-left:clamp(8px,6vw,80px); position:relative; z-index:2}
 
 /* локальна підкладка під текстом */
 .slide .left::before{
-  content:""; position:absolute; inset:-10px -14px -10px -14px; z-index:-1;
-  background: radial-gradient(600px 300px at 0% 10%, rgba(0,0,0,.18), transparent 60%);
-  filter: saturate(.9) contrast(.95);
-  border-radius:22px;
+    content:""; position:absolute; inset:-10px -14px -10px -14px; z-index:-1;
+    background: radial-gradient(600px 300px at 0% 10%, rgba(0,0,0,.18), transparent 60%);
+    filter: saturate(.9) contrast(.95);
+    border-radius:22px;
 }
 
 /* заголовок і тіні */
 .bigword{
-  font-weight:900; line-height:.92; letter-spacing:.01em;
-  font-size:clamp(46px,16vw,200px);
-  margin:0 0 10px 0;
-  color:#fff;
-  text-shadow:0 10px 30px rgba(0,0,0,.60), 0 3px 8px rgba(0,0,0,.70);
+    font-weight:900; line-height:.92; letter-spacing:.01em;
+    font-size:clamp(46px,16vw,200px);
+    margin:0 0 10px 0;
+    color:#fff;
+    text-shadow:0 10px 30px rgba(0,0,0,.60), 0 3px 8px rgba(0,0,0,.70);
 }
 .subtitle{
-  font-size:clamp(16px,2.2vw,28px);
-  font-weight:600; margin:14px 0 18px; color:#fff;
-  text-shadow:0 2px 10px rgba(0,0,0,.65);
+    font-size:clamp(16px,2.2vw,28px);
+    font-weight:600; margin:14px 0 18px; color:#fff;
+    text-shadow:0 2px 10px rgba(0,0,0,.65);
 }
 
 /* кнопки у херо */
 .hero-actions{display:flex; gap:10px; flex-wrap:wrap}
 .hero-actions .ghost{
-  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28);
-  border-radius:999px; padding:12px 16px; display:inline-flex;
-  color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.6);
+    background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28);
+    border-radius:999px; padding:12px 16px; display:inline-flex;
+    color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.6);
 }
 
 /* фони */
@@ -119,25 +119,25 @@ header{position:sticky; top:0; z-index:10; backdrop-filter: blur(8px); backgroun
 .slide[data-flavor="sunflower"]{background-image:url("assets/hero-sunflower.jpg"); --mask:.24}
 
 .slide::before{
-  content:""; position:absolute; inset:0;
-  background:
-    radial-gradient(1200px 500px at 20% 30%, rgba(0,0,0,.12), transparent 60%),
-    radial-gradient(800px 400px at 90% 80%, rgba(0,0,0,.20), transparent 60%),
-    rgba(0,0,0,var(--mask));
-  pointer-events:none;
+    content:""; position:absolute; inset:0;
+    background:
+            radial-gradient(1200px 500px at 20% 30%, rgba(0,0,0,.12), transparent 60%),
+            radial-gradient(800px 400px at 90% 80%, rgba(0,0,0,.20), transparent 60%),
+            rgba(0,0,0,var(--mask));
+    pointer-events:none;
 }
 
 /* стрілки */
 .navbtn{
-  position:absolute;
-  bottom:calc(18px + var(--safe-bottom));
-  width:58px; height:58px; border-radius:999px;
-  border:1px solid rgba(255,255,255,.38);
-  background:rgba(0,0,0,.28);
-  display:grid; place-items:center;
-  cursor:pointer; backdrop-filter:blur(4px);
-  color:#fff; font-size:28px; z-index:6;
-  box-shadow:0 8px 18px rgba(0,0,0,.25);
+    position:absolute;
+    bottom:calc(18px + var(--safe-bottom));
+    width:58px; height:58px; border-radius:999px;
+    border:1px solid rgba(255,255,255,.38);
+    background:rgba(0,0,0,.28);
+    display:grid; place-items:center;
+    cursor:pointer; backdrop-filter:blur(4px);
+    color:#fff; font-size:28px; z-index:6;
+    box-shadow:0 8px 18px rgba(0,0,0,.25);
 }
 .navbtn.prev{left:clamp(8px,2vw,22px)}
 .navbtn.next{right:clamp(8px,2vw,22px)}
@@ -145,18 +145,18 @@ header{position:sticky; top:0; z-index:10; backdrop-filter: blur(8px); backgroun
 
 /* центральна кнопка: завжди один рядок */
 .hero-cta{
-  position:absolute; left:50%; transform:translateX(-50%);
-  bottom:calc(30px + var(--safe-bottom));
-  display:inline-flex; align-items:center; gap:.55rem;
-  padding:16px 26px;
-  border-radius:9999px;
-  background:var(--accent-green);
-  color:#fff; font-weight:800;
-  white-space:nowrap;               /* не переносити текст */
-  font-size:clamp(14px,3.7vw,20px);
-  max-width:calc(100vw - 32px);     /* без виходу за край */
-  overflow:hidden; text-overflow:ellipsis;
-  box-shadow:0 8px 24px rgba(0,0,0,.24);
+    position:absolute; left:50%; transform:translateX(-50%);
+    bottom:calc(30px + var(--safe-bottom));
+    display:inline-flex; align-items:center; gap:.55rem;
+    padding:16px 26px;
+    border-radius:9999px;
+    background:var(--accent-green);
+    color:#fff; font-weight:800;
+    white-space:nowrap;               /* не переносити текст */
+    font-size:clamp(14px,3.7vw,20px);
+    max-width:calc(100vw - 32px);     /* без виходу за край */
+    overflow:hidden; text-overflow:ellipsis;
+    box-shadow:0 8px 24px rgba(0,0,0,.24);
 }
 .hero-cta:hover{ background:var(--accent-yellow); color:#000; }
 
@@ -172,27 +172,27 @@ footer{margin-top:24px; padding:24px 0 42px; color:var(--muted); border-top:1px 
 /* ===== FORMS ===== */
 form#order{display:grid; gap:10px}
 input,select,textarea{
-  width:100%; padding:12px; border-radius:10px;
-  border:1px solid #ddd; background:#fff; font-size:16px
+    width:100%; padding:12px; border-radius:10px;
+    border:1px solid #ddd; background:#fff; font-size:16px
 }
 button.btn{
-  padding:12px 16px; border:0; border-radius:999px;
-  background:var(--brand); font-weight:800; cursor:pointer
+    padding:12px 16px; border:0; border-radius:999px;
+    background:var(--brand); font-weight:800; cursor:pointer
 }
 button.btn:hover{background:var(--brand-dark)}
 .two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
 
 /* ===== АДАПТИВ ===== */
 @media (max-width:900px){
-  .col-4,.col-6{grid-column:span 12}
+    .col-4,.col-6{grid-column:span 12}
 }
 @media (max-width:700px){
-  .two{grid-template-columns:1fr}
-  .slide{padding:20px clamp(18px,5vw,24px); --mask:.26}
-  .bigword{font-size:clamp(36px,14vw,76px)}
-  .subtitle{font-size:clamp(14px,4.2vw,18px)}
-  .navbtn{width:54px; height:54px; font-size:24px}
+    .two{grid-template-columns:1fr}
+    .slide{padding:20px clamp(18px,5vw,24px); --mask:.26}
+    .bigword{font-size:clamp(36px,14vw,76px)}
+    .subtitle{font-size:clamp(14px,4.2vw,18px)}
+    .navbtn{width:54px; height:54px; font-size:24px}
 }
 @media (max-width:360px){
-  .hero-cta{font-size:15px; padding:12px 18px;}
+    .hero-cta{font-size:15px; padding:12px 18px;}
 }
