@@ -137,7 +137,6 @@
 <script>
     // ===== КОНФІГ =====
     const WORKER_BASE = 'https://medok-proxy.veter010709.workers.dev';
-    const ORDER_EMAIL = 'orders@example.com'; // ← заміни на свою пошту
 
     // ===== ХЕДЕР як на index.html =====
     (function(){
@@ -151,7 +150,6 @@
         nav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
         document.addEventListener('click', (e)=>{ if(nav.dataset.open!=='true')return; if(nav.contains(e.target)||toggle.contains(e.target))return; close(); });
         document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
-
         function syncDesktop(){
             if (window.matchMedia('(min-width: 900px)').matches){
                 nav.dataset.open = 'true';
@@ -170,18 +168,12 @@
     const phoneI    = document.getElementById('phone');
     const honeySel  = document.getElementById('honey');
     const qtySel    = document.getElementById('qty');
-
-    // У тебе зараз в HTML має лишитись тільки один варіант доставки:
-    // <select id="ship"><option value="np_branch" selected>Нова пошта — відділення</option></select>
     const shipSel   = document.getElementById('ship');
-
-    // Поля НП (пошук → select міста (Ref) → select відділень)
     const citySearch= document.getElementById('citySearch');
     const citySel   = document.getElementById('city');      // value = Ref
     const whSel     = document.getElementById('warehouse');
     const whStatus  = document.getElementById('wh-status');
     const npRow     = document.getElementById('np-row');
-
     const commentI  = document.getElementById('comment');
 
     // Попередньо обраний вид меду з головної
@@ -205,9 +197,9 @@
         o.textContent = placeholder || '—';
         whSel.appendChild(o);
     };
-    async function fetchJSON(url){
-        const r = await fetch(url);
-        if(!r.ok) throw new Error('HTTP '+r.status);
+    async function fetchJSON(url, init){
+        const r = await fetch(url, init);
+        if(!r.ok) throw new Error('HTTP '+r.status+' '+r.statusText);
         return r.json();
     }
 
@@ -221,10 +213,7 @@
         cityTimer = setTimeout(async () => {
             try {
                 const data = await fetchJSON(`${WORKER_BASE}/np/cities?q=${encodeURIComponent(q)}`);
-                if (!data.ok) return;
-
-                const arr = Array.isArray(data.data) ? data.data
-                    : Array.isArray(data.items) ? data.items : [];
+                const arr = Array.isArray(data.data) ? data.data : Array.isArray(data.items) ? data.items : [];
 
                 citySel.innerHTML = '';
                 const def = document.createElement('option');
@@ -234,11 +223,13 @@
 
                 arr.forEach(c => {
                     const opt = document.createElement('option');
-                    opt.value = c.Ref; // важливо — саме Ref
+                    opt.value = c.Ref;                       // важливо: Ref
                     opt.textContent = c.Description || c.Present || c.name;
                     citySel.appendChild(opt);
                 });
-            } catch(e) { /* тихо */ }
+            } catch(e) {
+                // тихо ігноруємо
+            }
         }, 250);
     });
 
@@ -260,8 +251,6 @@
 
         try{
             const data = await fetchJSON(`${WORKER_BASE}/np/warehouses?cityRef=${encodeURIComponent(cityRef)}`);
-            if(!data.ok) throw new Error('NP error');
-
             const list = Array.isArray(data.data) ? data.data :
                 Array.isArray(data.items) ? data.items : [];
 
@@ -272,7 +261,7 @@
                 return;
             }
 
-            // звичайні відділення → поштомати; сортування за номером
+            // поштомати вниз
             list.sort((a,b) => {
                 const aPM = /поштомат|postomat/i.test(a.Description || '');
                 const bPM = /поштомат|postomat/i.test(b.Description || '');
@@ -304,37 +293,74 @@
         }
     }
 
-    // ===== НП — єдиний спосіб доставки, блок завжди видимий =====
+    // Показ/приховання НП
     function applyShipVisibility(){
-        npRow.classList.remove('hidden');
-        citySel.required = true;
-        whSel.required   = true;
+        const needNP = shipSel.value === 'np_branch';
+        npRow.classList.toggle('hidden', !needNP);
+        citySel.required = needNP;
+        whSel.required  = needNP;
+        if (!needNP) setWhStatus('');
     }
-    window.addEventListener('DOMContentLoaded', applyShipVisibility);
+    shipSel.addEventListener('change', applyShipVisibility);
 
-    // ===== Сабміт → mailto =====
-    form.addEventListener('submit', (e) => {
+    // ===== Сабміт → Cloudflare Worker /order → Telegram =====
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if(!form.reportValidity()) return;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        try {
+            if(!form.reportValidity()) return;
 
-        const pay = form.querySelector('input[name="pay"]:checked')?.value || 'cod';
-        const rows = [
-            `Замовлення з сайту med_ok`,
-            `Імʼя: ${nameI.value}`,
-            `Телефон: ${phoneI.value}`,
-            `Вид меду: ${honeySel.value}`,
-            `Кількість: ${qtySel.value} л`,
-            `Доставка: ${shipSel.options[shipSel.selectedIndex].text}`,
-            `Місто (НП): ${citySel.options[citySel.selectedIndex]?.text || ''}`,
-            `Відділення (НП): ${whSel.value || ''}`,
-            `Оплата: ${pay === 'cod' ? 'Накладений платіж' : 'Повна передоплата'}`,
-            commentI.value ? `Коментар: ${commentI.value}` : null
-        ].filter(Boolean);
+            const pay = form.querySelector('input[name="pay"]:checked')?.value || 'cod';
+            const payload = {
+                name: nameI.value.trim(),
+                phone: phoneI.value.trim(),
+                honey: honeySel.value,
+                qty:   qtySel.value,
+                pay,
+                np_city:      citySel.options[citySel.selectedIndex]?.text || '',
+                np_warehouse: whSel.value || '',
+                comment:      commentI.value.trim()
+            };
 
-        const subject = encodeURIComponent('Замовлення меду — med_ok');
-        const body    = encodeURIComponent(rows.join('\n'));
-        window.location.href = `mailto:${ORDER_EMAIL}?subject=${subject}&body=${body}`;
+            if (shipSel.value === 'np_branch' && (!payload.np_city || !payload.np_warehouse)) {
+                alert('Будь ласка, оберіть місто і відділення Нової пошти.');
+                return;
+            }
+
+            // disable btn
+            if (submitBtn){ submitBtn.disabled = true; const t=submitBtn.textContent; submitBtn.dataset._t=t; submitBtn.textContent='Надсилаємо…'; }
+
+            const r = await fetch(`${WORKER_BASE}/order`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            if (!r.ok) {
+                const txt = await r.text().catch(()=> '');
+                throw new Error(`HTTP ${r.status} ${r.statusText} ${txt}`);
+            }
+            const data = await r.json().catch(()=> ({}));
+            if (!data.ok) throw new Error('Worker відповів ok:false');
+
+            alert('Дякую! Замовлення відправлено в Telegram 🐝');
+            form.reset();
+            applyShipVisibility();
+            clearWh('Спочатку оберіть місто');
+            setWhStatus('');
+        } catch (err) {
+            console.error('Submit error:', err);
+            alert('Не вдалося надіслати замовлення. Спробуйте ще раз.\n' + (err?.message || err));
+        } finally {
+            if (submitBtn){ submitBtn.disabled = false; submitBtn.textContent = submitBtn.dataset._t || 'Надіслати'; }
+        }
+    });
+
+    // ===== Старт =====
+    window.addEventListener('DOMContentLoaded', () => {
+        applyShipVisibility();
     });
 </script>
+
 </body>
 </html>
