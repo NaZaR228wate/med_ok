@@ -419,3 +419,14 @@ header .nav a.cta:hover,
   background: var(--accent) !important; /* жовтий */
   filter: none; /* прибираємо затемнення */
 }
+/* Вимкнути анімації для центральної кнопки HERO */
+.hero-cta {
+  transition: none !important;   /* без плавних переходів */
+}
+
+.hero-cta:hover,
+.hero-cta:focus,
+.hero-cta:active {
+  transform: none !important;    /* без "підстрибування"/масштабу */
+  /* колір на hover залишиться як у тебе задано; прибрати теж? тоді додай: background: var(--brand) !important; */
+}
