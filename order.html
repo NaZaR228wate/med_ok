@@ -4,8 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Оформлення замовлення — med_ok</title>
-
-  <link rel="stylesheet" href="styles.css?v=7"/>
+  <link rel="stylesheet" href="styles.css?v=8"/>
 </head>
 <body>
 <a class="visually-hidden" href="#main">Перейти до контенту</a>
@@ -99,23 +98,15 @@
         </div>
       </div>
 
-      <!-- Нова пошта -->
+      <!-- Нова пошта: лише ДВА ТЕКСТОВІ ПОЛЯ -->
       <div id="np-row" class="row mt-16">
         <div class="col">
-          <label for="citySearch">Пошук міста (2+ літери)</label>
-          <input id="citySearch" placeholder="Почніть вводити назву… (напр., Ки)" autocomplete="off"/>
-
-          <label for="city" class="mt-8">Місто (Нова пошта) *</label>
-          <select id="city" required>
-            <option value="">Спочатку введіть 2+ літери у полі вище…</option>
-          </select>
+          <label for="cityText">Місто (Нова пошта) *</label>
+          <input id="cityText" name="np_city" placeholder="Місто/село (напр., Чубинське)" required />
         </div>
         <div class="col">
-          <label for="warehouse">Відділення (№/адреса) *</label>
-          <select id="warehouse" disabled required>
-            <option>Спочатку оберіть місто</option>
-          </select>
-          <div id="wh-status" class="note mt-8"></div>
+          <label for="warehouseText">Відділення (№ або адреса) *</label>
+          <input id="warehouseText" name="np_warehouse" placeholder="Напр., №1 або вул. Київська, 12" required />
         </div>
       </div>
 
@@ -142,11 +133,10 @@
 
 <!-- ===== JS ===== -->
 <script>
-  // ========= КОНФІГ =========
-  const WORKER_BASE = 'https://medok-proxy.veter010709.workers.dev';
-  const ORDER_EMAIL = 'orders@example.com'; // заміни на свій email
+  // ===== КОНФІГ (тільки email потрібен) =====
+  const ORDER_EMAIL = 'orders@example.com'; // заміни на свій
 
-  // ========= Хедер (бургер) — такий самий як на index.html =========
+  // ===== Хедер — як на index.html =====
   (function(){
     const toggle = document.getElementById('menu-toggle');
     const nav = document.getElementById('primary-nav');
@@ -158,7 +148,7 @@
     nav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
     document.addEventListener('click', (e)=>{ if(nav.dataset.open!=='true')return; if(nav.contains(e.target)||toggle.contains(e.target))return; close(); });
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
-    // синхронізація на десктопі
+
     function syncDesktop(){
       if (window.matchMedia('(min-width: 900px)').matches){
         nav.dataset.open = 'true';
@@ -171,21 +161,19 @@
     window.addEventListener('resize', syncDesktop);
   })();
 
-  // ========= DOM =========
+  // ===== DOM =====
   const form      = document.getElementById('orderForm');
   const nameI     = document.getElementById('name');
   const phoneI    = document.getElementById('phone');
   const honeySel  = document.getElementById('honey');
   const qtySel    = document.getElementById('qty');
   const shipSel   = document.getElementById('ship');
-  const citySearch= document.getElementById('citySearch');
-  const citySel   = document.getElementById('city');      // value = Ref
-  const whSel     = document.getElementById('warehouse');
-  const whStatus  = document.getElementById('wh-status');
+  const cityText  = document.getElementById('cityText');
+  const whText    = document.getElementById('warehouseText');
   const npRow     = document.getElementById('np-row');
   const commentI  = document.getElementById('comment');
 
-  // Попередньо обраний вид меду
+  // Попередньо обраний вид меду з головної
   (function(){
     const t = localStorage.getItem('preselected_type');
     if(!t) return;
@@ -194,124 +182,15 @@
     localStorage.removeItem('preselected_type');
   })();
 
-  // ========= helpers =========
-  const setWhStatus = (msg, type='muted') => {
-    whStatus.textContent = msg || '';
-    whStatus.className = 'note mt-8 ' + (type || 'muted');
-  };
-  const clearWh = (placeholder) => {
-    whSel.innerHTML = '';
-    const o = document.createElement('option');
-    o.value = '';
-    o.textContent = placeholder || '—';
-    whSel.appendChild(o);
-  };
-  async function fetchJSON(url){
-    const r = await fetch(url);
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    return r.json();
-  }
-
-  // ========= МІСТА: пошук → select#city (value = Ref) =========
-  let cityTimer;
-  citySearch.addEventListener('input', () => {
-    const q = citySearch.value.trim();
-    if (cityTimer) clearTimeout(cityTimer);
-    if (q.length < 2) return;
-
-    cityTimer = setTimeout(async () => {
-      try {
-        // воркер тепер повертає { ok:true, data:[...] }
-        const data = await fetchJSON(`${WORKER_BASE}/np/cities?q=${encodeURIComponent(q)}`);
-        if (!data.ok) return;
-
-        const arr = Array.isArray(data.data) ? data.data : (Array.isArray(data.items) ? data.items : []);
-        citySel.innerHTML = '';
-        const def = document.createElement('option');
-        def.value = '';
-        def.textContent = 'Оберіть місто зі списку…';
-        citySel.appendChild(def);
-
-        arr.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c.Ref; // важливо
-          opt.textContent = c.Description || c.Present || c.name;
-          citySel.appendChild(opt);
-        });
-      } catch(e) { /* тихо */ }
-    }, 250);
-  });
-
-  // ========= ВІДДІЛЕННЯ: за cityRef =========
-  citySel.addEventListener('change', loadWarehousesForCityRef);
-
-  async function loadWarehousesForCityRef(){
-    const cityRef = citySel.value;
-    if(!cityRef){
-      whSel.disabled = true;
-      clearWh('Спочатку оберіть місто');
-      setWhStatus('');
-      return;
-    }
-
-    whSel.disabled = true;
-    clearWh('Завантаження…');
-    setWhStatus('Завантажуємо відділення…');
-
-    try{
-      const data = await fetchJSON(`${WORKER_BASE}/np/warehouses?cityRef=${encodeURIComponent(cityRef)}`);
-      if(!data.ok) throw new Error('NP error');
-
-      const list = Array.isArray(data.data) ? data.data :
-                   Array.isArray(data.items) ? data.items : [];
-
-      if(!list.length){
-        clearWh('Відділень не знайдено');
-        whSel.disabled = true;
-        setWhStatus('Для цього міста немає відділень.', 'warn');
-        return;
-      }
-
-      list.sort((a,b) => {
-        const aPM = /поштомат|postomat/i.test(a.Description || '');
-        const bPM = /поштомат|postomat/i.test(b.Description || '');
-        if (aPM !== bPM) return aPM ? 1 : -1;
-        return (+a.Number || 0) - (+b.Number || 0);
-      });
-
-      whSel.innerHTML = '';
-      const first = document.createElement('option');
-      first.value = '';
-      first.textContent = 'Оберіть відділення';
-      whSel.appendChild(first);
-
-      list.forEach(w => {
-        const o = document.createElement('option');
-        const num = w.Number ? `№${w.Number}` : '';
-        const addr = w.ShortAddress || w.Description || '';
-        o.value = w.Description || addr;
-        o.textContent = `${num} — ${addr}`.replace(/^ — /,'');
-        whSel.appendChild(o);
-      });
-
-      whSel.disabled = false;
-      setWhStatus(`${list.length} відділень знайдено.`);
-    }catch(e){
-      clearWh('Помилка завантаження');
-      whSel.disabled = true;
-      setWhStatus('Помилка при завантаженні. Спробуйте ще раз.', 'error');
-    }
-  }
-
-  // Показ/приховання НП
+  // Показ/приховання блоку НП + required
   function applyShipVisibility(){
     const needNP = shipSel.value === 'np_branch';
     npRow.classList.toggle('hidden', !needNP);
-    citySel.required = needNP;
-    whSel.required  = needNP;
-    if (!needNP) setWhStatus('');
+    cityText.required = needNP;
+    whText.required   = needNP;
   }
   shipSel.addEventListener('change', applyShipVisibility);
+  window.addEventListener('DOMContentLoaded', applyShipVisibility);
 
   // Сабміт → mailto
   form.addEventListener('submit', (e) => {
@@ -326,8 +205,8 @@
       `Вид меду: ${honeySel.value}`,
       `Кількість: ${qtySel.value} л`,
       `Доставка: ${shipSel.options[shipSel.selectedIndex].text}`,
-      (shipSel.value === 'np_branch') ? `Місто (НП): ${citySel.options[citySel.selectedIndex]?.text}` : null,
-      (shipSel.value === 'np_branch') ? `Відділення (НП): ${whSel.value}` : null,
+      (shipSel.value === 'np_branch') ? `Місто (НП): ${cityText.value}` : null,
+      (shipSel.value === 'np_branch') ? `Відділення (НП): ${whText.value}` : null,
       `Оплата: ${pay === 'cod' ? 'Накладений платіж' : 'Повна передоплата'}`,
       commentI.value ? `Коментар: ${commentI.value}` : null
     ].filter(Boolean);
@@ -336,8 +215,6 @@
     const body    = encodeURIComponent(rows.join('\n'));
     window.location.href = `mailto:${ORDER_EMAIL}?subject=${subject}&body=${body}`;
   });
-
-  window.addEventListener('DOMContentLoaded', applyShipVisibility);
 </script>
 </body>
 </html>
