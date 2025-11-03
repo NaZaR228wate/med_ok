@@ -5,42 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Оформлення замовлення — med_ok</title>
 
-  <!-- твій спільний стиль -->
-  <link rel="stylesheet" href="styles.css?v=6"/>
-
-  <!-- невеликий “страхувальний” стиль, якщо чогось бракує у styles.css -->
-  <style>
-    body{background:#f9f7f1;color:#222;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif}
-    .container{max-width:1080px;margin:0 auto;padding:24px}
-    header{position:sticky;top:0;background:#fffdf8;border-bottom:1px solid #eee;z-index:50}
-    .nav{display:flex;align-items:center;gap:16px;height:56px}
-    .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:#111;font-weight:700}
-    .brand svg{width:22px;height:22px}
-    .nav-right{margin-left:auto;display:flex;align-items:center;gap:20px}
-    .nav-right a{color:#111;text-decoration:none;font-weight:500}
-    .cta, .btn{display:inline-block;background:#0b7a05;color:#fff;border-radius:28px;padding:10px 18px;font-weight:700;text-decoration:none;border:none;cursor:pointer}
-    h1{font-size:32px;margin:24px 0 12px}
-    .card{background:#fff;border:1px solid #eee;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
-    form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    form .row-1{grid-template-columns:1fr 1fr}
-    form .col{display:flex;flex-direction:column;gap:6px}
-    label{font-size:14px;color:#333}
-    input,select,textarea{border:1px solid #ddd;border-radius:10px;padding:12px 12px;font:inherit;background:#fff}
-    textarea{min-height:96px;resize:vertical}
-    .note{font-size:12px;color:#777}
-    .note.warn{color:#a36500}
-    .note.error{color:#b00020}
-    .actions{display:flex;justify-content:center;padding-top:12px}
-    .muted{color:#777;font-size:12px}
-    .mt-8{margin-top:8px}
-    .mt-16{margin-top:16px}
-    .hidden{display:none}
-    @media (max-width:900px){ .nav-right{display:none} } /* на мобілці залишається твоє бургер-меню з index */
-  </style>
+  <link rel="stylesheet" href="styles.css?v=7"/>
 </head>
 <body>
+<a class="visually-hidden" href="#main">Перейти до контенту</a>
 
-<!-- ХЕДЕР як на index -->
+<!-- ХЕДЕР 1:1 як на index.html -->
 <header>
   <div class="container nav">
     <a class="brand" href="index.html" aria-label="На головну">
@@ -50,7 +20,17 @@
       </svg>
       <span>med_ok</span>
     </a>
-    <nav class="nav-right" aria-label="Головна навігація">
+
+    <!-- Бургер -->
+    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
+      <span class="menu-toggle__bar"></span>
+      <span class="menu-toggle__bar"></span>
+      <span class="menu-toggle__bar"></span>
+      <span class="visually-hidden">Меню</span>
+    </button>
+
+    <!-- Навігація -->
+    <nav id="primary-nav" data-open="false" aria-hidden="true">
       <a href="index.html#products">Продукція</a>
       <a href="index.html#about">Про пасіку</a>
       <a href="index.html#why">Чому ми</a>
@@ -59,7 +39,7 @@
   </div>
 </header>
 
-<main class="container">
+<main id="main" class="container">
   <h1>Оформлення замовлення</h1>
   <p class="muted">Заповніть форму. Поля зі <strong>*</strong> — обов’язкові. Після натискання «Надіслати» відкриється поштовий клієнт із заповненим листом.</p>
 
@@ -119,7 +99,7 @@
         </div>
       </div>
 
-      <!-- Нова пошта: пошук міста + селект міста (Ref) + відділення -->
+      <!-- Нова пошта -->
       <div id="np-row" class="row mt-16">
         <div class="col">
           <label for="citySearch">Пошук міста (2+ літери)</label>
@@ -160,12 +140,38 @@
   <p class="mt-16"><a href="index.html">← На головну</a></p>
 </main>
 
+<!-- ===== JS ===== -->
 <script>
-  // ===== КОНФІГ =====
+  // ========= КОНФІГ =========
   const WORKER_BASE = 'https://medok-proxy.veter010709.workers.dev';
   const ORDER_EMAIL = 'orders@example.com'; // заміни на свій email
 
-  // ===== DOM =====
+  // ========= Хедер (бургер) — такий самий як на index.html =========
+  (function(){
+    const toggle = document.getElementById('menu-toggle');
+    const nav = document.getElementById('primary-nav');
+    if (!toggle || !nav) return;
+    const close = () => { nav.dataset.open='false'; toggle.setAttribute('aria-expanded','false'); toggle.classList.remove('is-open'); nav.setAttribute('aria-hidden','true'); };
+    const open  = () => { nav.dataset.open='true';  toggle.setAttribute('aria-expanded','true');  toggle.classList.add('is-open');  nav.setAttribute('aria-hidden','false'); };
+    close();
+    toggle.addEventListener('click', () => (nav.dataset.open==='true'?close():open()));
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+    document.addEventListener('click', (e)=>{ if(nav.dataset.open!=='true')return; if(nav.contains(e.target)||toggle.contains(e.target))return; close(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
+    // синхронізація на десктопі
+    function syncDesktop(){
+      if (window.matchMedia('(min-width: 900px)').matches){
+        nav.dataset.open = 'true';
+        nav.removeAttribute('aria-hidden');
+        toggle && toggle.classList.remove('is-open');
+        toggle && toggle.setAttribute('aria-expanded','false');
+      }
+    }
+    syncDesktop();
+    window.addEventListener('resize', syncDesktop);
+  })();
+
+  // ========= DOM =========
   const form      = document.getElementById('orderForm');
   const nameI     = document.getElementById('name');
   const phoneI    = document.getElementById('phone');
@@ -179,7 +185,7 @@
   const npRow     = document.getElementById('np-row');
   const commentI  = document.getElementById('comment');
 
-  // Попередньо обраний вид меду з головної
+  // Попередньо обраний вид меду
   (function(){
     const t = localStorage.getItem('preselected_type');
     if(!t) return;
@@ -188,7 +194,7 @@
     localStorage.removeItem('preselected_type');
   })();
 
-  // ===== helpers =====
+  // ========= helpers =========
   const setWhStatus = (msg, type='muted') => {
     whStatus.textContent = msg || '';
     whStatus.className = 'note mt-8 ' + (type || 'muted');
@@ -206,7 +212,7 @@
     return r.json();
   }
 
-  // ===== МІСТА: пошук → наповнюємо select#city (value = Ref) =====
+  // ========= МІСТА: пошук → select#city (value = Ref) =========
   let cityTimer;
   citySearch.addEventListener('input', () => {
     const q = citySearch.value.trim();
@@ -215,30 +221,28 @@
 
     cityTimer = setTimeout(async () => {
       try {
+        // воркер тепер повертає { ok:true, data:[...] }
         const data = await fetchJSON(`${WORKER_BASE}/np/cities?q=${encodeURIComponent(q)}`);
-        // очікуємо { ok:true, data:[{Ref, Description,...}], ... }
         if (!data.ok) return;
 
+        const arr = Array.isArray(data.data) ? data.data : (Array.isArray(data.items) ? data.items : []);
         citySel.innerHTML = '';
         const def = document.createElement('option');
         def.value = '';
         def.textContent = 'Оберіть місто зі списку…';
         citySel.appendChild(def);
 
-        const arr = data.data || data.items || [];
         arr.forEach(c => {
           const opt = document.createElement('option');
-          opt.value = c.Ref; // ВАЖЛИВО: саме Ref
+          opt.value = c.Ref; // важливо
           opt.textContent = c.Description || c.Present || c.name;
           citySel.appendChild(opt);
         });
-      } catch(e) {
-        // тихо ігноруємо
-      }
+      } catch(e) { /* тихо */ }
     }, 250);
   });
 
-  // ===== ВІДДІЛЕННЯ: за cityRef =====
+  // ========= ВІДДІЛЕННЯ: за cityRef =========
   citySel.addEventListener('change', loadWarehousesForCityRef);
 
   async function loadWarehousesForCityRef(){
@@ -256,7 +260,6 @@
 
     try{
       const data = await fetchJSON(`${WORKER_BASE}/np/warehouses?cityRef=${encodeURIComponent(cityRef)}`);
-      // очікуємо { ok:true, data:[{Number, ShortAddress/Description}], ... }
       if(!data.ok) throw new Error('NP error');
 
       const list = Array.isArray(data.data) ? data.data :
@@ -300,7 +303,7 @@
     }
   }
 
-  // ===== Показ/приховання блоку НП за способом доставки =====
+  // Показ/приховання НП
   function applyShipVisibility(){
     const needNP = shipSel.value === 'np_branch';
     npRow.classList.toggle('hidden', !needNP);
@@ -310,7 +313,7 @@
   }
   shipSel.addEventListener('change', applyShipVisibility);
 
-  // ===== Сабміт → mailto =====
+  // Сабміт → mailto
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if(!form.reportValidity()) return;
@@ -334,10 +337,7 @@
     window.location.href = `mailto:${ORDER_EMAIL}?subject=${subject}&body=${body}`;
   });
 
-  // ===== Старт =====
-  window.addEventListener('DOMContentLoaded', () => {
-    applyShipVisibility();
-  });
+  window.addEventListener('DOMContentLoaded', applyShipVisibility);
 </script>
 </body>
 </html>
