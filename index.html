@@ -15,31 +15,33 @@
 
 <header>
     <div class="container nav">
-        <div class="brand">
+        <!-- Лого + лінк на головну -->
+        <a class="brand" href="index.html" aria-label="На головну">
             <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
                 <path fill="#f4b400" d="M22 10h20l10 12v20l-10 12H22L12 42V22z"/>
                 <path fill="#fff" opacity=".6" d="M26 18h12l6 7v14l-6 7H26l-6-7V25z"/>
             </svg>
             <span>med_ok</span>
-        </div>
+        </a>
 
-        <!-- завжди видима кнопка меню -->
+        <!-- Бургер (лише мобільні) -->
         <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
             <span class="menu-toggle__bar"></span>
             <span class="menu-toggle__bar"></span>
             <span class="menu-toggle__bar"></span>
-            <span class="visually-hidden">Відкрити меню</span>
+            <span class="visually-hidden">Меню</span>
         </button>
 
-        <!-- випадаюче меню -->
+        <!-- Навігація -->
         <nav id="primary-nav" data-open="false" aria-hidden="true">
             <a href="#products">Продукція</a>
             <a href="#about">Про пасіку</a>
             <a href="#why">Чому ми</a>
-            <a href="order.html" class="cta">Замовити</a>
+            <a class="cta" href="order.html">Замовити</a>
         </nav>
     </div>
 </header>
+
 
 <main id="main">
     <!-- ===== HERO ===== -->
@@ -238,5 +240,25 @@
         "address": {"@type":"PostalAddress","addressRegion":"Київська область","addressLocality":"Бориспільський район"}
     }
 </script>
+<script>
+    (function(){
+        const nav = document.getElementById('primary-nav');
+        const toggle = document.getElementById('menu-toggle');
+        if (!nav) return;
+
+        // Якщо ширина екрана ≥900px — меню завжди відкрите (навіть якщо колись закрили на мобілці)
+        function syncDesktop(){
+            if (window.matchMedia('(min-width: 900px)').matches){
+                nav.dataset.open = 'true';
+                nav.removeAttribute('aria-hidden');
+                toggle && toggle.classList.remove('is-open');
+                toggle && toggle.setAttribute('aria-expanded','false');
+            }
+        }
+        syncDesktop();
+        window.addEventListener('resize', syncDesktop);
+    })();
+</script>
+
 </body>
 </html>
