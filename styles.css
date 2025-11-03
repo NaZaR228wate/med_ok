@@ -413,3 +413,9 @@ button.btn:active{transform:scale(.98)}
 @media (max-width: 768px){
     #orderForm .row, #orderForm .row-1{grid-template-columns:1fr}
 }
+/* Hover для кнопки "Замовити" в хедері */
+header .nav a.cta:hover,
+#primary-nav .cta:hover {
+  background: var(--accent) !important; /* жовтий */
+  filter: none; /* прибираємо затемнення */
+}
