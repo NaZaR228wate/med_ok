@@ -4,15 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Оформлення замовлення — med_ok</title>
-    <link rel="stylesheet" href="styles.css?v=6">
+    <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
 <header>
     <div class="container nav">
         <div class="brand">
             <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-                <path fill="#f4b400" d="M22 10h20л10 12v20л-10 12H22Л12 42V22z"/>
-                <path fill="#fff" opacity=".6" d="M26 18h12л6 7v14л-6 7H26л-6-7V25z"/>
+                <path fill="#f4b400" d="M22 10h20l10 12v20l-10 12H22L12 42V22z"/>
+                <path fill="#fff" opacity=".6" d="M26 18h12l6 7v14l-6 7H26l-6-7V25z"/>
             </svg>
             <span>med_ok</span>
         </div>
@@ -35,10 +35,11 @@
 
 <main class="container" style="padding-top:28px">
     <h1>Оформлення замовлення</h1>
-    <p>Заповніть форму нижче. Після натискання «Надіслати» відкриється ваш поштовий клієнт із заповненим листом.</p>
+    <p>Заповніть форму нижче. Після натискання «Надіслати» відкриється ваш поштовий клієнт із заповненим листом для підтвердження.</p>
 
-    <div class="card" style="max-width:720px;margin:auto">
+    <div class="card" style="max-width:820px;margin:auto">
         <form id="order">
+            <!-- Контакти -->
             <div class="two">
                 <div>
                     <label for="name">Ім’я</label>
@@ -50,6 +51,7 @@
                 </div>
             </div>
 
+            <!-- Товар -->
             <div class="two">
                 <div>
                     <label for="type">Вид меду</label>
@@ -66,33 +68,68 @@
                 </div>
             </div>
 
-            <div class="two">
-                <div>
-                    <label for="ship">Спосіб доставки</label>
-                    <select id="ship">
-                        <option>Нова пошта — відділення</option>
-                        <option>Нова пошта — кур’єр</option>
-                        <option>Самовивіз</option>
-                    </select>
+            <!-- Оплата -->
+            <fieldset class="card-soft" style="margin:6px 0">
+                <legend><b>Оплата</b></legend>
+                <div class="radio-group" id="payGroup">
+                    <label><input type="radio" name="pay" value="Накладений платіж" checked> Накладений платіж (сплачуєте при отриманні)</label>
+                    <label><input type="radio" name="pay" value="Повна передоплата"> Повна передоплата (за реквізитами)</label>
                 </div>
-                <div>
-                    <label for="addr">Адреса / Відділення</label>
-                    <input id="addr" placeholder="Місто, Відділення №... або адреса для кур’єра">
+                <div id="prepayInfo" class="hidden" style="margin-top:8px">
+                    <div class="note">Після підтвердження замовлення надішлемо реквізити для оплати (картка/IBAN).</div>
                 </div>
-            </div>
+            </fieldset>
+
+            <!-- Доставка -->
+            <fieldset class="card-soft" style="margin:6px 0">
+                <legend><b>Доставка</b></legend>
+                <div class="two">
+                    <div>
+                        <label for="ship">Спосіб доставки</label>
+                        <select id="ship">
+                            <option>Нова пошта — відділення</option>
+                            <option>Нова пошта — кур’єр</option>
+                            <option>Самовивіз</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="city">Місто</label>
+                        <input id="city" placeholder="Напр.: Київ, Бориспіль">
+                    </div>
+                </div>
+
+                <div id="np-wrap" class="np-wrap">
+                    <label for="dept">Відділення (НП)</label>
+                    <input id="dept" placeholder="Почніть вводити номер/адресу відділення">
+                    <div id="np-hints" class="np-hints hidden"></div>
+                </div>
+
+                <div id="addr-wrap" class="hidden" style="margin-top:10px">
+                    <label for="addr">Адреса для кур’єра</label>
+                    <input id="addr" placeholder="Вулиця, будинок, квартира">
+                </div>
+            </fieldset>
 
             <label for="note">Коментар</label>
-            <textarea id="note" rows="3" placeholder="Зручний час дзвінка, деталі замовлення тощо"></textarea>
+            <textarea id="note" rows="3" placeholder="Зручний час дзвінка, додаткові побажання"></textarea>
 
-            <button class="btn" type="submit">Надіслати</button>
-            <div class="note">Після натискання відкриється e-mail з усіма даними для підтвердження.</div>
+            <!-- Підсумок + дії -->
+            <div class="summary">
+                <div class="summary-row"><div class="summary-label">Оплата</div><div id="sumPay" class="summary-value">Накладений платіж</div></div>
+                <div class="summary-row"><div class="summary-label">Доставка</div><div id="sumShip" class="summary-value">НП — відділення</div></div>
+            </div>
+
+            <div class="actions">
+                <a class="btn-secondary" href="index.html">← На головну</a>
+                <button class="btn" type="submit">Надіслати замовлення</button>
+            </div>
         </form>
     </div>
-
-    <p style="margin-top:16px"><a href="index.html">← На головну</a></p>
 </main>
 
 <footer class="container">© <span id="y"></span> med_ok</footer>
+
+<div id="toast" class="toast">Збережено</div>
 
 <script>
     const ORDER_EMAIL = "Veter010709@gmail.com";
@@ -102,6 +139,7 @@
     (function(){
         const toggle = document.getElementById('menu-toggle');
         const nav = document.getElementById('primary-nav');
+        if (!toggle || !nav) return;
         const close = ()=>{ nav.dataset.open='false'; toggle.setAttribute('aria-expanded','false'); toggle.classList.remove('is-open'); nav.setAttribute('aria-hidden','true'); };
         const open  = ()=>{ nav.dataset.open='true';  toggle.setAttribute('aria-expanded','true');  toggle.classList.add('is-open');  nav.setAttribute('aria-hidden','false'); };
         close();
@@ -111,14 +149,134 @@
         document.addEventListener('keydown', e=>{ if(e.key==='Escape') close(); });
     })();
 
-    // форма -> email
+    // Підстановка виду меду з головної (localStorage)
+    (function(){
+        const t = localStorage.getItem('preselected_type');
+        if (t) {
+            const sel = document.getElementById('type');
+            [...sel.options].forEach(o => { if (o.text === t) sel.value = o.text; });
+        }
+    })();
+
+    // Оплата: показ/приховати блок передоплати + підсумок
+    (function(){
+        const payGroup = document.getElementById('payGroup');
+        const prepayInfo = document.getElementById('prepayInfo');
+        const sumPay = document.getElementById('sumPay');
+        payGroup.addEventListener('change', ()=>{
+            const val = payGroup.querySelector('input[name="pay"]:checked').value;
+            sumPay.textContent = val;
+            prepayInfo.classList.toggle('hidden', val !== 'Повна передоплата');
+        });
+    })();
+
+    // Доставка: перемикаємо поля (відділення/адреса) + підсумок
+    (function(){
+        const ship = document.getElementById('ship');
+        const npWrap = document.getElementById('np-wrap');
+        const addrWrap = document.getElementById('addr-wrap');
+        const sumShip = document.getElementById('sumShip');
+
+        const sync = ()=>{
+            const v = ship.value;
+            sumShip.textContent = v.replace('Нова пошта — ', 'НП — ');
+            const isBranch = v.includes('відділення');
+            const isCourier = v.includes('кур’єр');
+            npWrap.classList.toggle('hidden', !isBranch);
+            addrWrap.classList.toggle('hidden', !isCourier);
+        };
+        ship.addEventListener('change', sync);
+        sync();
+    })();
+
+    // Прості підказки для Нової пошти (офлайн-шаблон + місце для API)
+    (function(){
+        const NP_API_KEY = ""; // <= якщо матимеш API-ключ НП, встав сюди
+        const cityInput = document.getElementById('city');
+        const deptInput = document.getElementById('dept');
+        const hintsBox = document.getElementById('np-hints');
+
+        // дуже простий локальний довідник для демо
+        const localCatalog = {
+            "київ":[
+                "Відділення №1 — вул. Куренівська, 2Б",
+                "Відділення №5 — просп. Перемоги, 20",
+                "Відділення №101 — вул. Саксаганського, 123"
+            ],
+            "бориспіль":[
+                "Відділення №1 — вул. Київський Шлях, 2/6",
+                "Відділення №2 — вул. Київський Шлях, 79"
+            ],
+            "львів":[
+                "Відділення №1 — вул. Шевченка, 1",
+                "Відділення №45 — вул. Наукова, 7а"
+            ]
+        };
+
+        function showHints(list){
+            if (!list || !list.length){ hintsBox.classList.add('hidden'); hintsBox.innerHTML=""; return; }
+            hintsBox.innerHTML = list.map(txt=>`<button type="button" class="np-hint">${txt}</button>`).join("");
+            hintsBox.classList.remove('hidden');
+            hintsBox.querySelectorAll('.np-hint').forEach(btn=>{
+                btn.addEventListener('click', ()=>{
+                    deptInput.value = btn.textContent;
+                    hintsBox.classList.add('hidden');
+                });
+            });
+        }
+
+        async function fetchNP(city, query){
+            // якщо немає ключа — не звертаємось до API
+            if (!NP_API_KEY) return null;
+
+            // тут можна підключити справжні ендпоїнти НП (Addresses.getWarehouses),
+            // але для цього потрібен бекенд або CORS-проксі.
+            // Зараз повертаємо null, щоб спрацював локальний каталог.
+            return null;
+        }
+
+        function searchLocal(city, q){
+            const key = (city||"").toLowerCase().trim();
+            const pool = localCatalog[key] || [];
+            q = (q||"").toLowerCase();
+            return pool.filter(x => x.toLowerCase().includes(q)).slice(0,8);
+        }
+
+        let cityVal = "";
+        cityInput.addEventListener('input', ()=>{ cityVal = cityInput.value; });
+
+        let debounceId = null;
+        deptInput.addEventListener('input', ()=>{
+            clearTimeout(debounceId);
+            const q = deptInput.value;
+            if ((q||"").length < 1){ showHints([]); return; }
+
+            debounceId = setTimeout(async ()=>{
+                const api = await fetchNP(cityVal, q);
+                if (api && api.length){ showHints(api); return; }
+                showHints(searchLocal(cityVal, q));
+            }, 200);
+        });
+
+        // клік поза підказками — ховаємо
+        document.addEventListener('click', (e)=>{
+            if (!hintsBox.contains(e.target) && e.target !== deptInput){
+                hintsBox.classList.add('hidden');
+            }
+        });
+    })();
+
+    // Submit -> email (mailto)
     document.getElementById('order')?.addEventListener('submit', function(e){
         e.preventDefault();
         const name = document.getElementById('name').value.trim();
         const phone = document.getElementById('phone').value.trim();
         const type = document.getElementById('type').value;
         const qty  = document.getElementById('qty').value;
+        const pay  = document.querySelector('input[name="pay"]:checked').value;
         const ship = document.getElementById('ship').value;
+        const city = document.getElementById('city').value.trim();
+        const dept = document.getElementById('dept').value.trim();
         const addr = document.getElementById('addr').value.trim();
         const note = document.getElementById('note').value.trim();
 
@@ -128,8 +286,11 @@
             `Телефон: ${phone}\n` +
             `Вид меду: ${type}\n` +
             `Кількість: ${qty} кг\n` +
+            `Оплата: ${pay}\n` +
             `Доставка: ${ship}\n` +
-            (addr?`Адреса/Відділення: ${addr}\n`:'') +
+            (city?`Місто: ${city}\n`:'') +
+            (ship.includes('відділення') && dept ? `Відділення: ${dept}\n` : '') +
+            (ship.includes('кур’єр') && addr ? `Адреса: ${addr}\n` : '') +
             (note?`Коментар: ${note}\n`:'') +
             `---\nНадіслано з order.html (med_ok)`
         );
