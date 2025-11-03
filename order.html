@@ -4,54 +4,21 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Оформлення замовлення — med_ok</title>
-
-  <!-- спільні стилі сайту -->
-  <link rel="stylesheet" href="styles.css?v=10"/>
-
-  <!-- невеликий резервний стиль, якщо в styles.css чогось бракує -->
-  <style>
-    body{background:#f9f7f1;color:#222;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    .container{max-width:1080px;margin:0 auto;padding:24px}
-    header{position:sticky;top:0;background:#fffdf8;border-bottom:1px solid #eee;z-index:50}
-    .nav{display:flex;align-items:center;gap:16px;height:56px}
-    .brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:#111;font-weight:700}
-    .brand svg{width:22px;height:22px}
-    .cta,.btn{display:inline-block;background:#0b7a05;color:#fff;border-radius:28px;padding:10px 18px;font-weight:700;text-decoration:none;border:none;cursor:pointer}
-    h1{font-size:32px;margin:24px 0 12px}
-    .card{background:#fff;border:1px solid #eee;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
-    form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    form .row-1{grid-template-columns:1fr 1fr}
-    form .col{display:flex;flex-direction:column;gap:6px}
-    label{font-size:14px;color:#333}
-    input,select,textarea{border:1px solid #ddd;border-radius:10px;padding:12px 12px;font:inherit;background:#fff}
-    textarea{min-height:96px;resize:vertical}
-    .note{font-size:12px;color:#777}
-    .note.warn{color:#a36500}
-    .note.error{color:#b00020}
-    .actions{display:flex;justify-content:center;padding-top:12px}
-    .muted{color:#777;font-size:12px}
-    .mt-8{margin-top:8px}
-    .mt-16{margin-top:16px}
-    .hidden{display:none}
-    @media (max-width:900px){ .nav-right{display:none} }
-  </style>
+  <link rel="stylesheet" href="styles.css?v=9"/>
 </head>
 <body>
-
 <a class="visually-hidden" href="#main">Перейти до контенту</a>
 
-<!-- ХЕДЕР 1:1 як на index.html -->
 <header>
   <div class="container nav">
     <a class="brand" href="index.html" aria-label="На головну">
       <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
         <path fill="#f4b400" d="M22 10h20l10 12v20l-10 12H22L12 42V22z"/>
-        <path fill="#fff" opacity=".6" d="M26 18h12l6 7v14l-6 7H26l-6-7В25z"/>
+        <path fill="#fff" opacity=".6" d="M26 18h12l6 7v14l-6 7H26l-6-7V25z"/>
       </svg>
       <span>med_ok</span>
     </a>
 
-    <!-- Бургер -->
     <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
       <span class="menu-toggle__bar"></span>
       <span class="menu-toggle__bar"></span>
@@ -59,7 +26,6 @@
       <span class="visually-hidden">Меню</span>
     </button>
 
-    <!-- Навігація -->
     <nav id="primary-nav" data-open="false" aria-hidden="true">
       <a href="index.html#products">Продукція</a>
       <a href="index.html#about">Про пасіку</a>
@@ -129,16 +95,21 @@
         </div>
       </div>
 
-      <!-- Нова пошта: ТІЛЬКИ МІСТО (текст) + ВІДДІЛЕННЯ (селект) -->
+      <!-- Нова пошта: пошук + місто(Ref) + відділення -->
       <div id="np-row" class="row mt-16">
         <div class="col">
-          <label for="npCity">Місто (Нова пошта) *</label>
-          <input id="npCity" name="np_city" placeholder="Напр., Київ або Чубинське" required autocomplete="off"/>
+          <label for="citySearch">Пошук міста (2+ літери)</label>
+          <input id="citySearch" placeholder="Почніть вводити назву… (напр., Ки)" autocomplete="off"/>
+
+          <label for="city" class="mt-8">Місто (Нова пошта) *</label>
+          <select id="city" required>
+            <option value="">Спочатку введіть 2+ літери у полі вище…</option>
+          </select>
         </div>
         <div class="col">
           <label for="warehouse">Відділення (№/адреса) *</label>
           <select id="warehouse" disabled required>
-            <option>Спочатку введіть місто</option>
+            <option>Спочатку оберіть місто</option>
           </select>
           <div id="wh-status" class="note mt-8"></div>
         </div>
@@ -165,13 +136,12 @@
   <p class="mt-16"><a href="index.html">← На головну</a></p>
 </main>
 
-<!-- ===== JS ===== -->
 <script>
   // ===== КОНФІГ =====
-  const WORKER_BASE = 'https://medok-proxy.veter010709.workers.dev'; // твій Cloudflare Worker
-  const ORDER_EMAIL = 'orders@example.com'; // ← заміни на свій email
+  const WORKER_BASE = 'https://medok-proxy.veter010709.workers.dev';
+  const ORDER_EMAIL = 'orders@example.com'; // заміни на свій email
 
-  // ===== Хедер як на index.html =====
+  // ===== ХЕДЕР як на index.html =====
   (function(){
     const toggle = document.getElementById('menu-toggle');
     const nav = document.getElementById('primary-nav');
@@ -183,7 +153,6 @@
     nav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
     document.addEventListener('click', (e)=>{ if(nav.dataset.open!=='true')return; if(nav.contains(e.target)||toggle.contains(e.target))return; close(); });
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
-
     function syncDesktop(){
       if (window.matchMedia('(min-width: 900px)').matches){
         nav.dataset.open = 'true';
@@ -203,8 +172,9 @@
   const honeySel  = document.getElementById('honey');
   const qtySel    = document.getElementById('qty');
   const shipSel   = document.getElementById('ship');
-  const npCityI   = document.getElementById('npCity');      // місто — текст
-  const whSel     = document.getElementById('warehouse');   // відділення — селект
+  const citySearch= document.getElementById('citySearch');
+  const citySel   = document.getElementById('city');      // value = Ref
+  const whSel     = document.getElementById('warehouse');
   const whStatus  = document.getElementById('wh-status');
   const npRow     = document.getElementById('np-row');
   const commentI  = document.getElementById('comment');
@@ -236,21 +206,55 @@
     return r.json();
   }
 
-  // ===== Завантаження відділень за НАЗВОЮ міста (без Ref) =====
-  async function loadWarehousesByCityName(name){
-    const q = (name || '').trim();
-    if (q.length < 2){
+  // ===== МІСТА: пошук → select#city (value = Ref) =====
+  let cityTimer;
+  citySearch.addEventListener('input', () => {
+    const q = citySearch.value.trim();
+    if (cityTimer) clearTimeout(cityTimer);
+    if (q.length < 2) return;
+
+    cityTimer = setTimeout(async () => {
+      try {
+        const data = await fetchJSON(`${WORKER_BASE}/np/cities?q=${encodeURIComponent(q)}`);
+        if (!data.ok) return;
+
+        const arr = Array.isArray(data.data) ? data.data
+                  : Array.isArray(data.items) ? data.items : [];
+
+        citySel.innerHTML = '';
+        const def = document.createElement('option');
+        def.value = '';
+        def.textContent = 'Оберіть місто зі списку…';
+        citySel.appendChild(def);
+
+        arr.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.Ref; // важливо
+          opt.textContent = c.Description || c.Present || c.name;
+          citySel.appendChild(opt);
+        });
+      } catch(e) { /* тихо */ }
+    }, 250);
+  });
+
+  // ===== ВІДДІЛЕННЯ: за cityRef =====
+  citySel.addEventListener('change', loadWarehousesForCityRef);
+
+  async function loadWarehousesForCityRef(){
+    const cityRef = citySel.value;
+    if(!cityRef){
       whSel.disabled = true;
-      clearWh('Спочатку введіть місто');
+      clearWh('Спочатку оберіть місто');
       setWhStatus('');
       return;
     }
+
     whSel.disabled = true;
     clearWh('Завантаження…');
     setWhStatus('Завантажуємо відділення…');
 
     try{
-      const data = await fetchJSON(`${WORKER_BASE}/np/warehouses?city=${encodeURIComponent(q)}`);
+      const data = await fetchJSON(`${WORKER_BASE}/np/warehouses?cityRef=${encodeURIComponent(cityRef)}`);
       if(!data.ok) throw new Error('NP error');
 
       const list = Array.isArray(data.data) ? data.data :
@@ -259,11 +263,10 @@
       if(!list.length){
         clearWh('Відділень не знайдено');
         whSel.disabled = true;
-        setWhStatus('Для цього міста немає відділень. Перевірте написання.', 'warn');
+        setWhStatus('Для цього міста немає відділень.', 'warn');
         return;
       }
 
-      // звичайні відділення → поштомати; сортування за номером
       list.sort((a,b) => {
         const aPM = /поштомат|postomat/i.test(a.Description || '');
         const bPM = /поштомат|postomat/i.test(b.Description || '');
@@ -295,23 +298,15 @@
     }
   }
 
-  // debounce, щоб не смикати API на кожен символ
-  let cityDebounce;
-  npCityI.addEventListener('input', () => {
-    if (cityDebounce) clearTimeout(cityDebounce);
-    cityDebounce = setTimeout(() => loadWarehousesByCityName(npCityI.value), 350);
-  });
-
   // Показ/приховання НП
   function applyShipVisibility(){
     const needNP = shipSel.value === 'np_branch';
     npRow.classList.toggle('hidden', !needNP);
-    npCityI.required = needNP;
-    whSel.required   = needNP;
+    citySel.required = needNP;
+    whSel.required  = needNP;
     if (!needNP) setWhStatus('');
   }
   shipSel.addEventListener('change', applyShipVisibility);
-  window.addEventListener('DOMContentLoaded', applyShipVisibility);
 
   // Сабміт → mailto
   form.addEventListener('submit', (e) => {
@@ -326,7 +321,7 @@
       `Вид меду: ${honeySel.value}`,
       `Кількість: ${qtySel.value} л`,
       `Доставка: ${shipSel.options[shipSel.selectedIndex].text}`,
-      (shipSel.value === 'np_branch') ? `Місто (НП): ${npCityI.value}` : null,
+      (shipSel.value === 'np_branch') ? `Місто (НП): ${citySel.options[citySel.selectedIndex]?.text}` : null,
       (shipSel.value === 'np_branch') ? `Відділення (НП): ${whSel.value}` : null,
       `Оплата: ${pay === 'cod' ? 'Накладений платіж' : 'Повна передоплата'}`,
       commentI.value ? `Коментар: ${commentI.value}` : null
@@ -335,6 +330,10 @@
     const subject = encodeURIComponent('Замовлення меду — med_ok');
     const body    = encodeURIComponent(rows.join('\n'));
     window.location.href = `mailto:${ORDER_EMAIL}?subject=${subject}&body=${body}`;
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    applyShipVisibility();
   });
 </script>
 </body>
