@@ -285,3 +285,131 @@ button.btn:active{transform:scale(.98)}
     .subtitle{font-size:clamp(14px,4.2vw,18px)}
     .navbtn{width:54px; height:54px; font-size:24px}
 }
+/* ===== DESKTOP (>=900px): горизонтальний хедер без бургера ===== */
+@media (min-width: 900px){
+    /* ховаємо бургер */
+    .menu-toggle{ display: none !important; }
+
+    /* контейнер хедера */
+    header .nav{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+    .brand{ margin-right: auto; }
+
+    /* саме меню: робимо рядок */
+    #primary-nav{
+        position: static !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center;
+        gap: 18px;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        min-width: auto;
+        width: auto;
+    }
+
+    /* лінки в ряд, не на всю ширину */
+    #primary-nav a{
+        display: inline-flex !important;
+        width: auto !important;
+        padding: 8px 10px;
+        border-radius: 8px;
+    }
+    #primary-nav a:hover{ background: rgba(0,0,0,.06); }
+
+    /* кнопка справа */
+    #primary-nav .cta{
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-weight: 800;
+    }
+}
+/* ===== Базове меню (мобільне: з бургером) — залишаємо як було */
+.nav{display:flex; align-items:center; justify-content:space-between; gap:12px; position:relative}
+.brand{display:flex; align-items:center; gap:10px; font-weight:800}
+.brand svg{width:28px; height:28px}
+
+/* випадайка під бургер */
+.nav nav{
+    position:absolute; top:calc(100% + 10px); right:20px;
+    display:flex; flex-direction:column; gap:6px;
+    padding:14px; border-radius:16px; border:1px solid rgba(0,0,0,.06);
+    background:rgba(255,255,255,.96); box-shadow:0 18px 40px rgba(0,0,0,.18);
+    min-width:210px; width:min(260px, calc(100vw - 40px));
+    transition:opacity .2s ease, transform .2s ease; z-index:50;
+}
+.nav nav[data-open="false"]{opacity:0; pointer-events:none; transform:translateY(-8px)}
+.nav nav[data-open="true"]{opacity:1; transform:translateY(0)}
+.nav a{display:block; padding:10px 12px; border-radius:10px}
+
+.menu-toggle{
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    width:46px; height:46px; border-radius:999px; border:1px solid rgba(0,0,0,.06);
+    background:rgba(255,255,255,.65); box-shadow:0 6px 18px rgba(0,0,0,.12);
+    cursor:pointer; padding:10px;
+}
+.menu-toggle__bar{width:100%; height:3px; background:#1b1b1b; border-radius:999px}
+.menu-toggle__bar + .menu-toggle__bar{margin-top:6px}
+
+/* ===== ПК-версія (без бургера, горизонтально) */
+@media (min-width: 992px){
+    /* ховаємо бургер */
+    .menu-toggle{display:none;}
+
+    /* перетворюємо випадайку на звичайний горизонтальний ряд */
+    .nav{gap:24px}
+    .nav nav{
+        position:static; right:auto; top:auto;
+        display:flex; flex-direction:row; align-items:center; gap:22px;
+        padding:0; min-width:auto; width:auto;
+        background:transparent; border:0; box-shadow:none;
+        opacity:1; transform:none; pointer-events:auto;
+    }
+    .nav a{padding:0; border-radius:0}
+    .nav a.cta{
+        padding:10px 16px; border-radius:999px;
+        background:#087B04; color:#fff; font-weight:800;
+    }
+    .nav a.cta:hover{filter:brightness(1.05)}
+}
+/* Покращення вигляду селектів/інпутів у формі */
+#order select, #order input[list] {
+    height: 44px;
+    font-size: 16px;
+}
+
+/* Статуси під селектом відділень */
+.note.warn  { color: #9a6b00; }
+.note.error { color: #b20000; }
+
+/* На мобільному селект шириною 100% (зазвичай уже так) */
+@media (max-width: 700px){
+    #np-row { grid-template-columns: 1fr; }
+}
+/* ===== ORDER FORM (тільки для order.html) ===== */
+#orderForm .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#orderForm .row-1{grid-template-columns:1fr 1fr}
+#orderForm .col{display:flex;flex-direction:column;gap:6px}
+#orderForm label{font-size:14px;color:#333}
+#orderForm input,#orderForm select,#orderForm textarea{
+    border:1px solid #ddd;border-radius:10px;padding:12px 12px;font:inherit;background:#fff;
+}
+#orderForm textarea{min-height:96px;resize:vertical}
+#orderForm .note{font-size:12px;color:#777}
+#orderForm .note.warn{color:#a36500}
+#orderForm .note.error{color:#b00020}
+#orderForm .actions{display:flex;justify-content:center;padding-top:12px}
+#orderForm .hidden{display:none}
+
+@media (max-width: 768px){
+    #orderForm .row, #orderForm .row-1{grid-template-columns:1fr}
+}
