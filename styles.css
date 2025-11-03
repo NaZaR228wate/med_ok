@@ -120,7 +120,8 @@ header{
     font-weight:900; line-height:.92; letter-spacing:.01em;
     font-size:clamp(46px,16vw,200px);
     margin:0 0 10px 0;
-    color:#fff; -webkit-text-stroke:0;
+    color:#fff;
+    -webkit-text-stroke:0;
     text-shadow:0 10px 30px rgba(0,0,0,.60), 0 3px 8px rgba(0,0,0,.70)
 }
 .subtitle{
