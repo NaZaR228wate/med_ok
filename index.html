@@ -28,7 +28,7 @@
             <span class="menu-toggle__bar"></span>
             <span class="visually-hidden">Відкрити меню</span>
         </button>
-        <nav id="primary-nav" data-open="true" aria-hidden="false">
+        <nav id="primary-nav" data-open="false" aria-hidden="false">
             <a href="#products">Продукція</a>
             <a href="#about">Про пасіку</a>
             <a href="#why">Чому ми</a>
@@ -64,17 +64,17 @@
             </div>
         </article>
 
-       <!-- Соняшниковий -->
-<article class="slide" data-flavor="sunflower" aria-label="Соняшниковий">
-  <div class="left">
-    <h1 class="bigword">СОНЯШНИКОВИЙ</h1>
-    <div class="subtitle">Сонячний аромат і приємна солодкість — класика до чаю та випічки</div>
-    <div class="hero-actions">
-      <a class="ghost" href="tel:+380637825176">📞 +380 (63) 782 51 76</a>
-      <a class="ghost" href="viber://chat?number=%2B380637825176">💬 Viber</a>
-    </div>
-  </div>
-</article>
+        <!-- Соняшниковий -->
+        <article class="slide" data-flavor="sunflower" aria-label="Соняшниковий">
+            <div class="left">
+                <h1 class="bigword">СОНЯШНИКОВИЙ</h1>
+                <div class="subtitle">Сонячний аромат і приємна солодкість — класика до чаю та випічки</div>
+                <div class="hero-actions">
+                    <a class="ghost" href="tel:+380637825176">📞 +380 (63) 782 51 76</a>
+                    <a class="ghost" href="viber://chat?number=%2B380637825176">💬 Viber</a>
+                </div>
+            </div>
+        </article>
 
         <!-- стрілки по краях -->
         <button class="navbtn prev" id="prev" aria-label="Попередній">‹</button>
@@ -241,11 +241,19 @@
         const nav = document.getElementById('primary-nav');
         if (!toggle || !nav) return;
 
+        const label = toggle.querySelector('.visually-hidden');
+        const links = Array.from(nav.querySelectorAll('a'));
+        const setLabel = (text) => { if (label) label.textContent = text; };
+        const disableLinks = () => links.forEach(link => link.setAttribute('tabindex', '-1'));
+        const enableLinks = () => links.forEach(link => link.removeAttribute('tabindex'));
+
         const close = () => {
             nav.dataset.open = 'false';
             toggle.setAttribute('aria-expanded', 'false');
             toggle.classList.remove('is-open');
             nav.setAttribute('aria-hidden', 'true');
+            setLabel('Відкрити меню');
+            disableLinks();
         };
 
         const open = () => {
@@ -253,6 +261,8 @@
             toggle.setAttribute('aria-expanded', 'true');
             toggle.classList.add('is-open');
             nav.setAttribute('aria-hidden', 'false');
+            setLabel('Закрити меню');
+            enableLinks();
         };
 
         const showDesktop = () => {
@@ -260,6 +270,8 @@
             nav.setAttribute('aria-hidden', 'false');
             toggle.setAttribute('aria-expanded', 'false');
             toggle.classList.remove('is-open');
+            setLabel('Відкрити меню');
+            enableLinks();
         };
 
         const mql = window.matchMedia('(max-width: 900px)');
