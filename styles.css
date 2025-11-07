@@ -103,6 +103,21 @@ header{
     margin:0 0 10px 0; color:#fff;
     text-shadow:0 10px 30px rgba(0,0,0,.60), 0 3px 8px rgba(0,0,0,.70)
 }
+/* Тільки телефони: трохи зменшити заголовок і не дати йому “вилазити” */
+@media (max-width: 480px){
+    .bigword{
+        font-size: clamp(36px, 12vw, 64px); /* трішки менше, але все ще виразно */
+        line-height: .95;
+        max-width: 92vw;       /* щоб не виходив за край */
+        word-break: break-word;
+        hyphens: auto;
+    }
+    .subtitle{
+        font-size: clamp(15px, 4vw, 20px);
+        max-width: 90vw;
+    }
+}
+
 .subtitle{font-size:clamp(16px,2.2vw,28px); font-weight:600; margin:14px 0 18px; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.65)}
 .hero-actions{display:flex; gap:10px; flex-wrap:wrap}
 .hero-actions .ghost{
