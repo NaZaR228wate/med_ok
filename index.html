@@ -4,18 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>med_ok — натуральний мед з пасіки</title>
-    <link rel="stylesheet" href="styles.css?v=5">
     <meta name="description" content="Натуральний мед від дідуся-пасічника з 40-річним досвідом. Доставка по всій Україні. Ми в Київській обл., Бориспільський район.">
     <meta property="og:title" content="med_ok — натуральний мед з пасіки">
     <meta property="og:description" content="Чесний мед своїми руками. Замовляйте напряму з пасіки. Доставка по всій Україні.">
     <meta property="og:type" content="website">
+    <link rel="stylesheet" href="styles.css?v=12">
 </head>
 <body>
 <a class="visually-hidden" href="#main">Перейти до контенту</a>
 
 <header>
     <div class="container nav">
-        <!-- Лого + лінк на головну -->
         <a class="brand" href="index.html" aria-label="На головну">
             <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
                 <path fill="#f4b400" d="M22 10h20l10 12v20l-10 12H22L12 42V22z"/>
@@ -24,7 +23,6 @@
             <span>med_ok</span>
         </a>
 
-        <!-- Бургер (лише мобільні) -->
         <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
             <span class="menu-toggle__bar"></span>
             <span class="menu-toggle__bar"></span>
@@ -32,7 +30,6 @@
             <span class="visually-hidden">Меню</span>
         </button>
 
-        <!-- Навігація -->
         <nav id="primary-nav" data-open="false" aria-hidden="true">
             <a href="#products">Продукція</a>
             <a href="#about">Про пасіку</a>
@@ -42,11 +39,9 @@
     </div>
 </header>
 
-
 <main id="main">
     <!-- ===== HERO ===== -->
     <section class="hero-slider" id="hero">
-        <!-- Акація -->
         <article class="slide active" data-flavor="acacia" aria-label="Акація">
             <div class="left">
                 <h1 class="bigword">АКАЦІЯ</h1>
@@ -58,7 +53,6 @@
             </div>
         </article>
 
-        <!-- Липа -->
         <article class="slide" data-flavor="linden" aria-label="Липовий">
             <div class="left">
                 <h1 class="bigword">ЛИПА</h1>
@@ -70,11 +64,10 @@
             </div>
         </article>
 
-        <!-- Соняшник -->
         <article class="slide" data-flavor="sunflower" aria-label="Соняшниковий">
             <div class="left">
                 <h1 class="bigword">СОНЯШНИК</h1>
-                <div class="subtitle">Насичений смак та швидка кристалізація</div>
+                <div class="subtitle">Яскравий смак та швидка кристалізація</div>
                 <div class="hero-actions">
                     <a class="ghost" href="tel:+380637825176">📞 +380 (63) 782 51 76</a>
                     <a class="ghost" href="viber://chat?number=%2B380637825176">💬 Viber</a>
@@ -82,48 +75,97 @@
             </div>
         </article>
 
-        <!-- стрілки по краях -->
         <button class="navbtn prev" id="prev" aria-label="Попередній">‹</button>
         <button class="navbtn next" id="next" aria-label="Наступний">›</button>
 
-        <!-- велика центральна CTA -->
         <a class="hero-cta" href="order.html">🍯 ХОЧУ БАНОЧКУ!</a>
     </section>
 
     <!-- ===== PRODUCTS ===== -->
     <section class="container" id="products">
         <h2>Продукція</h2>
-        <div class="grid">
-            <div class="col-6 card product" data-type="Акація">
-                <svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#f4b400" d="M18 10h28l6 8v22l-6 8H18l-6-8V18z"/></svg>
-                <div>
-                    <h3>Акація <span class="price">— <span class="muted">₴___ / кг</span></span></h3>
-                    <div class="muted">Довго залишається рідким, ніжний аромат. Ідеальний для чаю.</div>
+
+        <div class="products-grid">
+            <!-- РІЗНОТРАВ’Я -->
+            <article class="product product-card" data-type="Різнотрав’я" aria-label="Різнотравʼя">
+                <figure class="prod-figure">
+                    <img src="assets/prod-mixed.jpg" alt="Мед різнотравʼя" class="prod-img">
+                    <span class="badge">квітковий букет</span>
+                    <span class="price-badge">₴___</span>
+                </figure>
+                <div class="product-body">
+                    <h3 class="product-title">Різнотрав’я</h3>
+                    <ul class="p-bullets">
+                        <li>Баланс смаку й користі</li>
+                        <li>Ідеальний для сніданків</li>
+                    </ul>
+                    <div class="product-bottom">
+                        <a class="cta small" href="order.html">Замовити</a>
+                    </div>
                 </div>
-            </div>
-            <div class="col-6 card product" data-type="Липовий">
-                <svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#f4b400" d="M18 10h28l6 8v22l-6 8H18l-6-8V18z"/></svg>
-                <div>
-                    <h3>Липовий <span class="price">— <span class="muted">₴___ / кг</span></span></h3>
-                    <div class="muted">Запашний, насичений смак. Класика з дитинства.</div>
+            </article>
+
+            <!-- ЛИПА -->
+            <article class="product product-card" data-type="Липовий" aria-label="Липовий">
+                <figure class="prod-figure">
+                    <img src="assets/hero-linden.jpg" alt="Мед липовий" class="prod-img">
+                    <span class="badge">класика</span>
+                    <span class="price-badge">₴___</span>
+                </figure>
+                <div class="product-body">
+                    <h3 class="product-title">Липа</h3>
+                    <ul class="p-bullets">
+                        <li>Запашний, насичений смак</li>
+                        <li>Добре до чаю та випічки</li>
+                    </ul>
+                    <div class="product-bottom">
+                        <a class="cta small" href="order.html">Замовити</a>
+                    </div>
                 </div>
-            </div>
-            <div class="col-6 card product" data-type="Гречаний">
-                <svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#f4b400" d="M18 10h28l6 8v22l-6 8H18l-6-8V18z"/></svg>
-                <div>
-                    <h3>Гречаний <span class="price">— <span class="muted">₴___ / кг</span></span></h3>
-                    <div class="muted">Темний колір і виразний смак для поціновувачів.</div>
+            </article>
+
+            <!-- АКАЦІЯ -->
+            <article class="product product-card" data-type="Акація" aria-label="Акація">
+                <figure class="prod-figure">
+                    <img src="assets/hero-acacia.jpeg" alt="Мед акація" class="prod-img">
+                    <span class="badge">ніжний</span>
+                    <span class="price-badge">₴___</span>
+                </figure>
+                <div class="product-body">
+                    <h3 class="product-title">Акація</h3>
+                    <ul class="p-bullets">
+                        <li>Довго залишається рідким</li>
+                        <li>Делікатний аромат для чаю</li>
+                    </ul>
+                    <div class="product-bottom">
+                        <a class="cta small" href="order.html">Замовити</a>
+                    </div>
                 </div>
-            </div>
-            <div class="col-6 card product" data-type="Різнотрав’я">
-                <svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#f4b400" d="M18 10h28l6 8v22l-6 8H18l-6-8V18z"/></svg>
-                <div>
-                    <h3>Різнотрав’я <span class="price">— <span class="muted">₴___ / кг</span></span></h3>
-                    <div class="muted">Квітковий букет із пасік поблизу лугів і гаїв.</div>
+            </article>
+
+            <!-- СОНЯШНИК -->
+            <article class="product product-card" data-type="Соняшниковий" aria-label="Соняшниковий">
+                <figure class="prod-figure">
+                    <img src="assets/hero-sunflower.jpg" alt="Мед соняшниковий" class="prod-img">
+                    <span class="badge">насичений</span>
+                    <span class="price-badge">₴___</span>
+                </figure>
+                <div class="product-body">
+                    <h3 class="product-title">Соняшниковий</h3>
+                    <ul class="p-bullets">
+                        <li>Яскравий смак, швидка кристалізація</li>
+                        <li>Супер до тостів і десертів</li>
+                    </ul>
+                    <div class="product-bottom">
+                        <a class="cta small" href="order.html">Замовити</a>
+                    </div>
                 </div>
-            </div>
+            </article>
         </div>
-        <p class="note">Заміни “₴___ / кг” на свої ціни; можна додати варіанти 0.5 кг та 3 кг.</p>
+
+        <p class="note" style="margin-top:12px">
+            Фото поклади в <code>assets/</code> (шляхи вже стоять).
+        </p>
     </section>
 
     <!-- ===== ABOUT ===== -->
@@ -131,7 +173,7 @@
         <h2>Про пасіку</h2>
         <div class="grid">
             <div class="col-12 card">
-                <p><b>Наш пасічник — дідусь із 40-річним досвідом</b>. Піклується про бджіл, підтримує чистоту вуликів, читає й впроваджує нові підходи. Мед відкачуємо в сезон і продаємо напряму без посередників.</p>
+                <p><b>Наш пасічник — дідусь із 40-річним досвідом</b>. Мед відкачуємо в сезон і продаємо напряму без посередників.</p>
                 <ul class="check">
                     <li><span class="k">✓</span> Натуральний продукт без домішок</li>
                     <li><span class="k">✓</span> Чесна вага й чисті банки</li>
@@ -146,25 +188,22 @@
     <section class="container" id="why">
         <h2>Чому саме наш мед</h2>
         <div class="grid">
-            <div class="col-4 card"><h3 style="margin-top:0">Прямо з пасіки</h3><p class="muted">Купуєте у виробника, а не в перекупів.</p></div>
-            <div class="col-4 card"><h3 style="margin-top:0">Стабільна якість</h3><p class="muted">40 років досвіду — порядок у вуликах і акуратність у кожній банці.</p></div>
-            <div class="col-4 card"><h3 style="margin-top:0">Справедлива ціна</h3><p class="muted">Без оренди магазинів і зайвої націнки.</p></div>
+            <div class="col-4 card"><h3 style="margin-top:0">Прямо з пасіки</h3><p class="muted">Купуєте у виробника.</p></div>
+            <div class="col-4 card"><h3 style="margin-top:0">Стабільна якість</h3><p class="muted">40 років досвіду.</p></div>
+            <div class="col-4 card"><h3 style="margin-top:0">Справедлива ціна</h3><p class="muted">Без зайвої націнки.</p></div>
         </div>
     </section>
 
-    <!-- ===== Sticky CTA (мобільна панель) ===== -->
     <div class="sticky-cta" id="stickyCta">
         <div id="stickyText">🍯 Скуштуйте свіжий мед вже сьогодні</div>
         <a class="cta" href="order.html">Замовити</a>
     </div>
-
 </main>
 
 <footer class="container">
     © <span id="y"></span> med_ok. Усі права захищено.
 </footer>
 
-<!-- ===== JS ===== -->
 <script>
     // футер рік
     document.getElementById('y').textContent = new Date().getFullYear();
@@ -181,9 +220,19 @@
         nav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
         document.addEventListener('click', (e)=>{ if(nav.dataset.open!=='true')return; if(nav.contains(e.target)||toggle.contains(e.target))return; close(); });
         document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
+        function syncDesktop(){
+            if (window.matchMedia('(min-width: 900px)').matches){
+                nav.dataset.open = 'true';
+                nav.removeAttribute('aria-hidden');
+                toggle && toggle.classList.remove('is-open');
+                toggle && toggle.setAttribute('aria-expanded','false');
+            }
+        }
+        syncDesktop();
+        window.addEventListener('resize', syncDesktop);
     })();
 
-    // HERO SLIDER: автоплей
+    // HERO SLIDER
     (function(){
         const slides = Array.from(document.querySelectorAll('.hero-slider .slide'));
         const prevBtn = document.getElementById('prev');
@@ -218,17 +267,84 @@
         schedule();
     })();
 
-    // Збереження вибраного виду меду при кліку на картку продукту
-    document.querySelectorAll('.product').forEach(card=>{
-        card.addEventListener('click', ()=>{
-            const t = card.getAttribute('data-type');
-            if (t) localStorage.setItem('preselected_type', t);
-            window.location.href = 'order.html';
+    // Збереження вибраного виду меду при кліку по картці
+    document.querySelectorAll('.product-card').forEach(card=>{
+        const link = card.querySelector('.cta.small');
+        const type = card.getAttribute('data-type') || '';
+        link?.addEventListener('click', ()=>{
+            if (type) localStorage.setItem('preselected_type', type);
         });
     });
+
+    /* ===== Мікроанімації та ціни ===== */
+    (function(){
+        const CAN_HOVER = matchMedia('(hover: hover) and (pointer: fine)').matches;
+        const REDUCED   = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Поява карток зі скролом
+        const cards = [...document.querySelectorAll('.product-card')];
+        if (!REDUCED){
+            cards.forEach(c => c.classList.add('reveal'));
+            const io = new IntersectionObserver((entries)=>{
+                entries.forEach(e=>{
+                    if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+                });
+            }, {threshold:.15, rootMargin:'0px 0px -10% 0px'});
+            cards.forEach(c => io.observe(c));
+        } else {
+            cards.forEach(c => c.classList.add('in'));
+        }
+
+        // Ripple на кнопках тільки на десктопі
+        if (CAN_HOVER) {
+            document.querySelectorAll('.product-card .cta').forEach(btn=>{
+                btn.classList.add('btn-ripple');
+                btn.addEventListener('click', (ev)=>{
+                    const r = document.createElement('span'); r.className = 'r';
+                    const rect = btn.getBoundingClientRect();
+                    r.style.left = (ev.clientX - rect.left - 7) + 'px';
+                    r.style.top  = (ev.clientY - rect.top  - 7) + 'px';
+                    btn.appendChild(r);
+                    setTimeout(()=>r.remove(), 650);
+                });
+            });
+        }
+
+        // Легкий 3D-tilt — тільки на десктопі
+        if (CAN_HOVER) {
+            const items = document.querySelectorAll('.product-card');
+            items.forEach(card=>{
+                let t;
+                card.addEventListener('mousemove', (e)=>{
+                    clearTimeout(t);
+                    t = setTimeout(()=>{
+                        const r = card.getBoundingClientRect();
+                        const x = (e.clientX - r.left)/r.width - 0.5;
+                        const y = (e.clientY - r.top )/r.height - 0.5;
+                        card.style.transform =
+                            `perspective(800px) rotateX(${(-y*2).toFixed(2)}deg) rotateY(${(x*3).toFixed(2)}deg) translateY(-4px) scale(1.01)`;
+                    }, 16);
+                });
+                card.addEventListener('mouseleave', ()=>{ card.style.transform = ''; });
+            });
+        }
+
+        // Базові ціни за 1 л → бейдж "від ₴…"
+        const PRICE_PER_L = {
+            'Різнотрав’я': 260,
+            'Липовий': 280,
+            'Акація': 300,
+            'Соняшниковий': 240
+        };
+        document.querySelectorAll('.product-card').forEach(card=>{
+            const type = card.getAttribute('data-type');
+            const badge = card.querySelector('.price-badge');
+            const p = PRICE_PER_L[type];
+            if (badge && p) badge.textContent = `від ₴${p}`;
+        });
+    })();
 </script>
 
-<!-- SEO JSON-LD -->
 <script type="application/ld+json">
     {
         "@context":"https://schema.org",
@@ -239,25 +355,6 @@
         "areaServed":"Україна",
         "address": {"@type":"PostalAddress","addressRegion":"Київська область","addressLocality":"Бориспільський район"}
     }
-</script>
-<script>
-    (function(){
-        const nav = document.getElementById('primary-nav');
-        const toggle = document.getElementById('menu-toggle');
-        if (!nav) return;
-
-        // Якщо ширина екрана ≥900px — меню завжди відкрите (навіть якщо колись закрили на мобілці)
-        function syncDesktop(){
-            if (window.matchMedia('(min-width: 900px)').matches){
-                nav.dataset.open = 'true';
-                nav.removeAttribute('aria-hidden');
-                toggle && toggle.classList.remove('is-open');
-                toggle && toggle.setAttribute('aria-expanded','false');
-            }
-        }
-        syncDesktop();
-        window.addEventListener('resize', syncDesktop);
-    })();
 </script>
 </body>
 </html>
