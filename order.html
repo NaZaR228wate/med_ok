@@ -11,7 +11,6 @@
 <header>
     <div class="container nav">
         <a href="index.html" class="brand" aria-label="На головну">
-            <!-- іконка може бути будь-яка; лишив простий емодзі -->
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <circle cx="12" cy="12" r="10" stroke-width="2"/>
                 <circle cx="12" cy="12" r="6" stroke-width="2"/>
@@ -19,14 +18,23 @@
             <span>med_ok</span>
         </a>
 
-        <nav class="nav">
-            <a href="index.html">Продукція</a>
+        <!-- бургер -->
+        <button class="menu-toggle" id="menuBtn" aria-label="Меню" aria-expanded="false">
+            <span class="menu-toggle__bar"></span>
+            <span class="menu-toggle__bar"></span>
+            <span class="menu-toggle__bar"></span>
+        </button>
+
+        <!-- випадаюче меню (буде горизонтальним на десктопі завдяки твоєму CSS) -->
+        <nav id="primary-nav" data-open="false">
+            <a href="index.html#products">Продукція</a>
             <a href="index.html#why">Про пасіку</a>
             <a href="index.html#why">Чому ми</a>
             <a href="order.html" class="cta">Замовити</a>
         </nav>
     </div>
 </header>
+
 
 <!-- ===== PAGE ===== -->
 <main class="container">
@@ -370,5 +378,18 @@
     qtySel.addEventListener('change', recalc);
     recalc();
 </script>
+<script>
+    const menuBtn = document.getElementById('menuBtn');
+    const nav = document.getElementById('primary-nav');
+    if (menuBtn && nav){
+        menuBtn.addEventListener('click', () => {
+            const open = nav.getAttribute('data-open') === 'true';
+            nav.setAttribute('data-open', String(!open));
+            menuBtn.classList.toggle('is-open', !open);
+            menuBtn.setAttribute('aria-expanded', String(!open));
+        });
+    }
+</script>
+
 </body>
 </html>
