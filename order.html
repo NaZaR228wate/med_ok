@@ -123,189 +123,204 @@
     </div>
   </footer>
 
-  <!-- === CONFIG (твій воркер та e-mail) === -->
   <script>
-    const WORKER_BASE = 'https://medok-proxy.veter010709.workers.dev';
-    const ORDER_EMAIL = 'veter010709@gmail.com';
-  </script>
+  /* ==== конфіг (твій воркер і email для замовлень) ==== */
+  const WORKER_BASE = 'https://medok-proxy.veter010709.workers.dev';
+  const ORDER_EMAIL = 'veter010709@gmail.com';
 
-  <script>
-    // ===== посилання на елементи
-    const form      = document.getElementById('orderForm');
-    const nameI     = document.getElementById('name');
-    const phoneI    = document.getElementById('phone');
-    const honeySel  = document.getElementById('honey');
-    const qtySel    = document.getElementById('qty');
-    const shipSel   = document.getElementById('ship');
-    const citySearch= document.getElementById('citySearch');
-    const citySel   = document.getElementById('city');
-    const whSel     = document.getElementById('warehouse');
-    const whStatus  = document.getElementById('wh-status');
-    const commentI  = document.getElementById('comment');
+  /* ==== посилання на елементи (id мають існувати у твоїй розмітці) ==== */
+  const form       = document.getElementById('orderForm');
+  const nameI      = document.getElementById('name');
+  const phoneI     = document.getElementById('phone');
 
-    const effPriceEl= document.getElementById('effPrice');
-    const coefEl    = document.getElementById('coef');
-    const totalEl   = document.getElementById('total');
+  const honeySel   = document.getElementById('honey');
+  const qtySel     = document.getElementById('qty');
+  const shipSel    = document.getElementById('ship');
 
-    // ===== ціни та знижки
-    const BASE = {
-      "Акацієвий": 300,
-      "Липовий": 250,
-      "Соняшниковий": 200,
-      "Різнотрав'я": 220
-    };
-    function coefForQty(q) {
-      if (q >= 10) return 0.85;
-      if (q >= 5)  return 0.90;
-      if (q >= 2)  return 0.95;
-      return 1.00;
-    }
-    function formatUAH(x){ return new Intl.NumberFormat('uk-UA').format(Math.round(x)) + ' грн'; }
+  const citySearch = document.getElementById('citySearch');
+  const citySel    = document.getElementById('city');
+  const whSel      = document.getElementById('warehouse');
+  const whStatus   = document.getElementById('wh-status');
 
-    function recalc() {
-      const h = honeySel.value;
-      const q = Number(qtySel.value || 1);
-      const base = BASE[h] ?? 0;
-      const k = coefForQty(q);
-      const eff = base * k;
-      const sum = eff * q;
+  // елементи блоку підсумку (постав свої id якщо інші)
+  const effPriceEl = document.getElementById('effPrice') || document.getElementById('sumPerL');
+  const coefEl     = document.getElementById('coef')     || document.getElementById('sumK');
+  const totalEl    = document.getElementById('total')    || document.getElementById('sumTotal');
 
-      effPriceEl.textContent = base ? formatUAH(eff) : '—';
-      coefEl.textContent     = base ? (k.toFixed(2) + '×') : '—';
-      totalEl.textContent    = base ? formatUAH(sum) : '—';
-    }
+  /* ==== базові ціни, коефіцієнти знижок ==== */
+  const BASE = {
+    "Акацієвий": 300,
+    "Липовий": 250,
+    "Соняшниковий": 200,
+    "Різнотрав'я": 220
+  };
+  function coefForQty(q){
+    q = Number(q||1);
+    if (q >= 10) return 0.85;
+    if (q >= 5)  return 0.90;
+    if (q >= 2)  return 0.95;
+    return 1.00;
+  }
+  const fmtUAH = (x)=> new Intl.NumberFormat('uk-UA').format(Math.round(x))+' грн';
 
-    // ===== префіл з URL (honey, qty)
-    (function prefillFromQuery(){
+  function recalc(){
+    const h = honeySel?.value || '';
+    const q = Number(qtySel?.value || 1);
+    const base = BASE[h] ?? 0;
+    const k = coefForQty(q);
+    const eff = base * k;
+    const sum = eff * q;
+
+    if (effPriceEl) effPriceEl.textContent = base ? fmtUAH(eff) : '—';
+    if (coefEl)     coefEl.textContent     = base ? (k.toFixed(2)+'×') : '—';
+    if (totalEl)    totalEl.textContent    = base ? fmtUAH(sum) : '—';
+  }
+
+  /* ==== утиліти ==== */
+  const sleep = (ms)=> new Promise(r=>setTimeout(r,ms));
+  function debounce(fn, ms=350){
+    let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); };
+  }
+  async function getJSON(url){
+    const r = await fetch(url, {method:'GET'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }
+
+  /* ==== префіл із URL (honey, qty) ==== */
+  (function prefillFromQuery(){
+    try{
       const u = new URL(location.href);
       const h = u.searchParams.get('honey');
       const q = u.searchParams.get('qty');
-      if (h) { [...honeySel.options].forEach(o => { if (o.value === h) honeySel.value = h; }); }
-      if (q) { qtySel.value = q; }
-    })();
-
-    honeySel.addEventListener('change', recalc);
-    qtySel.addEventListener('change', recalc);
-    recalc();
-
-    // ===== допоміжні
-    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-    function debounce(fn, ms=300) {
-      let t; return (...a) => { clearTimeout(t); t = setTimeout(()=>fn(...a), ms); };
-    }
-    async function getJSON(url){
-      const r = await fetch(url, { method: 'GET' });
-      if (!r.ok) throw new Error('HTTP '+r.status);
-      return r.json();
-    }
-
-    // ===== пошук міст
-    let lastCityRef = '';
-    async function doSearchCities() {
-      const q = citySearch.value.trim();
-      if (q.length < 2) return;
-      try {
-        const data = await getJSON(`${WORKER_BASE}/np/cities?q=${encodeURIComponent(q)}`);
-        const list = (data && data.data) || [];
-        citySel.innerHTML = '';
-        if (!list.length){
-          citySel.innerHTML = `<option value="">Нічого не знайдено</option>`;
-          return;
-        }
-        for (const c of list){
-          const ref = c.Ref || c.CityRef || '';
-          const name = c.Description || c.DescriptionRu || '';
-          const area = c.AreaDescription || '';
-          const opt = document.createElement('option');
-          opt.value = ref;
-          opt.textContent = area ? `${name} (${area})` : name;
-          opt.dataset.cityName = name;
-          citySel.appendChild(opt);
-        }
-        citySel.disabled = false;
-      } catch(e){
-        citySel.innerHTML = `<option value="">Помилка завантаження</option>`;
-        console.error('cities error', e);
+      if (h && honeySel) {
+        for (const o of [...honeySel.options]) if (o.value===h) honeySel.value=h;
       }
-    }
-    citySearch.addEventListener('input', debounce(doSearchCities, 350));
+      if (q && qtySel) qtySel.value = q;
+    }catch{}
+  })();
 
-    // ===== відділення
-    async function loadWarehouses() {
-      const ref = citySel.value;
-      if (!ref){ whSel.innerHTML = `<option value="">Спочатку оберіть місто</option>`; whSel.disabled = true; return; }
-      lastCityRef = ref;
-      whStatus.textContent = 'Завантажуємо відділення…';
-      whSel.innerHTML = `<option value="">Завантаження…</option>`;
-      whSel.disabled = true;
-      try {
-        const data = await getJSON(`${WORKER_BASE}/np/warehouses?cityRef=${encodeURIComponent(ref)}`);
-        if (ref !== lastCityRef) return; // користувач змінив місто — цей запит вже неактуальний
-        const list = (data && data.data) || [];
-        whSel.innerHTML = '';
-        for (const w of list){
-          const num = w.Number || '';
-          const addr = w.ShortAddress || w.Description || '';
-          const opt = document.createElement('option');
-          opt.value = num ? `Відділення №${num}, ${addr}` : addr;
-          opt.textContent = opt.value;
-          whSel.appendChild(opt);
-        }
-        whSel.disabled = false;
-        whStatus.textContent = list.length ? '' : 'Немає відділень';
-      } catch(e){
-        whSel.innerHTML = `<option value="">Помилка завантаження</option>`;
-        whStatus.textContent = 'Помилка завантаження';
-        console.error('warehouses error', e);
-      }
-    }
-    citySel.addEventListener('change', loadWarehouses);
-
-    // ===== відправка
-    form.addEventListener('submit', async (ev) => {
-      ev.preventDefault();
-      const pay = (form.querySelector('input[name="pay"]:checked')||{}).value || 'cod';
-
-      const payload = {
-        name: nameI.value.trim(),
-        phone: phoneI.value.trim(),
-        honey: honeySel.value,
-        qty: qtySel.value,
-        pay,
-        ship: shipSel.value,
-        np_city: citySel.options[citySel.selectedIndex]?.dataset?.cityName || '',
-        np_warehouse: whSel.value || '',
-        comment: commentI.value.trim(),
-        email: ORDER_EMAIL
-      };
-
-      // валідація простенька
-      if (!payload.name || !payload.phone || !payload.np_city || !payload.np_warehouse) {
-        alert('Будь ласка, заповніть усі обовʼязкові поля.');
+  /* ==== пошук міст НП ==== */
+  async function searchCities(){
+    const q = (citySearch?.value || '').trim();
+    if (q.length < 2) return;  // не стріляємо в API, поки <2 літер
+    try{
+      const data = await getJSON(`${WORKER_BASE}/np/cities?q=${encodeURIComponent(q)}`);
+      const list = (data && data.data) || [];
+      citySel.innerHTML = '';
+      if (!list.length){
+        citySel.innerHTML = `<option value="">Нічого не знайдено</option>`;
+        citySel.disabled = true;
         return;
       }
-
-      try {
-        const r = await fetch(`${WORKER_BASE}/order`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await r.json();
-        if (data?.ok) {
-          alert('Замовлення надіслано! Ми звʼяжемося з вами найближчим часом.');
-          form.reset();
-          totalEl.textContent = '—';
-          effPriceEl.textContent = '—';
-          coefEl.textContent = '—';
-        } else {
-          throw new Error(data?.error || 'Unknown');
-        }
-      } catch(e){
-        console.error(e);
-        alert('Не вдалося надіслати замовлення. Спробуйте ще раз, будь ласка.');
+      for (const c of list){
+        const ref  = c.Ref || c.CityRef || '';
+        const name = c.Description || c.DescriptionRu || '';
+        const area = c.AreaDescription || '';
+        const opt  = document.createElement('option');
+        opt.value = ref;
+        opt.textContent = area ? `${name} (${area})` : name;
+        opt.dataset.cityName = name;
+        citySel.appendChild(opt);
       }
-    });
-  </script>
+      citySel.disabled = false;
+    }catch(e){
+      console.error('cities error', e);
+      citySel.innerHTML = `<option value="">Помилка завантаження</option>`;
+      citySel.disabled = true;
+    }
+  }
+  citySearch?.addEventListener('input', debounce(searchCities, 350));
+
+  /* ==== завантаження відділень ==== */
+  async function loadWarehouses(){
+    const ref = citySel?.value || '';
+    if (!ref){
+      whSel.innerHTML = `<option value="">Спочатку оберіть місто</option>`;
+      whSel.disabled = true;
+      if (whStatus) whStatus.textContent = '';
+      return;
+    }
+    if (whStatus) whStatus.textContent = 'Завантажуємо відділення…';
+    whSel.innerHTML = `<option value="">Завантаження…</option>`;
+    whSel.disabled = true;
+    try{
+      const data = await getJSON(`${WORKER_BASE}/np/warehouses?cityRef=${encodeURIComponent(ref)}`);
+      const list = (data && data.data) || [];
+      whSel.innerHTML = '';
+      for (const w of list){
+        const num  = w.Number || '';
+        const addr = w.ShortAddress || w.Description || '';
+        const text = num ? `Відділення №${num}, ${addr}` : addr;
+        const opt  = document.createElement('option');
+        opt.value = text;
+        opt.textContent = text;
+        whSel.appendChild(opt);
+      }
+      whSel.disabled = !list.length;
+      if (whStatus) whStatus.textContent = list.length ? '' : 'Немає відділень';
+    }catch(e){
+      console.error('warehouses error', e);
+      whSel.innerHTML = `<option value="">Помилка завантаження</option>`;
+      whSel.disabled = true;
+      if (whStatus) whStatus.textContent = 'Помилка завантаження';
+    }
+  }
+  citySel?.addEventListener('change', loadWarehouses);
+
+  /* ==== відправка замовлення ==== */
+  form?.addEventListener('submit', async (ev)=>{
+    ev.preventDefault();
+    const pay = (form.querySelector('input[name="pay"]:checked')||{}).value || 'cod';
+
+    const payload = {
+      name: (nameI?.value||'').trim(),
+      phone: (phoneI?.value||'').trim(),
+      honey: honeySel?.value || '',
+      qty: qtySel?.value || '1',
+      pay,
+      ship: shipSel?.value || 'np_branch',
+      np_city: citySel?.options[citySel.selectedIndex]?.dataset?.cityName || '',
+      np_warehouse: whSel?.value || '',
+      comment: (document.getElementById('comment')?.value || '').trim(),
+      email: ORDER_EMAIL
+    };
+
+    if (!payload.name || !payload.phone || !payload.np_city || !payload.np_warehouse){
+      alert('Будь ласка, заповніть усі обовʼязкові поля.');
+      return;
+    }
+
+    try{
+      const r = await fetch(`${WORKER_BASE}/order`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await r.json();
+      if (data?.ok){
+        alert('Замовлення надіслано! Ми звʼяжемося з вами найближчим часом.');
+        form.reset();
+        if (effPriceEl) effPriceEl.textContent = '—';
+        if (coefEl)     coefEl.textContent     = '—';
+        if (totalEl)    totalEl.textContent    = '—';
+      }else{
+        throw new Error(data?.error || 'Unknown');
+      }
+    }catch(e){
+      console.error('order error', e);
+      alert('Не вдалося надіслати замовлення. Спробуйте ще раз, будь ласка.');
+    }
+  });
+
+  /* ==== видимість блоків доставки (поки 1 варіант) ==== */
+  function applyShipVisibility(){ /* no-op, залишено для сумісності */ }
+
+  /* ==== ініціалізація ==== */
+  honeySel?.addEventListener('change', recalc);
+  qtySel?.addEventListener('change', recalc);
+  recalc();
+  applyShipVisibility();
+</script>
 </body>
 </html>
