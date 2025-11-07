@@ -243,17 +243,19 @@
 
         const label = toggle.querySelector('.visually-hidden');
         const links = Array.from(nav.querySelectorAll('a'));
+        const firstLink = links[0] || null;
         const setLabel = (text) => { if (label) label.textContent = text; };
         const disableLinks = () => links.forEach(link => link.setAttribute('tabindex', '-1'));
         const enableLinks = () => links.forEach(link => link.removeAttribute('tabindex'));
 
-        const close = () => {
+        const close = (focusToggle = false) => {
             nav.dataset.open = 'false';
             toggle.setAttribute('aria-expanded', 'false');
             toggle.classList.remove('is-open');
             nav.setAttribute('aria-hidden', 'true');
             setLabel('Відкрити меню');
             disableLinks();
+            if (focusToggle) toggle.focus();
         };
 
         const open = () => {
@@ -263,6 +265,7 @@
             nav.setAttribute('aria-hidden', 'false');
             setLabel('Закрити меню');
             enableLinks();
+            setTimeout(() => { firstLink?.focus(); }, 0);
         };
 
         const showDesktop = () => {
@@ -288,22 +291,26 @@
 
         toggle.addEventListener('click', () => {
             const isOpen = nav.dataset.open === 'true';
-            (isOpen ? close : open)();
+            if (isOpen) {
+                close(true);
+            } else {
+                open();
+            }
         });
 
-        nav.querySelectorAll('a').forEach(link => link.addEventListener('click', close));
+        nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => close()));
 
         document.addEventListener('click', (event) => {
             if (!mql.matches) return;
             if (nav.dataset.open !== 'true') return;
             if (nav.contains(event.target) || toggle.contains(event.target)) return;
-            close();
+            close(true);
         });
 
         // Закриваємо меню при натисканні Escape
         document.addEventListener('keydown', (e) => {
             if (!mql.matches) return;
-            if (e.key === 'Escape') close();
+            if (e.key === 'Escape' && nav.dataset.open === 'true') close(true);
         });
     })();
 
