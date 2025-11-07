@@ -149,15 +149,25 @@
 </main>
 
 <script>
-  // Базові ціни та коефіцієнти
-  const BASE_L = { 'Різнотрав’я': 260, 'Липовий': 280, 'Акація': 300, 'Соняшниковий': 240 };
-  const COEF   = { '0.5': 1.10, '1': 1.00, '2': 0.95, '3': 0.92, '4': 0.90, '5': 0.85 };
-  const sumLabel = document.getElementById('sumLabel');
-  const sumPerL  = document.getElementById('sumPerL');
-  const sumK     = document.getElementById('sumK');
-  const sumTotal = document.getElementById('sumTotal');
-  const round5 = n => Math.round(n/5)*5;
-  const honeySel = document.getElementById('honey');
+ // ==== конфіг (твій воркер і e-mail)
+  const WORKER_BASE = 'https://medok-proxy.veter010709.workers.dev';
+  const ORDER_EMAIL = 'veter010709@gmail.com';
+
+  // ==== елементи форми
+  const form      = document.getElementById('orderForm');
+  const nameI     = document.getElementById('name');
+  const phoneI    = document.getElementById('phone');
+  const honeySel  = document.getElementById('honey');
+  const qtySel    = document.getElementById('qty');
+  const shipSel   = document.getElementById('ship');
+
+  // пошук міст / відділень Нової пошти
+  const citySearch = document.getElementById('citySearch');
+  const citySel    = document.getElementById('city');
+  const whSel      = document.getElementById('warehouse');
+  const whStatus   = document.getElementById('wh-status');
+
+  const commentI   = document.getElementById('comment');
 
   function updatePriceBox(){
     const type = honeySel.value;
