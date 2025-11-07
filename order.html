@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Оформлення замовлення — med_ok</title>
-    <link rel="stylesheet" href="styles.css?v=9"/>
+    <link rel="stylesheet" href="styles.css?v=12"/>
 </head>
 <body>
 <a class="visually-hidden" href="#main">Перейти до контенту</a>
@@ -14,7 +14,7 @@
         <a class="brand" href="index.html" aria-label="На головну">
             <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
                 <path fill="#f4b400" d="M22 10h20l10 12v20l-10 12H22L12 42V22z"/>
-                <path fill="#fff" opacity=".6" d="M26 18h12l6 7v14l-6 7H26l-6-7V25z"/>
+                <path fill="#fff" opacity=".6" d="M26 18h12l6 7v14l-6 7H26l-6-7В25z"/>
             </svg>
             <span>med_ok</span>
         </a>
@@ -37,7 +37,7 @@
 
 <main id="main" class="container">
     <h1>Оформлення замовлення</h1>
-    <p class="muted">Заповніть форму. Поля зі <strong>*</strong> — обов’язкові. Після натискання «Надіслати» відкриється поштовий клієнт із заповненим листом.</p>
+    <p class="muted">Заповніть форму. Поля зі <strong>*</strong> — обов’язкові. Після надсилання ми отримаємо замовлення в Telegram.</p>
 
     <section class="card" style="padding:18px 18px 6px" id="order">
         <form id="orderForm" novalidate>
@@ -59,8 +59,9 @@
                 <div class="col">
                     <label for="honey">Вид меду *</label>
                     <select id="honey" name="honey" required>
-                        <option value="Акація">Акація</option>
+                        <option value="Різнотрав’я">Різнотрав’я</option>
                         <option value="Липовий">Липовий</option>
+                        <option value="Акація">Акація</option>
                         <option value="Соняшниковий">Соняшниковий</option>
                     </select>
                 </div>
@@ -71,8 +72,25 @@
                         <option value="1">1 л</option>
                         <option value="2">2 л</option>
                         <option value="3">3 л</option>
+                        <option value="4">4 л</option>
                         <option value="5">5 л</option>
                     </select>
+                </div>
+            </div>
+
+            <!-- Прайс-бокс -->
+            <div class="card summary mt-16" id="priceBox" style="padding:12px 16px">
+                <div class="summary-row">
+                    <span class="summary-label">Вид/обʼєм</span><span id="sumLabel">—</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Ефективна ціна за 1 л</span><span id="sumPerL">—</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Коефіцієнт</span><span id="sumK">—</span>
+                </div>
+                <div class="summary-row total">
+                    <span>До сплати</span><span id="sumTotal">—</span>
                 </div>
             </div>
 
@@ -93,7 +111,7 @@
                 </div>
             </div>
 
-            <!-- Нова пошта: пошук + місто(Ref) + відділення -->
+            <!-- Нова пошта -->
             <div id="np-row" class="row mt-16">
                 <div class="col">
                     <label for="citySearch">Пошук міста (2+ літери)</label>
@@ -135,10 +153,25 @@
 </main>
 
 <script>
-    // ===== КОНФІГ =====
-    const WORKER_BASE = 'https://medok-proxy.veter010709.workers.dev';
+    /* ===================== КОНФІГ ===================== */
+    const DEFAULT_WORKER = 'https://medok-proxy.veter010709.workers.dev';
+    const WORKER_BASE = (() => {
+        const url = new URL(location.href);
+        const qp = url.searchParams.get('worker');
+        if (qp) {
+            const clean = qp.replace(/\/+$/,'');
+            try { localStorage.setItem('WORKER_BASE', clean); } catch(_) {}
+            return clean;
+        }
+        const saved = localStorage.getItem('WORKER_BASE');
+        return (saved || DEFAULT_WORKER).replace(/\/+$/,'');
+    })();
+    async function pingWorker(){
+        try{ const r = await fetch(`${WORKER_BASE}/np/cities?q=Ки`); return r.ok; }
+        catch{ return false; }
+    }
 
-    // ===== ХЕДЕР як на index.html =====
+    /* ===================== ХЕДЕР (бургер) ===================== */
     (function(){
         const toggle = document.getElementById('menu-toggle');
         const nav = document.getElementById('primary-nav');
@@ -162,7 +195,7 @@
         window.addEventListener('resize', syncDesktop);
     })();
 
-    // ===== DOM =====
+    /* ===================== DOM ===================== */
     const form      = document.getElementById('orderForm');
     const nameI     = document.getElementById('name');
     const phoneI    = document.getElementById('phone');
@@ -170,22 +203,61 @@
     const qtySel    = document.getElementById('qty');
     const shipSel   = document.getElementById('ship');
     const citySearch= document.getElementById('citySearch');
-    const citySel   = document.getElementById('city');      // value = Ref
+    const citySel   = document.getElementById('city');
     const whSel     = document.getElementById('warehouse');
     const whStatus  = document.getElementById('wh-status');
     const npRow     = document.getElementById('np-row');
     const commentI  = document.getElementById('comment');
 
-    // Попередньо обраний вид меду з головної
+    /* ===================== Автопідстановка з головної ===================== */
     (function(){
         const t = localStorage.getItem('preselected_type');
-        if(!t) return;
-        const opt = Array.from(honeySel.options).find(o => o.value === t || o.textContent === t);
-        if (opt) honeySel.value = opt.value;
-        localStorage.removeItem('preselected_type');
+        if (t) {
+            const opt = Array.from(honeySel.options).find(o => o.value === t || o.textContent === t);
+            if (opt) honeySel.value = opt.value;
+            localStorage.removeItem('preselected_type');
+        }
+        const q = localStorage.getItem('preselected_qty');
+        if (q && Array.from(qtySel.options).some(o => o.value === q)) {
+            qtySel.value = q;
+            localStorage.removeItem('preselected_qty');
+        }
     })();
 
-    // ===== helpers =====
+    /* ===================== Ціни/коефіцієнти та прайс-бокс ===================== */
+    const BASE_L = { 'Різнотрав’я': 260, 'Липовий': 280, 'Акація': 300, 'Соняшниковий': 240 };
+    const COEF   = { '0.5': 1.10, '1': 1.00, '2': 0.95, '3': 0.92, '4': 0.90, '5': 0.85 };
+    const sumLabel = document.getElementById('sumLabel');
+    const sumPerL  = document.getElementById('sumPerL');
+    const sumK     = document.getElementById('sumK');
+    const sumTotal = document.getElementById('sumTotal');
+    const round5 = n => Math.round(n/5)*5;
+
+    function updatePriceBox(){
+        const type = honeySel.value;
+        const vol  = parseFloat(qtySel.value);
+        const base = BASE_L[type] || 0;
+        const k    = COEF[String(qtySel.value)] || 1;
+
+        if (!base || !vol){
+            sumLabel.textContent = '—';
+            sumPerL.textContent  = '—';
+            sumK.textContent     = '—';
+            sumTotal.textContent = '—';
+            return;
+        }
+        const total = round5(base * vol * k);
+        const perL  = round5(total / vol);
+
+        sumLabel.textContent = `${type}, ${vol} л`;
+        sumPerL.textContent  = `₴${perL}`;
+        sumK.textContent     = `× ${k.toFixed(2)}`;
+        sumTotal.textContent = `₴${total}`;
+    }
+    honeySel.addEventListener('change', updatePriceBox);
+    qtySel.addEventListener('change', updatePriceBox);
+
+    /* ===================== Helpers ===================== */
     const setWhStatus = (msg, type='muted') => {
         whStatus.textContent = msg || '';
         whStatus.className = 'note mt-8 ' + (type || 'muted');
@@ -203,7 +275,7 @@
         return r.json();
     }
 
-    // ===== МІСТА: пошук → select#city (value = Ref) =====
+    /* ===================== Пошук міст (НП) ===================== */
     let cityTimer;
     citySearch.addEventListener('input', () => {
         const q = citySearch.value.trim();
@@ -223,21 +295,20 @@
 
                 arr.forEach(c => {
                     const opt = document.createElement('option');
-                    opt.value = c.Ref;                       // важливо: Ref
-                    opt.textContent = c.Description || c.Present || c.name;
+                    opt.value = c.Ref || c.DeliveryCity || c.CityRef || '';
+                    opt.textContent = c.Description || c.Present || c.name || c.MainDescription || '';
+                    opt.dataset.cityName = opt.textContent;
                     citySel.appendChild(opt);
                 });
-            } catch(e) {
-                // тихо ігноруємо
-            }
+            } catch(e) { /* ignore */ }
         }, 250);
     });
 
-    // ===== ВІДДІЛЕННЯ: за cityRef =====
-    citySel.addEventListener('change', loadWarehousesForCityRef);
-
-    async function loadWarehousesForCityRef(){
-        const cityRef = citySel.value;
+    /* ===================== Відділення (НП) ===================== */
+    citySel.addEventListener('change', loadWarehousesForCity);
+    async function loadWarehousesForCity(){
+        const cityRef  = citySel.value;
+        const cityName = citySel.options[citySel.selectedIndex]?.dataset?.cityName || citySel.options[citySel.selectedIndex]?.text || '';
         if(!cityRef){
             whSel.disabled = true;
             clearWh('Спочатку оберіть місто');
@@ -250,9 +321,17 @@
         setWhStatus('Завантажуємо відділення…');
 
         try{
-            const data = await fetchJSON(`${WORKER_BASE}/np/warehouses?cityRef=${encodeURIComponent(cityRef)}`);
-            const list = Array.isArray(data.data) ? data.data :
-                Array.isArray(data.items) ? data.items : [];
+            // 1) за Ref
+            let data = await fetchJSON(`${WORKER_BASE}/np/warehouses?cityRef=${encodeURIComponent(cityRef)}`);
+            let list = Array.isArray(data.data) ? data.data : Array.isArray(data.items) ? data.items : [];
+
+            // 2) fallback за назвою
+            if(!list.length && cityName){
+                try{
+                    data = await fetchJSON(`${WORKER_BASE}/np/warehouses?city=${encodeURIComponent(cityName)}`);
+                    list = Array.isArray(data.data) ? data.data : Array.isArray(data.items) ? data.items : [];
+                }catch(_){}
+            }
 
             if(!list.length){
                 clearWh('Відділень не знайдено');
@@ -261,7 +340,6 @@
                 return;
             }
 
-            // поштомати вниз
             list.sort((a,b) => {
                 const aPM = /поштомат|postomat/i.test(a.Description || '');
                 const bPM = /поштомат|postomat/i.test(b.Description || '');
@@ -293,7 +371,7 @@
         }
     }
 
-    // Показ/приховання НП
+    /* ===================== Показ/прихов. НП ===================== */
     function applyShipVisibility(){
         const needNP = shipSel.value === 'np_branch';
         npRow.classList.toggle('hidden', !needNP);
@@ -303,12 +381,18 @@
     }
     shipSel.addEventListener('change', applyShipVisibility);
 
-    // ===== Сабміт → Cloudflare Worker /order → Telegram =====
+    /* ===================== Сабміт → /order (Worker → Telegram) ===================== */
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = form.querySelector('button[type="submit"]');
         try {
             if(!form.reportValidity()) return;
+
+            // розрахунок ціни
+            const base = BASE_L[honeySel.value] || 0;
+            const k    = COEF[String(qtySel.value)] || 1;
+            const total = round5(base * parseFloat(qtySel.value) * k);
+            const perL  = round5(total / parseFloat(qtySel.value));
 
             const pay = form.querySelector('input[name="pay"]:checked')?.value || 'cod';
             const payload = {
@@ -319,7 +403,10 @@
                 pay,
                 np_city:      citySel.options[citySel.selectedIndex]?.text || '',
                 np_warehouse: whSel.value || '',
-                comment:      commentI.value.trim()
+                comment:      commentI.value.trim(),
+                price_total: total,
+                price_per_l: perL,
+                price_coef:  k
             };
 
             if (shipSel.value === 'np_branch' && (!payload.np_city || !payload.np_warehouse)) {
@@ -327,7 +414,6 @@
                 return;
             }
 
-            // disable btn
             if (submitBtn){ submitBtn.disabled = true; const t=submitBtn.textContent; submitBtn.dataset._t=t; submitBtn.textContent='Надсилаємо…'; }
 
             const r = await fetch(`${WORKER_BASE}/order`, {
@@ -343,11 +429,12 @@
             const data = await r.json().catch(()=> ({}));
             if (!data.ok) throw new Error('Worker відповів ok:false');
 
-            alert('Дякую! Замовлення відправлено в Telegram 🐝');
+            alert('Дякую! Замовлення відправлено 🐝');
             form.reset();
             applyShipVisibility();
             clearWh('Спочатку оберіть місто');
             setWhStatus('');
+            updatePriceBox();
         } catch (err) {
             console.error('Submit error:', err);
             alert('Не вдалося надіслати замовлення. Спробуйте ще раз.\n' + (err?.message || err));
@@ -356,11 +443,13 @@
         }
     });
 
-    // ===== Старт =====
-    window.addEventListener('DOMContentLoaded', () => {
+    /* ===================== Старт ===================== */
+    window.addEventListener('DOMContentLoaded', async () => {
         applyShipVisibility();
+        updatePriceBox();
+        const ok = await pingWorker();
+        if (!ok) console.warn('Worker недоступний:', WORKER_BASE);
     });
 </script>
-
 </body>
 </html>
