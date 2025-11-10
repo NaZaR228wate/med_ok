@@ -8,6 +8,19 @@ const API_URL  = 'https://medok-proxy.veter010709.workers.dev/order'; // тві�
 function formatUAH(n) {
     return '₴' + Number(n || 0).toLocaleString('uk-UA');
 }
+async function fetchCities(query) {
+    if (query.length < 2) return [];
+    const res = await fetch(`${API_BASE}/np/cities?q=${encodeURIComponent(query)}`);
+    const json = await res.json();
+    return json?.data || [];
+}
+
+async function fetchWarehouses(city) {
+    if (!city) return [];
+    const res = await fetch(`${API_BASE}/np/warehouses?city=${encodeURIComponent(city)}`);
+    const json = await res.json();
+    return json?.data || [];
+}
 
 // завантаження кошика
 function loadCart() {
@@ -119,8 +132,42 @@ function initForm() {
         }
     });
 }
+function initNovaPoshta() {
+    const cityInput = document.querySelector('#citySearch');
+    const citySelect = document.querySelector('#city');
+    const warehouseSelect = document.querySelector('#warehouse');
+
+    if (!cityInput || !citySelect || !warehouseSelect) return;
+
+    let lastCityQuery = '';
+    let cityResults = [];
+
+    // автопошук міст
+    cityInput.addEventListener('input', async () => {
+        const query = cityInput.value.trim();
+        if (query.length < 2 || query === lastCityQuery) return;
+        lastCityQuery = query;
+
+        const cities = await fetchCities(query);
+        cityResults = cities;
+        citySelect.innerHTML = cities.length
+            ? cities.map(c => `<option value="${c.Description}">${c.Description}</option>`).join('')
+            : `<option value="">Місто не знайдено</option>`;
+    });
+
+    // при виборі міста — підтягуємо відділення
+    citySelect.addEventListener('change', async () => {
+        const city = citySelect.value;
+        warehouseSelect.innerHTML = `<option>Завантаження...</option>`;
+        const warehouses = await fetchWarehouses(city);
+        warehouseSelect.innerHTML = warehouses.length
+            ? warehouses.map(w => `<option value="${w.Description}">${w.Description}</option>`).join('')
+            : `<option value="">Немає відділень</option>`;
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     renderCartBlock();
     initForm();
+    initNovaPoshta(); // підключаємо пошук міст
 });
