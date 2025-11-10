@@ -270,3 +270,56 @@ textarea{min-height:96px; resize:vertical}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 /* вимкнути нижню плашку всюди */
 .sticky-cta{ display:none !important; }
+/* ===== HEADER CART + ORDER ===== */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cart-header-btn {
+    position: relative;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font-weight: 700;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+.cart-header-btn:hover { background: var(--accent); color:#111; }
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--accent);
+    color: #111;
+    border-radius: 999px;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: 800;
+    display: none;
+    min-width: 20px;
+    text-align: center;
+}
+
+.header-order-btn {
+    background: var(--brand);
+    color: #fff;
+    font-weight: 800;
+    padding: 10px 16px;
+    border-radius: 999px;
+    transition: background .2s ease;
+}
+.header-order-btn:hover {
+    background: var(--accent);
+    color: #111;
+}
+
+@media (max-width: 900px) {
+    .nav-right {
+        margin-left: auto;
+    }
+}
