@@ -158,55 +158,91 @@ function initForm() {
 }
 
 // ───────────── Інпут/селекти Нової пошти ─────────────
+// ДОДАЙ/ЗАМІНИ в order.js
+
 function initNovaPoshta() {
-  const cityInput       = $('#citySearch');
-  const citySelect      = $('#city');
-  const warehouseSelect = $('#warehouse');
-  const whStatus        = $('#wh-status');
+  const cityInput       = document.querySelector('#citySearch');
+  const citySelect      = document.querySelector('#city');
+  const warehouseSelect = document.querySelector('#warehouse');
+  const whStatus        = document.querySelector('#wh-status');
 
   if (!cityInput || !citySelect || !warehouseSelect) return;
 
+  const setEmptyCity = (text = 'Спочатку введіть 2+ літери') => {
+    citySelect.innerHTML = `<option value="" selected disabled>${text}</option>`;
+    citySelect.disabled = true;
+  };
+  const setEmptyWarehouse = (text = 'Спочатку оберіть місто') => {
+    warehouseSelect.innerHTML = `<option value="" selected disabled>${text}</option>`;
+    warehouseSelect.disabled = true;
+  };
+
   const setCityOptions = (cities) => {
     if (!cities.length) {
-      citySelect.innerHTML = `<option value="">Місто не знайдено</option>`;
-      citySelect.disabled = true;
-      warehouseSelect.innerHTML = `<option value="">Спочатку оберіть місто</option>`;
-      warehouseSelect.disabled = true;
+      setEmptyCity('Місто не знайдено');
+      setEmptyWarehouse();
       return;
     }
-    citySelect.innerHTML = cities
-      .map(c => `<option value="${c.Description}">${c.Description}</option>`)
-      .join('');
+    citySelect.innerHTML = [
+      `<option value="" selected disabled>Оберіть місто зі списку</option>`,
+      ...cities.map(c => `<option value="${c.Description}">${c.Description}</option>`)
+    ].join('');
     citySelect.disabled = false;
-    // Скидаємо відділення
-    warehouseSelect.innerHTML = `<option value="">Спочатку оберіть місто</option>`;
-    warehouseSelect.disabled = true;
+
+    // завжди скидаємо відділення до плейсхолдера
+    setEmptyWarehouse();
   };
 
   const setWarehouseOptions = (warehouses) => {
     if (whStatus) whStatus.textContent = '';
     if (!warehouses.length) {
-      warehouseSelect.innerHTML = `<option value="">Немає відділень</option>`;
-      warehouseSelect.disabled = true;
+      setEmptyWarehouse('Немає відділень');
       return;
     }
-    warehouseSelect.innerHTML = warehouses
-      .map(w => `<option value="${w.Description}">${w.Description}</option>`)
-      .join('');
+    warehouseSelect.innerHTML = [
+      `<option value="" selected disabled>Оберіть відділення</option>`,
+      ...warehouses.map(w => `<option value="${w.Description}">${w.Description}</option>`)
+    ].join('');
     warehouseSelect.disabled = false;
   };
 
-  // Автопошук міст
+  // стартовий стан
+  setEmptyCity();
+  setEmptyWarehouse();
+
+  // автопошук міст (з дебаунсом)
+  const debounce = (fn, ms = 350) => {
+    let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); };
+  };
+
   cityInput.addEventListener('input', debounce(async () => {
     const q = cityInput.value.trim();
     if (q.length < 2) {
-      setCityOptions([]);
+      setEmptyCity();
+      setEmptyWarehouse();
       return;
     }
-    const cities = await fetchCities(q).catch(() => []);
+    citySelect.innerHTML = `<option value="" selected disabled>Завантаження...</option>`;
+    citySelect.disabled = true;
+
+    const res = await fetch(`${API_BASE}/np/cities?q=${encodeURIComponent(q)}`).then(r=>r.json()).catch(()=>({}));
+    const cities = Array.isArray(res?.data) ? res.data : [];
     setCityOptions(cities);
   }, 350));
 
+  citySelect.addEventListener('change', async () => {
+    const city = citySelect.value.trim();
+    if (!city) { setEmptyWarehouse(); return; }
+
+    warehouseSelect.innerHTML = `<option value="" selected disabled>Завантаження...</option>`;
+    warehouseSelect.disabled = true;
+    if (whStatus) whStatus.textContent = 'Завантажуємо відділення…';
+
+    const res = await fetch(`${API_BASE}/np/warehouses?city=${encodeURIComponent(city)}`).then(r=>r.json()).catch(()=>({}));
+    const whs = Array.isArray(res?.data) ? res.data : [];
+    setWarehouseOptions(whs);
+  });
+}
   // Після вибору міста — вантажимо відділення
   citySelect.addEventListener('change', async () => {
     const city = citySelect.value.trim();
