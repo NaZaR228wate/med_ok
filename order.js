@@ -4,43 +4,34 @@
 const CART_KEY = 'medok_cart_v1';
 
 // БАЗА твого Cloudflare Worker (без слеша в кінці!)
-const API_BASE = 'https://medok-proxy.veter010709.workers.dev';
+const API_BASE  = 'https://medok-proxy.veter010709.workers.dev';
 const API_ORDER = `${API_BASE}/order`;
 
-/* ───────────── Утиліти ───────────── */
-const $  = (sel, root = document) => root.querySelector(sel);
-const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+/* ────────── Утиліти ────────── */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const formatUAH = (n) => '₴' + Number(n || 0).toLocaleString('uk-UA');
+const debounce = (fn, ms = 350) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; };
 
-const debounce = (fn, ms = 350) => {
-  let t = null;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-};
-
-/* ───────────── Нова пошта (API) ───────────── */
-async function fetchCities(query) {
-  if (query.length < 2) return [];
-  const r = await fetch(`${API_BASE}/np/cities?q=${encodeURIComponent(query)}`);
-  const j = await r.json().catch(() => ({}));
+/* ────────── Нова пошта (API) ────────── */
+async function fetchCities(q) {
+  if ((q||'').trim().length < 2) return [];
+  const r = await fetch(`${API_BASE}/np/cities?q=${encodeURIComponent(q)}`);
+  const j = await r.json().catch(()=>({}));
+  return Array.isArray(j?.data) ? j.data : [];
+}
+async function fetchWarehousesByCityName(city) {
+  if (!city) return [];
+  const r = await fetch(`${API_BASE}/np/warehouses?city=${encodeURIComponent(city)}`);
+  const j = await r.json().catch(()=>({}));
   return Array.isArray(j?.data) ? j.data : [];
 }
 
-async function fetchWarehousesByCityName(cityName) {
-  if (!cityName) return [];
-  const r = await fetch(`${API_BASE}/np/warehouses?city=${encodeURIComponent(cityName)}`);
-  const j = await r.json().catch(() => ({}));
-  return Array.isArray(j?.data) ? j.data : [];
-}
-
-/* ───────────── Кошик (localStorage) ───────────── */
+/* ────────── Кошик ────────── */
 function loadCart() {
   try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
   catch { return []; }
 }
-
 function renderCartBlock() {
   const items = loadCart();
   if (!items.length) return;
@@ -58,13 +49,13 @@ function renderCartBlock() {
   `;
   form.parentElement.insertBefore(section, form);
 
+  let sum = 0;
   const list = section.querySelector('#orderList');
   const totalEl = section.querySelector('#orderTotal');
 
-  let sum = 0;
-  items.forEach((i, idx) => {
-    const line = i.price * i.count;
-    sum += line;
+  loadCart().forEach((i, idx) => {
+    const lineSum = i.price * i.count;
+    sum += lineSum;
     const row = document.createElement('div');
     row.className = 'order-item card';
     row.innerHTML = `
@@ -73,7 +64,7 @@ function renderCartBlock() {
           <b>${idx + 1}. ${i.type}</b><br>
           <small>${i.qty} л × ${i.count} шт — ${formatUAH(i.price)} / шт</small>
         </div>
-        <div><b>${formatUAH(line)}</b></div>
+        <div><b>${formatUAH(lineSum)}</b></div>
       </div>
     `;
     list.appendChild(row);
@@ -84,7 +75,7 @@ function renderCartBlock() {
   if (payTotal) payTotal.textContent = formatUAH(sum);
 }
 
-/* ───────────── Відправлення замовлення ───────────── */
+/* ────────── Відправлення ────────── */
 function buildOrderData(form, items) {
   return {
     from_cart: true,
@@ -95,14 +86,12 @@ function buildOrderData(form, items) {
     phone: $('#phone', form)?.value.trim(),
     pay:   form.querySelector('input[name="pay"]:checked')?.value || 'cod',
 
-    // важливо: передаємо саме текст значень
     np_city:      $('#city', form)?.value.trim(),
     np_warehouse: $('#warehouse', form)?.value.trim(),
 
     comment: $('#comment', form)?.value.trim(),
   };
 }
-
 async function sendOrder(data) {
   const r = await fetch(API_ORDER, {
     method: 'POST',
@@ -111,45 +100,29 @@ async function sendOrder(data) {
   });
   return r.json();
 }
-
 function initForm() {
   const form = $('#order');
   if (!form) return;
 
-  // заборона Enter у пошуку міста (щоб не відправляло форму)
-  $('#citySearch')?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') e.preventDefault();
-  });
+  // Забороняємо Enter у пошуку міста
+  $('#citySearch')?.addEventListener('keydown', (e)=>{ if (e.key==='Enter') e.preventDefault(); });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const items = loadCart();
-    if (!items.length) {
-      alert('Кошик порожній 😅');
-      return;
-    }
+    if (!items.length) { alert('Кошик порожній 😅'); return; }
 
-    const city = $('#city')?.value.trim();
-    const wh   = $('#warehouse')?.value.trim();
     const name = $('#name')?.value.trim();
     const phone= $('#phone')?.value.trim();
+    const city = $('#city')?.value.trim();
+    const wh   = $('#warehouse')?.value.trim();
 
-    if (!name || !phone) {
-      alert('Будь ласка, введіть імʼя та номер телефону 📞');
-      return;
-    }
-    if (!city) {
-      alert('Будь ласка, оберіть місто Нової пошти 🏙');
-      return;
-    }
-    if (!wh) {
-      alert('Будь ласка, оберіть відділення Нової пошти 🏤');
-      return;
-    }
+    if (!name || !phone) { alert('Будь ласка, введіть імʼя та телефон.'); return; }
+    if (!city)            { alert('Будь ласка, оберіть місто Нової пошти.'); return; }
+    if (!wh)              { alert('Будь ласка, оберіть відділення Нової пошти.'); return; }
 
     const data = buildOrderData(form, items);
-
     try {
       const json = await sendOrder(data);
       if (json?.ok) {
@@ -162,43 +135,45 @@ function initForm() {
       }
     } catch (err) {
       console.error(err);
-      alert('⚠️ Не вдалося надіслати замовлення. Перевірте інтернет або конфіг воркера.');
+      alert('⚠️ Не вдалося надіслати замовлення. Перевірте інтернет або воркер.');
     }
   });
 }
 
-/* ───────────── Інпут/селекти Нової пошти ───────────── */
+/* ────────── Поля Нової пошти (з плейсхолдерами «порожній вибір») ────────── */
 function initNovaPoshta() {
   const cityInput       = $('#citySearch');
   const citySelect      = $('#city');
   const warehouseSelect = $('#warehouse');
-  const whStatus        = $('#wh-status'); // необов’язковий текстовий індикатор
+  const whStatus        = $('#wh-status'); // необов’язковий індикатор
 
   if (!cityInput || !citySelect || !warehouseSelect) return;
 
-  const setEmptyCity = (text = 'Спочатку введіть 2+ літери') => {
-    citySelect.innerHTML = `<option value="" selected disabled>${text}</option>`;
-    citySelect.disabled = true;
+  // плейсхолдери, які завжди будуть обрані за замовчуванням
+  const setEmptyCity = (text = 'Оберіть місто зі списку') => {
+    citySelect.innerHTML = `<option value="" selected>— ${text} —</option>`;
+    citySelect.disabled = false;
+    citySelect.selectedIndex = 0;
   };
-  const setEmptyWarehouse = (text = 'Спочатку оберіть місто') => {
-    warehouseSelect.innerHTML = `<option value="" selected disabled>${text}</option>`;
-    warehouseSelect.disabled = true;
+  const setEmptyWarehouse = (text = 'Оберіть відділення') => {
+    warehouseSelect.innerHTML = `<option value="" selected>— ${text} —</option>`;
+    warehouseSelect.disabled = false;
+    warehouseSelect.selectedIndex = 0;
   };
 
   const setCityOptions = (cities) => {
     if (!cities.length) {
       setEmptyCity('Місто не знайдено');
-      setEmptyWarehouse();
+      setEmptyWarehouse('Спочатку оберіть місто');
       return;
     }
     citySelect.innerHTML = [
-      `<option value="" selected disabled>Оберіть місто зі списку</option>`,
+      `<option value="" selected>— Оберіть місто —</option>`,
       ...cities.map(c => `<option value="${c.Description}">${c.Description}</option>`)
     ].join('');
     citySelect.disabled = false;
-
-    // скидаємо відділення
-    setEmptyWarehouse();
+    citySelect.selectedIndex = 0;   // залишаємо обране «порожнє»
+    setEmptyWarehouse('Спочатку оберіть місто');
   };
 
   const setWarehouseOptions = (warehouses) => {
@@ -208,46 +183,44 @@ function initNovaPoshta() {
       return;
     }
     warehouseSelect.innerHTML = [
-      `<option value="" selected disabled>Оберіть відділення</option>`,
+      `<option value="" selected>— Оберіть відділення —</option>`,
       ...warehouses.map(w => `<option value="${w.Description}">${w.Description}</option>`)
     ].join('');
     warehouseSelect.disabled = false;
+    warehouseSelect.selectedIndex = 0; // лишається порожній варіант
   };
 
   // стартовий стан
-  setEmptyCity();
-  setEmptyWarehouse();
+  setEmptyCity('Спочатку введіть 2+ літери');
+  setEmptyWarehouse('Спочатку оберіть місто');
 
-  // автопошук міст (з дебаунсом)
+  // пошук міст (з дебаунсом)
   cityInput.addEventListener('input', debounce(async () => {
     const q = cityInput.value.trim();
     if (q.length < 2) {
-      setEmptyCity();
-      setEmptyWarehouse();
+      setEmptyCity('Спочатку введіть 2+ літери');
+      setEmptyWarehouse('Спочатку оберіть місто');
       return;
     }
-    citySelect.innerHTML = `<option value="" selected disabled>Завантаження...</option>`;
-    citySelect.disabled = true;
-
-    const res = await fetchCities(q).catch(() => []);
-    setCityOptions(res);
+    citySelect.innerHTML = `<option value="" selected>— Завантаження… —</option>`;
+    citySelect.disabled = false; // показуємо, що «живе»
+    const cities = await fetchCities(q).catch(()=>[]);
+    setCityOptions(cities);
   }, 350));
 
-  // після вибору міста — вантажимо відділення
+  // вибір міста -> тягнемо відділення
   citySelect.addEventListener('change', async () => {
     const city = citySelect.value.trim();
-    if (!city) { setEmptyWarehouse(); return; }
-
-    warehouseSelect.innerHTML = `<option value="" selected disabled>Завантаження...</option>`;
-    warehouseSelect.disabled = true;
+    if (!city) { setEmptyWarehouse('Спочатку оберіть місто'); return; }
+    warehouseSelect.innerHTML = `<option value="" selected>— Завантаження… —</option>`;
+    warehouseSelect.disabled = false;
     if (whStatus) whStatus.textContent = 'Завантажуємо відділення…';
-
-    const list = await fetchWarehousesByCityName(city).catch(() => []);
+    const list = await fetchWarehousesByCityName(city).catch(()=>[]);
     setWarehouseOptions(list);
   });
 }
 
-/* ───────────── Старт ───────────── */
+/* ────────── Старт ────────── */
 document.addEventListener('DOMContentLoaded', () => {
   renderCartBlock();
   initForm();
