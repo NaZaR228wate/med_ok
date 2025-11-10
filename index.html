@@ -23,30 +23,30 @@
             <span>med_ok</span>
         </a>
 
-        <!-- Бургер -->
+        <nav id="primary-nav" data-open="false" aria-hidden="true">
+            <a href="#products">Продукція</a>
+            <a href="#about">Про пасіку</a>
+            <a href="#why">Чому ми</a>
+        </nav>
+
+        <div class="nav-right">
+            <button id="cartBtn" class="cart-header-btn" aria-label="Відкрити кошик">
+                🛒
+                <span id="cartQtyBadge" class="cart-badge">0</span>
+            </button>
+            <a class="cta header-order-btn" href="order.html">Замовити</a>
+        </div>
+
         <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
             <span class="menu-toggle__bar"></span>
             <span class="menu-toggle__bar"></span>
             <span class="menu-toggle__bar"></span>
             <span class="visually-hidden">Меню</span>
         </button>
-
-        <!-- Навігація -->
-        <nav id="primary-nav" data-open="false" aria-hidden="true">
-            <a href="#products">Продукція</a>
-            <a href="#about">Про пасіку</a>
-            <a href="#why">Чому ми</a>
-
-            <!-- Кошик у шапці -->
-            <button id="cartBtn" class="cta" style="background:#111;color:#fff;position:relative;">
-                🛒 Кошик
-                <span id="cartQtyBadge" style="position:absolute;top:-8px;right:-8px;background:#f4b400;color:#111;border-radius:999px;padding:2px 7px;font-weight:800;font-size:12px;min-width:22px;text-align:center;display:none;">0</span>
-            </button>
-
-            <a class="cta" href="order.html">Замовити</a>
-        </nav>
     </div>
 </header>
+
+
 
 <main id="main">
     <!-- ===== HERO ===== -->
