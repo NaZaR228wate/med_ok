@@ -268,15 +268,127 @@ textarea{min-height:96px; resize:vertical}
     box-shadow:0 8px 24px rgba(0,0,0,.18);transition:opacity .2s ease, transform .2s ease
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== Quantity selection overlay ===== */
+#qtyMenu{
+    /* full-screen overlay hidden by default */
+    position:fixed;
+    inset:0;
+    z-index:1200;
+    display:none;
+}
+#qtyMenu .qty-dialog{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    background:var(--card);
+    border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,.18);
+    padding:20px;
+    width:min(320px,92vw);
+}
+#qtyMenu #qtyBackdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.45);
+}
+#qtyMenu .qty-dialog label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:600;
+}
+/* стиль для степперу вибору об'єму */
+#qtyMenu .qty-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+#qtyMenu .qty-head #qtyTitle{
+    font-weight:800;
+    font-size:20px;
+}
+#qtyMenu .qty-stepper{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border:1px solid #eee;
+    border-radius:12px;
+    padding:8px 12px;
+    background:#fff;
+    margin-top:8px;
+}
+#qtyMenu .qty-step{
+    width:40px;
+    height:36px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    background:#fff;
+    font-weight:800;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+#qtyMenu .qty-step:active{
+    transform:scale(.96);
+}
+#qtyMenu .qty-value{
+    font-weight:800;
+}
+#qtyMenu .qty-price{
+    margin-top:8px;
+    text-align:right;
+    font-weight:700;
+    font-size:18px;
+}
+#qtyMenu .qty-dialog .btn{
+    margin-top:20px;
+    width:100%;
+}
+#qtyMenu .qty-dialog .btn-secondary{
+    background:#fff;
+    color:#111;
+    border:1px solid #ddd;
+    border-radius:999px;
+    padding:6px 12px;
+    font-weight:700;
+    cursor:pointer;
+    transition:background .15s ease;
+}
+#qtyMenu .qty-dialog .btn-secondary:hover{
+    background:#f4f4f4;
+}
 /* вимкнути нижню плашку всюди */
 .sticky-cta{ display:none !important; }
-/* ===== HEADER CART + ORDER ===== */
+
+/* ===== cart total summary in header ===== */
+.cart-total-header{
+    font-weight:700;
+    margin-left:6px;
+    color:var(--ink);
+    white-space:nowrap;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+}
+@media (max-width:900px){
+    .cart-total-header{
+        display:none;
+    }
+}
+
+/* ===== Header cart & order buttons ===== */
+/* Контейнер для кошика, суми та кнопки замовлення */
 .nav-right {
     display: flex;
     align-items: center;
     gap: 10px;
 }
-
+/* Кнопка кошика у шапці */
 .cart-header-btn {
     position: relative;
     background: #111;
@@ -286,10 +398,17 @@ textarea{min-height:96px; resize:vertical}
     font-weight: 700;
     padding: 10px 16px;
     cursor: pointer;
-    transition: background .2s ease;
+    transition: background .2s ease, color .2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
 }
-.cart-header-btn:hover { background: var(--accent); color:#111; }
-
+.cart-header-btn:hover {
+    background: var(--accent);
+    color: #111;
+}
+/* Бейдж із кількістю товарів на кнопці */
 .cart-badge {
     position: absolute;
     top: -8px;
@@ -304,22 +423,20 @@ textarea{min-height:96px; resize:vertical}
     min-width: 20px;
     text-align: center;
 }
-
+/* Кнопка «Замовити» у шапці */
 .header-order-btn {
     background: var(--brand);
     color: #fff;
     font-weight: 800;
     padding: 10px 16px;
     border-radius: 999px;
-    transition: background .2s ease;
+    transition: background .2s ease, color .2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 .header-order-btn:hover {
     background: var(--accent);
     color: #111;
 }
 
-@media (max-width: 900px) {
-    .nav-right {
-        margin-left: auto;
-    }
-}
