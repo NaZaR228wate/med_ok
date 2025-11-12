@@ -10,12 +10,42 @@
 <!-- ===== HEADER ===== -->
 <header>
     <div class="container nav">
-        <a href="index.html" class="brand" aria-label="На головну">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <circle cx="12" cy="12" r="10" stroke-width="2"/>
-                <circle cx="12" cy="12" r="6" stroke-width="2"/>
+        <a href="index.html" class="brand" aria-label="med_ok">
+            <!-- SVG-баночка з бліком і великою краплею -->
+            <svg id="logo-medok" viewBox="0 0 64 64" role="img">
+                <defs>
+                    <mask id="shineMask">
+                        <rect x="0" y="0" width="64" height="64" fill="black"/>
+                        <g id="jar-shape">
+                            <rect x="12" y="16" rx="6" ry="6" width="40" height="36" fill="white"/>
+                            <rect x="18" y="12" rx="4" ry="4" width="28" height="10" fill="white"/>
+                        </g>
+                    </mask>
+                    <linearGradient id="honey" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%"  stop-color="#FFD34E"/>
+                        <stop offset="100%" stop-color="#E79A00"/>
+                    </linearGradient>
+                </defs>
+
+                <!-- Баночка -->
+                <g stroke="#2B2B2B" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+                    <rect x="12" y="16" rx="6" ry="6" width="40" height="36" fill="url(#honey)"/>
+                    <rect x="18" y="12" rx="4" ry="4" width="28" height="10" fill="#FFE7A6"/>
+                    <path d="M45 10c2 0 4 1.5 4 3.2S47 16 45 16" fill="none"/>
+                    <path d="M18 28 H46" stroke="#F8C44E" stroke-width="3"/>
+                </g>
+
+                <!-- Блік -->
+                <g mask="url(#shineMask)">
+                    <rect class="shine" x="-40" y="0" width="24" height="64" fill="rgba(255,255,255,.85)"/>
+                </g>
+
+                <!-- ВЕЛИКА крапля -->
+                <circle class="drop" cx="47" cy="18" r="5" fill="#E79A00" opacity="0"/>
             </svg>
-            <span>med_ok</span>
+
+            <!-- Замість тексту: твій wordmark -->
+            <img class="brand-wordmark" src="assets/medok-wordmark.png" alt="med_ok">
         </a>
 
         <!-- бургер -->
@@ -56,47 +86,7 @@
                 <input id="phone" type="tel" placeholder="+380..." required />
             </div>
         </div>
-
-        <!-- Вид меду / Кількість -->
-        <div class="grid">
-            <div class="col-6">
-                <label for="honey">Вид меду *</label>
-                <select id="honey" required>
-                    <option>Акацієвий</option>
-                    <option>Липовий</option>
-                    <option>Соняшниковий</option>
-                    <option>Різнотрав'я</option>
-                </select>
-            </div>
-            <div class="col-6">
-                <label for="qty">Кількість (л) *</label>
-                <select id="qty" required>
-                    <option value="0.5">0.5</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="5">5</option>
-                </select>
-
-            </div>
-        </div>
         <p id="cartOrderHint" class="muted hidden" style="margin:6px 0 0"></p>
-
-        <!-- Підсумок (виглядає як у тебе завдяки .summary) -->
-        <div class="summary">
-            <div class="summary-row">
-                <span class="muted">Ефективна ціна за 1 л</span>
-                <b id="effPrice">—</b>
-            </div>
-            <div class="summary-row">
-                <span class="muted">Коефіцієнт</span>
-                <b id="coef">—</b>
-            </div>
-            <div class="summary-row total">
-                <span>До сплати</span>
-                <b id="total">—</b>
-            </div>
-        </div>
 
         <!-- Доставка -->
         <h2 class="section-subtitle">Доставка</h2>
