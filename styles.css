@@ -444,7 +444,7 @@ textarea{min-height:96px; resize:vertical}
     text-decoration:none; color:#222;
 }
 /* logo sizes */
-.brand-wordmark { height:50px; }
+.brand-wordmark { height:35px; }
 
 /* Блік раз на 7с */
 @keyframes logo-shine {
