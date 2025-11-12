@@ -387,6 +387,7 @@ textarea{min-height:96px; resize:vertical}
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-left: auto; /* відсуває вправо */
 }
 /* Кнопка кошика у шапці */
 .cart-header-btn {
