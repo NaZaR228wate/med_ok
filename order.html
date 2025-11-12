@@ -26,6 +26,7 @@
             <a href="index.html#products">Продукція</a>
             <a href="index.html#why">Про пасіку</a>
             <a href="index.html#why">Чому ми</a>
+            <a href="order.html" class="cta">Замовити</a>
         </nav>
     </div>
 </header>
@@ -51,7 +52,47 @@
                 <input id="phone" type="tel" placeholder="+380..." required />
             </div>
         </div>
+
+        <!-- Вид меду / Кількість -->
+        <div class="grid">
+            <div class="col-6">
+                <label for="honey">Вид меду *</label>
+                <select id="honey" required>
+                    <option>Акацієвий</option>
+                    <option>Липовий</option>
+                    <option>Соняшниковий</option>
+                    <option>Різнотрав'я</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <label for="qty">Кількість (л) *</label>
+                <select id="qty" required>
+                    <option value="0.5">0.5</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="5">5</option>
+                </select>
+
+            </div>
+        </div>
         <p id="cartOrderHint" class="muted hidden" style="margin:6px 0 0"></p>
+
+        <!-- Підсумок (виглядає як у тебе завдяки .summary) -->
+        <div class="summary">
+            <div class="summary-row">
+                <span class="muted">Ефективна ціна за 1 л</span>
+                <b id="effPrice">—</b>
+            </div>
+            <div class="summary-row">
+                <span class="muted">Коефіцієнт</span>
+                <b id="coef">—</b>
+            </div>
+            <div class="summary-row total">
+                <span>До сплати</span>
+                <b id="total">—</b>
+            </div>
+        </div>
 
         <!-- Доставка -->
         <h2 class="section-subtitle">Доставка</h2>
