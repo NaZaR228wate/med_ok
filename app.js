@@ -128,6 +128,39 @@
     els.forEach((e) => io.observe(e));
   })();
 
+  /* ======= Анімація лічильника років пасіки ======= */
+  (() => {
+    const yearsEl = document.getElementById('yearsCounter');
+    if (!yearsEl || !('IntersectionObserver' in window)) return;
+    const target = parseInt(yearsEl.dataset.target || '0', 10);
+    let started = false;
+    function animate() {
+      const duration = 2000; // тривалість анімації в мс
+      const startTimestamp = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - startTimestamp) / duration, 1);
+        const value = Math.floor(progress * target);
+        yearsEl.textContent = value;
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          yearsEl.textContent = target;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting && !started) {
+          started = true;
+          animate();
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    io.observe(yearsEl);
+  })();
+
   /* ======= Кошик (localStorage) ======= */
   const CART_KEY     = 'medok_cart_v1';
   const LAST_QTY_KEY = 'medok_last_qty_v1';
