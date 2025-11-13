@@ -95,7 +95,7 @@
     <!-- ===== PRODUCTS ===== -->
     <section class="container" id="products">
         <h2>Продукція</h2>
-
+        <p class="section-subtitle">Свіжі сорти меду прямо з нашої пасіки</p>
         <div class="products-grid">
             <!-- Різнотрав’я -->
             <article class="product-card reveal">
@@ -178,15 +178,26 @@
     <!-- ===== ABOUT ===== -->
     <section class="container" id="about">
         <h2>Про нашу пасіку</h2>
-        <div class="grid">
-            <div class="col-12 card">
-                <p><b>Еко‑пасіка у серці Київщини</b>. Ми дбайливо ставимося до наших бджілок, збираємо нектар у чистих лугах і садах та відкачуємо мед власноруч, поєднуючи традиційні методи й сучасні знання.</p>
+        <div class="grid about-grid">
+            <!-- Текст та список переваг -->
+            <div class="col-6 about-text card">
+                <p><strong>Еко‑пасіка у серці Київщини.</strong> Ми дбайливо ставимося до наших бджілок, збираємо нектар у чистих лугах і садах та відкачуємо мед власноруч, поєднуючи традиційні методи й сучасні знання.</p>
                 <ul class="check">
-                    <li><span class="k">✓</span> Натуральний продукт без домішок</li>
-                    <li><span class="k">✓</span> Дбайливе ставлення до бджіл та природи</li>
-                    <li><span class="k">✓</span> Дегустація при самовивозі й швидка доставка</li>
-                    <li><span class="k">✓</span> Підтримка сімейної справи та місцевих бджолярів</li>
+                    <li>Натуральний продукт без домішок</li>
+                    <li>Дбайливе ставлення до бджіл та природи</li>
+                    <li>Дегустація при самовивозі й швидка доставка</li>
+                    <li>Підтримка сімейної справи та місцевих бджолярів</li>
                 </ul>
+                <div class="years-counter">
+                    <span id="yearsCounter" data-target="40">0</span>
+                    <span class="years-label">років досвіду</span>
+                </div>
+            </div>
+            <!-- Колаж із фото -->
+            <div class="col-6 about-images">
+                <img src="assets/beekeepers2.png" alt="Бджолярі за роботою" loading="lazy">
+                <img src="assets/honeycomb2.png" alt="Стільник із медом" loading="lazy">
+                <img src="assets/bee-flower2.png" alt="Бджілка на акації" loading="lazy">
             </div>
         </div>
     </section>
@@ -194,19 +205,31 @@
     <!-- ===== WHY ===== -->
     <section class="container" id="why">
         <h2>Чому обирають нас</h2>
-        <div class="grid">
-            <div class="col-4 card">
-                <h3 style="margin-top:0">Еко‑пасіка</h3>
-                <p class="muted">Наші вулики розташовані серед лугів та садів, без промислових зон і пестицидів.</p>
-            </div>
-            <div class="col-4 card">
-                <h3 style="margin-top:0">Сімейні традиції</h3>
-                <p class="muted">Більше 40 років передаємо любов до бджіл із покоління в покоління.</p>
-            </div>
-            <div class="col-4 card">
-                <h3 style="margin-top:0">Сервіс з турботою</h3>
-                <p class="muted">Допомагаємо обрати сорт, швидко відправляємо та завжди на зв’язку.</p>
-            </div>
+        <div class="grid why-grid">
+            <!-- Еко‑пасіка -->
+            <article class="col-4 why-card reveal">
+                <img class="why-img" src="assets/bee-flower2.png" alt="Еко‑пасіка" loading="lazy">
+                <div class="why-content">
+                    <h3>Еко‑пасіка</h3>
+                    <p class="muted">Наші вулики розташовані серед лугів та садів, без промислових зон і пестицидів.</p>
+                </div>
+            </article>
+            <!-- Сімейні традиції -->
+            <article class="col-4 why-card reveal">
+                <img class="why-img" src="assets/honeycomb2.png" alt="Сімейні традиції" loading="lazy">
+                <div class="why-content">
+                    <h3>Сімейні традиції</h3>
+                    <p class="muted">Більше 40&nbsp;років передаємо любов до бджіл із покоління в покоління.</p>
+                </div>
+            </article>
+            <!-- Сервіс з турботою -->
+            <article class="col-4 why-card reveal">
+                <img class="why-img" src="assets/beekeepers2.png" alt="Сервіс з турботою" loading="lazy">
+                <div class="why-content">
+                    <h3>Сервіс з турботою</h3>
+                    <p class="muted">Допомагаємо обрати сорт, швидко відправляємо та завжди на зв’язку.</p>
+                </div>
+            </article>
         </div>
     </section>
 
