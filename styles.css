@@ -150,24 +150,53 @@ header{
     background:var(--brand); color:#fff; font-weight:800; padding:16px 26px; border-radius:999px;
     box-shadow:0 8px 24px rgba(0,0,0,.24); transition:background .15s ease, transform .15s ease
 }
-.hero-cta:hover{background:var(--accent); transform:translateX(-50%);}
+.hero-cta:hover{background:var(--accent); transform:translateX(-50%);} /* ; */
 .hero-cta:active{transform:translateX(-50%) scale(.98)}
 
 /* ===== Продукція (вітрина) — БІЛЬШІ КАРТКИ ===== */
+/* Вітрина продукції тепер адаптивно масштабується: товари займають однакову ширину */
+/* ===== Продукція: 4 товари в один ряд ===== */
+/* ===== Продукція: 4 товари в один ряд ===== */
 .products-grid{
-    display:grid; grid-template-columns:repeat(12,1fr); gap:18px;
+    display: flex;
+    justify-content: center;   /* ряд по центру */
+    align-items: stretch;
+    gap: 24px;
 }
+
+/* На десктопі – чотири широкі картки в ряд */
+.products-grid .product-card{
+    flex: 0 0 350px;        /* фіксована ширина ~280px */
+    max-width: 380px;
+}
+
+/* На планшетах – по 2 в ряд */
+@media (max-width: 1024px){
+    .products-grid{
+        flex-wrap: wrap;
+    }
+    .products-grid .product-card{
+        flex: 0 0 calc(50% - 16px);
+        max-width: calc(50% - 16px);
+    }
+}
+
+/* На телефонах – по 1 в ряд */
+@media (max-width: 640px){
+    .products-grid .product-card{
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
 /* Десктоп: 3 в ряд (4/12) */
 .product-card{
-    grid-column: span 4;
+    /* розтягнення колонок визначається grid-container; скидаємо встановлений span */
+    grid-column: auto;
     background:var(--card); border:1px solid #eee; border-radius:16px; box-shadow:var(--shadow);
     overflow:hidden; transform:translateY(0) scale(1);
     transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s;
 }
-/* Планшет: 2 в ряд */
-@media (max-width:1024px){ .product-card{ grid-column: span 6; } }
-/* Мобільний: 1 в ряд */
-@media (max-width:640px){ .product-card{ grid-column: span 12; } }
 
 .prod-figure{ position:relative; overflow:hidden; aspect-ratio: 4/3; }
 @media (max-width:640px){ .prod-figure{ aspect-ratio:3/2 } }
@@ -364,6 +393,139 @@ textarea{min-height:96px; resize:vertical}
 }
 /* вимкнути нижню плашку всюди */
 .sticky-cta{ display:none !important; }
+
+/* ===== Доповнення до нових секцій ===== */
+
+/* Підзаголовок секції для продукції */
+.section-subtitle{
+    margin-top:-8px;
+    margin-bottom:24px;
+    font-size:16px;
+    color:var(--muted);
+    font-style:italic;
+}
+
+/* ---- ABOUT SECTION ---- */
+.about-grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:24px;
+    align-items:center;
+}
+.about-text{
+    grid-column:span 6;
+    background:var(--card);
+    border:1px solid #eee;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:24px;
+}
+@media (max-width:900px){
+    .about-text{ grid-column:span 12; }
+}
+.about-text p{
+    margin-top:0;
+    margin-bottom:16px;
+}
+.about-text ul{
+    list-style:none;
+    padding-left:0;
+    margin:0;
+}
+.about-text ul li{
+    position:relative;
+    padding-left:28px;
+    margin-bottom:8px;
+    color:var(--ink);
+}
+.about-text ul li::before{
+    content:'✓';
+    position:absolute;
+    left:0;
+    top:0;
+    font-weight:800;
+    color:var(--brand);
+}
+.years-counter{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    margin-top:22px;
+}
+.years-counter #yearsCounter{
+    font-size:clamp(32px,6vw,60px);
+    font-weight:900;
+    color:var(--brand);
+}
+.years-counter .years-label{
+    font-size:clamp(16px,2.5vw,24px);
+    font-weight:600;
+    color:var(--ink);
+    line-height:1.2;
+}
+.about-images{
+    grid-column:span 6;
+    display:grid;
+    grid-template-columns:60% 40%;
+    grid-template-rows: 1fr 1fr;
+    gap:14px;
+}
+@media (max-width:900px){
+    .about-images{ grid-column:span 12; margin-top:18px; grid-template-columns:repeat(2,1fr); grid-template-rows: auto; }
+}
+.about-images img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:18px;
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+}
+.about-images img:first-child{
+    grid-row:1 / span 2;
+}
+
+/* ---- WHY SECTION ---- */
+.why-grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:24px;
+}
+.why-card{
+    grid-column:span 4;
+    background:var(--card);
+    border:1px solid #eee;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    transition:transform .25s ease, box-shadow .25s ease;
+}
+.why-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 16px 32px rgba(0,0,0,.12);
+}
+@media(max-width:900px){
+    .why-card{ grid-column:span 12; }
+}
+.why-img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+.why-content{
+    padding:20px;
+}
+.why-content h3{
+    margin:0 0 8px 0;
+    font-size:clamp(18px,2vw,22px);
+    font-weight:800;
+}
+.why-content p{
+    margin:0;
+    color:var(--muted);
+    line-height:1.5;
+}
 
 /* ===== cart total summary in header ===== */
 .cart-total-header{
