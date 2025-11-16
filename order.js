@@ -2,7 +2,10 @@
 /* Відображення кошика + надсилання замовлення через Worker */
 
 const CART_KEY = 'medok_cart_v1';
-const API_URL  = 'https://medok-proxy.veter010709.workers.dev/order'; // твій Cloudflare Worker
+// Базовий URL для всіх запитів до твого Cloudflare Worker
+const API_BASE = 'https://medok-proxy.veter010709.workers.dev';
+// Шлях для надсилання замовлення
+const API_URL  = `${API_BASE}/order`;
 
 // форматування гривні
 function formatUAH(n) {
@@ -114,6 +117,16 @@ function initForm() {
             return;
         }
 
+        // Перевіряємо обов’язкові поля (ім’я, телефон, місто, відділення)
+        const nameVal      = form.querySelector('#name')?.value.trim();
+        const phoneVal     = form.querySelector('#phone')?.value.trim();
+        const cityVal      = form.querySelector('#city')?.value.trim();
+        const warehouseVal = form.querySelector('#warehouse')?.value.trim();
+        if (!nameVal || !phoneVal || !cityVal || !warehouseVal) {
+            alert('Будь ласка, заповніть всі обов’язкові поля (Ім’я, Телефон, Місто, Відділення).');
+            return;
+        }
+
         const data = buildOrderData(form, items);
 
         try {
@@ -122,47 +135,114 @@ function initForm() {
                 alert('✅ Замовлення успішно надіслано!');
                 localStorage.removeItem(CART_KEY);
                 form.reset();
-                window.location.href = 'index.html'; // можна прибрати, якщо не хочеш редірект
+                window.location.href = 'index.html';
             } else {
                 alert('❌ Помилка: ' + (json.error || 'невідомо'));
             }
         } catch (err) {
             console.error(err);
-            alert('⚠️ Не вдалося надіслати замовлення. Перевір з’єднання.');
+            alert('⚠️ Не вдалося надіслати замовлення. Перевірте з’єднання.');
         }
     });
 }
 function initNovaPoshta() {
-    const cityInput = document.querySelector('#citySearch');
-    const citySelect = document.querySelector('#city');
+    const cityInput       = document.querySelector('#citySearch');
+    const citySelect      = document.querySelector('#city');
     const warehouseSelect = document.querySelector('#warehouse');
 
     if (!cityInput || !citySelect || !warehouseSelect) return;
 
-    let lastCityQuery = '';
-    let cityResults = [];
+    // утиліти для встановлення плейсхолдерів та стану
+    const setEmptyCity = (text = 'Спочатку введіть 2+ літери у полі вище…') => {
+        citySelect.innerHTML = `<option value="" selected>— ${text} —</option>`;
+        citySelect.disabled = true;
+        citySelect.selectedIndex = 0;
+    };
+    const setEmptyWarehouse = (text = 'Спочатку оберіть місто') => {
+        warehouseSelect.innerHTML = `<option value="" selected>— ${text} —</option>`;
+        warehouseSelect.disabled = true;
+        warehouseSelect.selectedIndex = 0;
+    };
+
+    // початковий стан
+    setEmptyCity();
+    setEmptyWarehouse();
 
     // автопошук міст
+    let lastCityQuery = '';
     cityInput.addEventListener('input', async () => {
         const query = cityInput.value.trim();
-        if (query.length < 2 || query === lastCityQuery) return;
+        if (query === lastCityQuery) return;
         lastCityQuery = query;
 
-        const cities = await fetchCities(query);
-        cityResults = cities;
-        citySelect.innerHTML = cities.length
-            ? cities.map(c => `<option value="${c.Description}">${c.Description}</option>`).join('')
-            : `<option value="">Місто не знайдено</option>`;
+        // якщо менше 2 символів — повертаємо початковий стан
+        if (query.length < 2) {
+            setEmptyCity();
+            setEmptyWarehouse();
+            return;
+        }
+
+        // показуємо завантаження
+        citySelect.innerHTML = `<option value="" selected>— Завантаження… —</option>`;
+        citySelect.disabled = true;
+
+        try {
+            const cities = await fetchCities(query);
+            if (!cities || !cities.length) {
+                // немає результатів
+                citySelect.innerHTML = `<option value="" selected>— Місто не знайдено —</option>`;
+                citySelect.disabled = true;
+                // залишаємо warehouse порожнім
+                setEmptyWarehouse();
+                return;
+            }
+
+            // вставляємо плейсхолдер і результати
+            citySelect.innerHTML = [
+                `<option value="" selected disabled>— Оберіть місто —</option>`,
+                ...cities.map(c => `<option value="${c.Description}">${c.Description}</option>`)
+            ].join('');
+            citySelect.disabled = false;
+            citySelect.selectedIndex = 0;
+
+            // після завантаження міст скидаємо відділення
+            setEmptyWarehouse();
+        } catch (err) {
+            console.error('fetchCities error', err);
+            setEmptyCity('Помилка завантаження міст');
+            setEmptyWarehouse();
+        }
     });
 
     // при виборі міста — підтягуємо відділення
     citySelect.addEventListener('change', async () => {
-        const city = citySelect.value;
-        warehouseSelect.innerHTML = `<option>Завантаження...</option>`;
-        const warehouses = await fetchWarehouses(city);
-        warehouseSelect.innerHTML = warehouses.length
-            ? warehouses.map(w => `<option value="${w.Description}">${w.Description}</option>`).join('')
-            : `<option value="">Немає відділень</option>`;
+        const city = citySelect.value.trim();
+        if (!city) {
+            setEmptyWarehouse();
+            return;
+        }
+        // показуємо завантаження
+        warehouseSelect.innerHTML = `<option value="" selected>— Завантаження… —</option>`;
+        warehouseSelect.disabled = true;
+        warehouseSelect.selectedIndex = 0;
+        try {
+            const warehouses = await fetchWarehouses(city);
+            if (!warehouses || !warehouses.length) {
+                warehouseSelect.innerHTML = `<option value="" selected disabled>— Немає відділень —</option>`;
+                warehouseSelect.disabled = true;
+                return;
+            }
+            warehouseSelect.innerHTML = [
+                `<option value="" selected disabled>— Оберіть відділення —</option>`,
+                ...warehouses.map(w => `<option value="${w.Description}">${w.Description}</option>`)
+            ].join('');
+            warehouseSelect.disabled = false;
+            warehouseSelect.selectedIndex = 0;
+        } catch (err) {
+            console.error('fetchWarehouses error', err);
+            warehouseSelect.innerHTML = `<option value="" selected disabled>— Помилка завантаження —</option>`;
+            warehouseSelect.disabled = true;
+        }
     });
 }
 
