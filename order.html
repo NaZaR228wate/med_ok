@@ -15,16 +15,16 @@
         </a>
 
         <!-- бургер -->
-        <button class="menu-toggle" id="menuBtn" aria-label="Меню" aria-expanded="false">
+        <button class="menu-toggle" id="menuBtn" aria-label="Меню" aria-expanded="false" aria-controls="primary-nav">
             <span class="menu-toggle__bar"></span>
             <span class="menu-toggle__bar"></span>
             <span class="menu-toggle__bar"></span>
         </button>
 
         <!-- випадаюче меню (буде горизонтальним на десктопі завдяки твоєму CSS) -->
-        <nav id="primary-nav" data-open="false">
+        <nav id="primary-nav" data-open="false" aria-hidden="true">
             <a href="index.html#products">Продукція</a>
-            <a href="index.html#why">Про пасіку</a>
+            <a href="index.html#about">Про пасіку</a>
             <a href="index.html#why">Чому ми</a>
         </nav>
     </div>
@@ -118,9 +118,36 @@
     </form>
 </main>
 
-<footer class="container" style="padding-top:0">
-    <div class="muted" style="border-top:1px solid #eee; padding-top:14px">
-        © med_ok — Доставка по Україні (Нова пошта)
+<footer class="footer">
+    <div class="container footer-grid">
+        <div class="footer-brand">
+            <img class="brand-wordmark" src="assets/medok-wordmark.png" alt="med_ok">
+            <p class="muted">Свій мед із сімейної пасіки: від вуликів до баночки контролюємо кожен етап.</p>
+            <div class="footer-tags">
+                <span class="chip">Чесна вага</span>
+                <span class="chip">Без антибіотиків</span>
+                <span class="chip">Доставка Новою поштою</span>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <h4>Головні сторінки</h4>
+            <a href="index.html#products">🍯 Продукція</a>
+            <a href="index.html#about">🐝 Про пасіку</a>
+            <a href="index.html#why">👍 Чому нас обирають</a>
+        </div>
+
+        <div class="footer-col">
+            <h4>Контакти</h4>
+            <a class="footer-link" href="tel:+380632369027">📞 +380 63 236 9027</a>
+            <a class="footer-link" href="viber://chat?number=%2B380632369027">💬 Написати у Viber</a>
+            <div class="footer-badge">Відправляємо замовлення щодня</div>
+        </div>
+
+    </div>
+    <div class="container footer-bottom">
+        <div>© <span id="y"></span> med_ok. Натуральний мед з пасіки.</div>
+        <div class="footer-bottom__right">Бориспільський район, Київська область.</div>
     </div>
 </footer>
 <script src="order.js" defer></script>
