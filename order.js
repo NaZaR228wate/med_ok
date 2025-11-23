@@ -5,6 +5,11 @@ const CART_KEY  = 'medok_cart_v1';
 const API_BASE  = 'https://medok-proxy.veter010709.workers.dev';
 const API_ORDER = `${API_BASE}/order`;
 
+(() => {
+    const y = document.getElementById('y');
+    if (y) y.textContent = new Date().getFullYear();
+})();
+
 /* ────────── Утиліти ────────── */
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -72,6 +77,54 @@ function renderCartBlock() {
     totalEl.textContent = formatUAH(sum);
     const payTotal = $('#payTotal');
     if (payTotal) payTotal.textContent = formatUAH(sum);
+}
+
+/* ────────── Меню (бургер) ────────── */
+function initNav() {
+    const toggle = document.getElementById('menuBtn');
+    const nav    = document.getElementById('primary-nav');
+    if (!toggle || !nav) return;
+
+    const close = () => {
+        nav.dataset.open = 'false';
+        nav.setAttribute('aria-hidden', 'true');
+        toggle.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+    };
+    const open = () => {
+        nav.dataset.open = 'true';
+        nav.removeAttribute('aria-hidden');
+        toggle.classList.add('is-open');
+        toggle.setAttribute('aria-expanded', 'true');
+    };
+
+    close();
+
+    toggle.addEventListener('click', () => {
+        nav.dataset.open === 'true' ? close() : open();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (nav.dataset.open !== 'true') return;
+        if (nav.contains(e.target) || toggle.contains(e.target)) return;
+        close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') close();
+    });
+
+    const syncDesktop = () => {
+        if (window.matchMedia('(min-width: 900px)').matches) {
+            nav.dataset.open = 'true';
+            nav.removeAttribute('aria-hidden');
+            toggle.classList.remove('is-open');
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+    };
+
+    syncDesktop();
+    window.addEventListener('resize', syncDesktop);
 }
 
 /* ────────── Відправлення ────────── */
@@ -228,6 +281,7 @@ function initNovaPoshta() {
 
 /* ────────── Старт ────────── */
 document.addEventListener('DOMContentLoaded', () => {
+    initNav();
     // якщо кошик порожній — назад до товарів
     const initialItems = loadCart();
     if (!initialItems || initialItems.length === 0) {
