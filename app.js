@@ -453,3 +453,15 @@
     closeQtyMenu();
   });
 })();
+// Підвантажити фони інших слайдів після onload/idle
+window.addEventListener('load', () => {
+    const late = [
+        ['[data-flavor="linden"]',    'assets/hero-linden.webp'],
+        ['[data-flavor="sunflower"]', 'assets/hero-sunflower.webp']
+    ];
+    const setBg = ([sel, url]) => {
+        const el = document.querySelector('.hero-slider ' + sel);
+        if (el && !el.style.backgroundImage) el.style.backgroundImage = `url("${url}")`;
+    };
+    (window.requestIdleCallback || setTimeout)(() => late.forEach(setBg), 150);
+});
