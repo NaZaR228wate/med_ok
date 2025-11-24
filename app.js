@@ -334,9 +334,13 @@
   // Відкрити/закрити кошик
   function openCart() {
     if (cartDrawer) cartDrawer.style.display = 'block';
+    // Prevent background page from scrolling when cart is open
+    document.body.style.overflow = 'hidden';
   }
   function closeCartDrawer() {
     if (cartDrawer) cartDrawer.style.display = 'none';
+    // Restore scroll when cart is closed
+    document.body.style.overflow = '';
   }
 
   // Події кошика
@@ -360,6 +364,12 @@
   window.addEventListener('cart:changed', renderCart);
   // Початковий рендер
   renderCart();
+
+  // Make cart total clickable to open cart drawer
+  if (cartTotalHeader) {
+    cartTotalHeader.style.cursor = 'pointer';
+    cartTotalHeader.addEventListener('click', openCart);
+  }
 
   /* ======= Кнопки "У кошик" у продуктах ======= */
   document.addEventListener('click', (e) => {
