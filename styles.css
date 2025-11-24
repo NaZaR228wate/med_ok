@@ -721,3 +721,21 @@ textarea{min-height:96px; resize:vertical}
     .footer-bottom { flex-direction:column; align-items:flex-start; }
     .footer-cta { order:-1; }
 }
+
+/* === Відгуки клієнтів === */
+.testimonials-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+/* === FAQ === */
+#faq details {
+    margin-bottom: 12px;
+    padding: 12px;
+}
+#faq summary {
+    cursor: pointer;
+    font-weight: 700;
+    outline: none;
+}
