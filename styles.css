@@ -205,7 +205,7 @@ header{
 @media (max-width:640px){ .prod-figure{ aspect-ratio:3/2 } }
 .prod-img{ width:100%; height:100%; object-fit:cover; display:block; transform:scale(1.02); transition:transform .6s ease }
 .badge{
-    position:absolute; left:10px; top:10px; background:#111; color:#fff; font-weight:800;
+    position:absolute; left:10px; top:10px; background:#1D9A18; color:#fff; font-weight:800;
     font-size:13px; padding:7px 11px; border-radius:999px; opacity:.92; animation: card-bob 3s ease-in-out infinite;
 }
 .price-badge{
@@ -272,12 +272,25 @@ textarea{min-height:96px; resize:vertical}
 .summary-row.total{ font-weight:800 }
 
 .actions{ display:flex; justify-content:center; padding-top:12px }
-.btn{
-    display:inline-block; background:var(--brand); color:#fff; border-radius:28px;
-    padding:10px 18px; font-weight:800; border:none; cursor:pointer;
-    transition:background .15s ease, transform .02s ease
+.btn {
+    display: inline-block;
+    background: var(--brand);
+    color: #fff;
+    border-radius: 28px;
+    padding: 10px 18px;
+    font-weight: 800;
+    border: 2px solid #d9a400; /* 🔸 обводка кольору меду */
+    cursor: pointer;
+    transition: background .15s ease, transform .02s ease;
 }
-.btn:hover{ background:var(--accent) } .btn:active{ transform:scale(.98) }
+
+.btn:hover {
+    background: var(--accent);
+}
+
+.btn:active {
+    transform: scale(.98);
+}
 
 /* ===== Sticky CTA ===== */
 .sticky-cta{
@@ -738,4 +751,44 @@ textarea{min-height:96px; resize:vertical}
     cursor: pointer;
     font-weight: 700;
     outline: none;
+}
+
+/* ===== MINI PRICE ===== */
+.mini-price {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    color: #555;
+    font-size: 13px;
+}
+.mini-price .pill {
+    border: 1px solid #eee;
+    border-radius: 999px;
+    padding: 4px 8px;
+    background: #fff;
+}
+/* ===== MINI PRICE ===== */
+.mini-price {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: #111;                 /* темніший колір */
+    font-size: 15px;             /* трохи більший шрифт */
+    font-weight: 800;            /* жирний шрифт */
+    justify-content: center;     /* по центру під карткою */
+}
+.mini-price .pill {
+    border-radius: 999px;
+    padding: 6px 10px;
+    background: #fff9e6;         /* легкий теплий фон */
+    color: #111;
+    box-shadow: 0 2px 6px rgba(0,0,0,.06);
+    transition: transform .2s ease;
+}
+
+.mini-price .pill:hover {
+    transform: scale(1.06);
+    background: #ffe97f;
 }
