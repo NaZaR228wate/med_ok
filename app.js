@@ -200,6 +200,21 @@
     return `${type}|${qty}`;
   }
 
+  // Заповнити блоки mini-price для товарів (показує 0.5 л та 1 л)
+  (() => {
+    const areas = document.querySelectorAll('[data-bind-price]');
+    if (!areas.length) return;
+    areas.forEach((area) => {
+      const type = area.getAttribute('data-bind-price');
+      const table = PRICES?.[type];
+      if (!table) return;
+      const keys = Object.keys(table).filter((k) => k === '0.5' || k === '1');
+      area.innerHTML = keys.map((k) => {
+        return `<span class="pill">${k} л — ${formatUAH(table[k])}</span>`;
+      }).join(' ');
+    });
+  })();
+
   // Додати позицію в кошик
   function addToCart(type, qtyLiters) {
     const price = PRICES?.[type]?.[String(qtyLiters)];
