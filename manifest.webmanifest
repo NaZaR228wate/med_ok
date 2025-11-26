@@ -1,6 +1,6 @@
 {
-  "name": "med_ok",
-  "short_name": "med_ok",
+  "name": "medok",
+  "short_name": "medok",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
