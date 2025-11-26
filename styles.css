@@ -792,3 +792,7 @@ textarea{min-height:96px; resize:vertical}
     transform: scale(1.06);
     background: #ffe97f;
 }
+header img {
+  max-height: 50px; /* або менше, якщо треба */
+  width: auto;       /* щоб не спотворювалось */
+}
