@@ -97,7 +97,7 @@ function renderCartBlock() {
 
 /* ────────── Меню (бургер) ────────── */
 function initNav() {
-    const toggle = document.getElementById('menuBtn');
+    const toggle = document.getElementById('menu-toggle');
     const nav    = document.getElementById('primary-nav');
     if (!toggle || !nav) return;
 
@@ -214,7 +214,10 @@ function initForm() {
                 localStorage.removeItem(CART_KEY);
                 form.reset();
                 // м'який редирект після плавної анімації
-                setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+                setTimeout(() => {
+                    window.location.href = '/thank-you.html';
+                }, 1200);
+
             } else {
                 showSuccessToast('❌ Помилка: ' + (json?.error || 'невідомо'));
             }
