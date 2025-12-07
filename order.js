@@ -214,10 +214,12 @@ function initForm() {
                 localStorage.removeItem(CART_KEY);
                 form.reset();
                 // м'який редирект після плавної анімації
-                setTimeout(() => {
-                    window.location.href = '/thank-you.html';
-                }, 1200);
-
+                const orderId = (json && json.order_id) ? json.order_id : '';
+setTimeout(() => {
+  window.location.href = orderId
+    ? '/thank-you.html?order=' + encodeURIComponent(orderId)
+    : '/thank-you.html';
+}, 1200);
             } else {
                 showSuccessToast('❌ Помилка: ' + (json?.error || 'невідомо'));
             }
