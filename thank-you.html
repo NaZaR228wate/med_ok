@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <title>Дякуємо за замовлення</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body{font-family: Inter, system-ui, sans-serif; margin:0; background:#fff9f2;}
+        .wrap{max-width:720px; margin:40px auto; padding:24px; background:#fff; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.06)}
+        h1{margin:0 0 8px}
+        .code{display:inline-block; padding:6px 10px; border-radius:8px; background:#fff3cd}
+        .card{margin-top:16px; padding:16px; border:1px solid #eee; border-radius:12px}
+        .row{display:flex; gap:12px; flex-wrap:wrap}
+        .row > div{flex:1 1 220px}
+        a.btn{display:inline-block; margin-top:16px; padding:10px 16px; border-radius:12px; text-decoration:none; background:#2ecc71; color:#fff}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>Дякуємо! Замовлення прийнято ✅</h1>
+    <p>Ми зв’яжемося з вами найближчим часом, щоб уточнити деталі.</p>
+    <p>Номер замовлення: <span class="code" id="orderId">—</span></p>
+
+    <div class="card" id="summary" hidden>
+        <h3>Підсумок</h3>
+        <div class="row">
+            <div><b>Ім’я:</b> <span id="name"></span></div>
+            <div><b>Телефон:</b> <span id="phone"></span></div>
+            <div><b>Оплата:</b> <span id="pay"></span></div>
+        </div>
+        <div class="row">
+            <div><b>Місто (НП):</b> <span id="city"></span></div>
+            <div><b>Відділення:</b> <span id="wh"></span></div>
+        </div>
+        <div id="items"></div>
+        <div id="total"></div>
+    </div>
+
+    <a class="btn" href="/index.html">Продовжити покупки</a>
+</div>
+
+<script>
+    const params = new URLSearchParams(location.search);
+    const orderId = params.get('order') || '—';
+    document.getElementById('orderId').textContent = orderId;
+
+    const data = JSON.parse(sessionStorage.getItem('medok_last_order') || 'null');
+    if (data) {
+        const $ = (id)=>document.getElementById(id);
+        $('summary').hidden = false;
+        $('name').textContent  = data.name || '';
+        $('phone').textContent = data.phone || '';
+        $('pay').textContent   = data.pay === 'prepay' ? 'Повна передоплата' : 'Накладений платіж';
+        $('city').textContent  = data.np_city || '';
+        $('wh').textContent    = data.np_warehouse || '';
+
+        const items = document.getElementById('items');
+        if (data.from_cart && Array.isArray(data.cart)) {
+            const ul = document.createElement('ul');
+            data.cart.forEach(i=>{
+                const li = document.createElement('li');
+                li.textContent = `${i.type} — ${i.qty} л × ${i.count} шт`;
+                ul.appendChild(li);
+            });
+            items.appendChild(ul);
+            if (data.total != null) document.getElementById('total').textContent = 'Разом: ' + data.total + ' грн';
+        } else if (data.honey) {
+            items.textContent = `Товар: ${data.honey}, кількість: ${data.qty} л`;
+        }
+
+        // щоб при F5 не висіло навіки
+        sessionStorage.removeItem('medok_last_order');
+        history.replaceState({}, '', '/thank-you.html');
+    }
+</script>
+</body>
+</html>
