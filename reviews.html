@@ -30,7 +30,7 @@
             <a href="index.html#about">Про пасіку</a>
             <a href="index.html#why">Чому обирають нас</a>
             <a href="reviews.html">Відгуки</a>
-            <a class="cta" href="index.html#products">Замовити</a>
+            <a class="cta" href="order.html">Замовити</a>
         </nav>
 
         <div class="nav-right">
@@ -159,5 +159,150 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
 </script>
+<script>
+    (() => {
+        const API_BASE = 'https://medok-proxy.veter010709.workers.dev';
+
+        // ---- елементи
+        const listEl = document.querySelector('#reviews .testimonials-grid');
+        const form   = document.getElementById('reviewForm');
+        const nameEl = document.getElementById('reviewName');
+        const cityEl = document.getElementById('reviewCity');
+        const textEl = document.getElementById('reviewText');
+
+        // ---- admin режим: ?admin=KEY -> збережемо у localStorage
+        const url = new URL(location.href);
+        const urlAdmin = url.searchParams.get('admin');
+        if (urlAdmin) localStorage.setItem('medok_admin_key', urlAdmin);
+        const ADMIN_KEY = localStorage.getItem('medok_admin_key') || '';
+
+        const isAdmin = !!ADMIN_KEY;
+
+        // ---- утиліти
+        function makeCard(r) {
+            const el = document.createElement('article');
+            el.className = 'card';
+            el.dataset.id = r.id;
+            el.innerHTML = `
+      <p style="margin-top:0; white-space:pre-wrap">“${escapeHtml(r.text)}”</p>
+      <p class="muted">— ${escapeHtml(r.name)}, м. ${escapeHtml(r.city)}</p>
+    `;
+            if (isAdmin) {
+                const bar = document.createElement('div');
+                bar.style.display = 'flex';
+                bar.style.gap = '8px';
+                bar.style.marginTop = '8px';
+
+                const editBtn = document.createElement('button');
+                editBtn.type = 'button';
+                editBtn.className = 'btn btn-sm';
+                editBtn.textContent = 'Редагувати';
+
+                const delBtn = document.createElement('button');
+                delBtn.type = 'button';
+                delBtn.className = 'btn btn-sm btn-danger';
+                delBtn.textContent = 'Видалити';
+
+                editBtn.onclick = async () => {
+                    const name = prompt('Імʼя', r.name);
+                    if (name == null) return;
+                    const city = prompt('Місто', r.city);
+                    if (city == null) return;
+                    const text = prompt('Відгук', r.text);
+                    if (text == null) return;
+                    const ok = await apiPatch(r.id, { name, city, text });
+                    if (ok) { r.name=name; r.city=city; r.text=text; el.replaceWith(makeCard(r)); }
+                };
+                delBtn.onclick = async () => {
+                    if (!confirm('Точно видалити?')) return;
+                    const ok = await apiDelete(r.id);
+                    if (ok) el.remove();
+                };
+
+                bar.append(editBtn, delBtn);
+                el.append(bar);
+            }
+            return el;
+        }
+
+        function prependCard(r) {
+            const card = makeCard(r);
+            listEl.insertBefore(card, listEl.firstChild);
+            return card;
+        }
+
+        function escapeHtml(s='') {
+            return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+        }
+
+        // ---- API
+        async function apiGet() {
+            const r = await fetch(`${API_BASE}/reviews`);
+            const j = await r.json(); return j?.ok ? j.data : [];
+        }
+        async function apiPost(payload) {
+            const r = await fetch(`${API_BASE}/reviews`, {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify(payload)
+            });
+            return r.json();
+        }
+        async function apiPatch(id, payload) {
+            const r = await fetch(`${API_BASE}/reviews/${id}`, {
+                method:'PATCH',
+                headers:{'Content-Type':'application/json','Authorization':`Bearer ${ADMIN_KEY}`},
+                body: JSON.stringify(payload)
+            });
+            const j = await r.json().catch(()=>({}));
+            if (!r.ok || !j?.ok) { alert(j?.error || 'Помилка'); return false; }
+            return true;
+        }
+        async function apiDelete(id) {
+            const r = await fetch(`${API_BASE}/reviews/${id}`, {
+                method:'DELETE',
+                headers:{'Authorization':`Bearer ${ADMIN_KEY}`}
+            });
+            const j = await r.json().catch(()=>({}));
+            if (!r.ok || !j?.ok) { alert(j?.error || 'Помилка'); return false; }
+            return true;
+        }
+
+        // ---- завантаження з сервера
+        (async () => {
+            try {
+                const data = await apiGet();
+                // показуємо серверні відгуки ПЕРЕД статичними
+                data.forEach(r => listEl.insertBefore(makeCard(r), listEl.firstChild));
+            } catch (e) { console.warn('reviews load failed', e); }
+        })();
+
+        // ---- відправка форми
+        form?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = nameEl.value.trim();
+            const city = cityEl.value.trim();
+            const text = textEl.value.trim();
+            if (!name || !city || !text) return;
+
+            const optimistic = prependCard({ id:'tmp', name, city, text });
+            form.reset();
+
+            try {
+                const j = await apiPost({ name, city, text });
+                if (j?.ok) {
+                    // замінимо тим, що з сервера (з реальним id)
+                    optimistic.replaceWith(makeCard(j.data));
+                } else {
+                    optimistic.remove();
+                    alert(j?.error || 'Не вдалося надіслати відгук');
+                }
+            } catch {
+                optimistic.remove();
+                alert('Немає звʼязку. Спробуйте пізніше.');
+            }
+        });
+    })();
+</script>
+
 </body>
 </html>
