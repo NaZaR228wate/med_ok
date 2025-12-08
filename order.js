@@ -1,5 +1,5 @@
 /* med_ok — order.js ================= */
-/* Кошик на сторінці замовлення + Нова Пошта + надсилання в Worker + редірект на “Подяку” */
+/* Кошик на сторінці замовлення + Нова Пошта + відправка в Worker + "Подяка" */
 
 const CART_KEY  = 'medok_cart_v1';
 const API_BASE  = 'https://medok-proxy.veter010709.workers.dev';
@@ -7,6 +7,9 @@ const API_ORDER = `${API_BASE}/order`;
 
 /* Рік у футері */
 (() => { const y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear(); })();
+
+/* ────────── Глобальний прапорець для безпечної навігації ────────── */
+window.__allowNavigate = false;
 
 /* ────────── Утиліти ────────── */
 const $  = (s, r = document) => r.querySelector(s);
@@ -29,7 +32,7 @@ function showSuccessToast(msg = '✅ Замовлення надіслано!') 
 }
 function setStatus(el, text = '') { if (el) el.textContent = text; }
 
-/* ────────── Нова пошта (API) ────────── */
+/* ────────── Нова Пошта (API) ────────── */
 async function fetchCities(q) {
   if ((q||'').trim().length < 2) return [];
   const r = await fetch(`${API_BASE}/np/cities?q=${encodeURIComponent(q)}`);
@@ -183,10 +186,10 @@ function initForm() {
       const json = await sendOrder(data);
 
       if (json?.ok) {
-        // 1) Тост
+        // 1) тост
         showSuccessToast('✅ Замовлення надіслано!');
 
-        // 2) ЗБЕРЕГТИ підсумок для thank-you (до очищення кошика!)
+        // 2) зберегти підсумок для "Подяки" ДО очищення кошика
         try {
           sessionStorage.setItem('medok_last_order', JSON.stringify({
             name:  data.name,
@@ -200,19 +203,29 @@ function initForm() {
           }));
         } catch {}
 
-        // 3) Почистити кошик + форму
+        // 3) почистити кошик + форму
         localStorage.removeItem(CART_KEY);
         form.reset();
 
-        // 4) Редірект
+        // 4) абсолютний URL "Подяки"
         const orderId = (json && json.order_id) ? String(json.order_id) : '';
         const base = new URL('/thank-you.html', location.origin).href;
         const target = orderId ? `${base}?order=${encodeURIComponent(orderId)}` : base;
 
-        // відключимо попередження “beforeunload”, якщо десь є
+        // 5) дозволити навігацію (щоб beforeunload не блокував)
+        window.__allowNavigate = true;
         try { window.onbeforeunload = null; } catch {}
 
-        setTimeout(() => { location.replace(target); }, 800);
+        // 6) надійний редірект з фолбеками
+        setTimeout(() => {
+          try { location.replace(target); } catch {}
+          setTimeout(() => {
+            try { location.href = target; } catch {}
+            setTimeout(() => {
+              try { location.assign(target); } catch {}
+            }, 50);
+          }, 120);
+        }, 800);
       } else {
         showSuccessToast('❌ Помилка: ' + (json?.error || 'невідомо'));
       }
@@ -225,7 +238,7 @@ function initForm() {
   });
 }
 
-/* ────────── Поля Нової пошти: плейсхолдери + індикатори + автопам'ять ────────── */
+/* ────────── Поля Нової Пошти: плейсхолдери + індикатори + автопам'ять ────────── */
 function initNovaPoshta() {
   const cityInput       = $('#citySearch');
   const citySelect      = $('#city');
@@ -352,12 +365,16 @@ document.addEventListener('DOMContentLoaded', () => {
   phoneEl.addEventListener('input', () => { try { localStorage.setItem(K2, phoneEl.value); } catch {} });
 })();
 
-/* Попередження при виході, якщо кошик не порожній */
+/* Попередження при виході, якщо кошик не порожній (з повагою до редіректу) */
 (function guardLeaving(){
   window.addEventListener('beforeunload', (e) => {
     try {
+      if (window.__allowNavigate) return;
       const cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
-      if (cart.length > 0) { e.preventDefault(); e.returnValue = ''; }
+      if (cart.length > 0) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
     } catch {}
   });
 })();
