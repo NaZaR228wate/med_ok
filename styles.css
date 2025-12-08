@@ -796,3 +796,8 @@ header img {
   max-height: 50px; /* або менше, якщо треба */
   width: auto;       /* щоб не спотворювалось */
 }
+.footer-logo {
+    max-width: 140px; /* відповідний розмір логотипа */
+    height: auto;     /* зберігає пропорції, не розтягує */
+    display: block;
+}
