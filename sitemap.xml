@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- Головна -->
+  <url>
+    <loc>https://nazar228wate.github.io/med_ok/</loc>
+    <lastmod>2025-12-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://nazar228wate.github.io/med_ok/assets/prod-mixed.webp</image:loc>
+      <image:title>Натуральний мед med_ok</image:title>
+    </image:image>
+  </url>
+
+  <!-- Оформлення замовлення -->
+  <url>
+    <loc>https://nazar228wate.github.io/med_ok/order.html</loc>
+    <lastmod>2025-12-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Відгуки -->
+  <url>
+    <loc>https://nazar228wate.github.io/med_ok/reviews.html</loc>
+    <lastmod>2025-12-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- thank-you НЕ додаємо до sitemap, бо noindex -->
+</urlset>
