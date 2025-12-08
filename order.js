@@ -1,5 +1,5 @@
 /* med_ok — order.js ================= */
-/* Кошик на сторінці замовлення + Нова Пошта + відправка в Worker + "Подяка" */
+/* Замовлення + Нова Пошта + Телеграм + "Подяка" з ультра-надійним редіректом */
 
 const CART_KEY  = 'medok_cart_v1';
 const API_BASE  = 'https://medok-proxy.veter010709.workers.dev';
@@ -20,7 +20,6 @@ const debounce = (fn, ms = 350) => { let t; return (...a)=>{ clearTimeout(t); t=
 /* ────────── UI helpers ────────── */
 function showSuccessToast(msg = '✅ Замовлення надіслано!') {
   const toast = document.createElement('div');
-  toast.className = 'toast show';
   toast.textContent = msg;
   Object.assign(toast.style, {
     position:'fixed', left:'50%', bottom:'24px', transform:'translateX(-50%)',
@@ -28,7 +27,7 @@ function showSuccessToast(msg = '✅ Замовлення надіслано!') 
     opacity:'0.95', zIndex:9999, fontFamily:'Inter,system-ui,sans-serif'
   });
   document.body.appendChild(toast);
-  setTimeout(()=>{ toast.classList.remove('show'); toast.style.opacity='0.2'; setTimeout(()=>toast.remove(), 280); }, 1800);
+  setTimeout(()=>{ toast.style.opacity='0.2'; setTimeout(()=>toast.remove(), 280); }, 1200);
 }
 function setStatus(el, text = '') { if (el) el.textContent = text; }
 
@@ -51,13 +50,10 @@ function loadCart() {
   try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
   catch { return []; }
 }
-
 function renderCartBlock() {
   const items = loadCart();
   if (!items.length) return;
-
-  const form = $('#order');
-  if (!form) return;
+  const form = $('#order'); if (!form) return;
 
   const section = document.createElement('section');
   section.className = 'card';
@@ -77,7 +73,6 @@ function renderCartBlock() {
     const line = (Number(i.price)||0) * (Number(i.count)||0);
     sum += line;
     const row = document.createElement('div');
-    row.className = 'order-item card';
     row.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
@@ -145,11 +140,43 @@ async function sendOrder(data) {
   return r.json();
 }
 
+/* ────────── НАДІЙНИЙ РЕДІРЕКТ ────────── */
+function goThankYou(orderId) {
+  const base = new URL('/thank-you.html', location.origin).href;
+  const target = orderId ? `${base}?order=${encodeURIComponent(String(orderId))}` : base;
+
+  // 1) відключаємо все, що може заважати виходу
+  window.__allowNavigate = true;
+  try { window.onbeforeunload = null; window.onpagehide = null; window.onunload = null; } catch {}
+
+  // 2) кілька способів поспіль
+  try { location.replace(target); } catch {}
+  setTimeout(() => { try { location.href = target; } catch {} }, 60);
+  setTimeout(() => { try { location.assign(target); } catch {} }, 140);
+
+  // 3) жорсткий фолбек — сабміт формою GET (деякі SW/розширення це не чіпляють)
+  setTimeout(() => {
+    const f = document.createElement('form');
+    f.method = 'GET';
+    f.action = base;
+    if (orderId) {
+      const inp = document.createElement('input');
+      inp.type = 'hidden'; inp.name = 'order'; inp.value = String(orderId);
+      f.appendChild(inp);
+    }
+    document.body.appendChild(f);
+    try { f.submit(); } catch {}
+  }, 220);
+
+  // 4) останній шанс
+  setTimeout(() => { try { window.open(target, '_self'); } catch {} }, 300);
+}
+
 function initForm() {
   const form = $('#order');
   if (!form) return;
 
-  // Забороняємо Enter у пошуку міста (щоб не сабмітило форму)
+  // Забороняємо Enter у пошуку міста
   $('#citySearch')?.addEventListener('keydown', (e)=>{ if (e.key==='Enter') e.preventDefault(); });
 
   form.addEventListener('submit', async (e) => {
@@ -186,10 +213,9 @@ function initForm() {
       const json = await sendOrder(data);
 
       if (json?.ok) {
-        // 1) тост
         showSuccessToast('✅ Замовлення надіслано!');
 
-        // 2) зберегти підсумок для "Подяки" ДО очищення кошика
+        // зберігаємо короткий підсумок (щоб показати на "Подяці")
         try {
           sessionStorage.setItem('medok_last_order', JSON.stringify({
             name:  data.name,
@@ -203,29 +229,13 @@ function initForm() {
           }));
         } catch {}
 
-        // 3) почистити кошик + форму
-        localStorage.removeItem(CART_KEY);
+        // чистимо кошик + форму
+        try { localStorage.removeItem(CART_KEY); } catch {}
         form.reset();
 
-        // 4) абсолютний URL "Подяки"
-        const orderId = (json && json.order_id) ? String(json.order_id) : '';
-        const base = new URL('/thank-you.html', location.origin).href;
-        const target = orderId ? `${base}?order=${encodeURIComponent(orderId)}` : base;
-
-        // 5) дозволити навігацію (щоб beforeunload не блокував)
-        window.__allowNavigate = true;
-        try { window.onbeforeunload = null; } catch {}
-
-        // 6) надійний редірект з фолбеками
-        setTimeout(() => {
-          try { location.replace(target); } catch {}
-          setTimeout(() => {
-            try { location.href = target; } catch {}
-            setTimeout(() => {
-              try { location.assign(target); } catch {}
-            }, 50);
-          }, 120);
-        }, 800);
+        // ПЕРЕХІД (з невеличкою паузою, щоб тост мигнув)
+        const orderId = json.order_id || '';
+        setTimeout(() => goThankYou(orderId), 600);
       } else {
         showSuccessToast('❌ Помилка: ' + (json?.error || 'невідомо'));
       }
@@ -238,16 +248,14 @@ function initForm() {
   });
 }
 
-/* ────────── Поля Нової Пошти: плейсхолдери + індикатори + автопам'ять ────────── */
+/* ────────── Нова Пошта: плейсхолдери + індикатори + автопам'ять ────────── */
 function initNovaPoshta() {
   const cityInput       = $('#citySearch');
   const citySelect      = $('#city');
   const warehouseSelect = $('#warehouse');
   const whStatus        = $('#wh-status');
-
   if (!cityInput || !citySelect || !warehouseSelect) return;
 
-  // тонкий статус під полем пошуку міста
   let cityStatus = document.getElementById('city-status');
   if (!cityStatus) {
     cityStatus = document.createElement('div');
@@ -285,11 +293,9 @@ function initNovaPoshta() {
     warehouseSelect.disabled = false; warehouseSelect.selectedIndex = 0;
   };
 
-  // стартовий стан
   setEmptyCity('Спочатку введіть 2+ літери');
   setEmptyWarehouse('Спочатку оберіть місто');
 
-  // пошук міст
   cityInput.addEventListener('input', debounce(async () => {
     const q = cityInput.value.trim();
     if (q.length < 2) { setEmptyCity('Спочатку введіть 2+ літери'); setEmptyWarehouse('Спочатку оберіть місто'); setStatus(cityStatus,''); return; }
@@ -301,7 +307,6 @@ function initNovaPoshta() {
     } catch { setStatus(cityStatus,'Помилка завантаження'); setEmptyCity('Помилка завантаження'); }
   }, 350));
 
-  // коли обрали місто — тягнемо відділення, зберігаємо місто
   citySelect.addEventListener('change', async () => {
     const city = citySelect.value;
     if (!city) { setEmptyWarehouse('Спочатку оберіть місто'); return; }
@@ -316,14 +321,12 @@ function initNovaPoshta() {
     } catch { setStatus(whStatus,'Помилка завантаження'); setEmptyWarehouse('Помилка завантаження'); }
   });
 
-  // зберігаємо вибране відділення
   warehouseSelect.addEventListener('change', () => {
     const val = warehouseSelect.value;
     if (val) localStorage.setItem(SAVED_WH_KEY, val);
     else localStorage.removeItem(SAVED_WH_KEY);
   });
 
-  // автопідстановка збережених значень
   (async () => {
     const saved = localStorage.getItem(SAVED_CITY_KEY);
     if (!saved) return;
@@ -365,16 +368,13 @@ document.addEventListener('DOMContentLoaded', () => {
   phoneEl.addEventListener('input', () => { try { localStorage.setItem(K2, phoneEl.value); } catch {} });
 })();
 
-/* Попередження при виході, якщо кошик не порожній (з повагою до редіректу) */
+/* Попередження при виході, якщо кошик не порожній (поважає редірект) */
 (function guardLeaving(){
   window.addEventListener('beforeunload', (e) => {
     try {
       if (window.__allowNavigate) return;
       const cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
-      if (cart.length > 0) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
+      if (cart.length > 0) { e.preventDefault(); e.returnValue = ''; }
     } catch {}
   });
 })();
