@@ -1,8 +1,6 @@
 User-agent: *
 Allow: /
 
-# Не індексувати сторінку подяки
-Disallow: /med_ok/thank-you.html
+Disallow: /thank-you.html
 
-# Карта сайту
-Sitemap: https://nazar228wate.github.io/med_ok/sitemap.xml
+Sitemap: https://medok.ink/sitemap.xml
