@@ -1,7 +1,6 @@
 // sw.js
-const CACHE_NAME = 'medok-v4'; // змінив версію кешу, щоб усі отримали новий SW
+const CACHE_NAME = 'medok-v3';
 const ASSETS_TO_CACHE = [
-  // HTML не кешуємо тут
   './styles.css',
   './app.js',
   './order.js',
@@ -9,15 +8,11 @@ const ASSETS_TO_CACHE = [
   './assets/hero-acacia.webp'
 ];
 
-// install: кешуємо тільки статику
 self.addEventListener('install', (event) => {
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS_TO_CACHE))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS_TO_CACHE)));
 });
 
-// activate: чистимо старі кеші
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -26,20 +21,18 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// fetch:
-// 1) НЕ перехоплюємо навігацію (req.mode === 'navigate') — даємо браузеру самостійно перейти.
-// 2) НЕ чіпаємо безпосередньо /thank-you.html навіть якщо це не navigate (на всяк випадок).
-// 3) Для CSS/JS/картинок — cache-first.
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  const url = new URL(req.url);
 
-  // Повністю відпускаємо всі переходи між сторінками
-  if (req.mode === 'navigate' || url.pathname === '/thank-you.html') {
-    return; // не викликаємо respondWith → SW не перешкоджає навігації
+  // переходи між сторінками — мережа спочатку; офлайн-фолбек за бажанням
+  if (req.mode === 'navigate') {
+    event.respondWith(
+      fetch(req).catch(() => caches.match('./index.html'))
+    );
+    return;
   }
 
-  // Статика: спочатку кеш, потім мережа
+  // статичні — cache first
   event.respondWith(
     caches.match(req).then(res => res || fetch(req))
   );
