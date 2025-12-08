@@ -5,24 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Дякуємо за замовлення — med_ok</title>
 
-  <!-- Indexing: сторінка службова -->
+  <!-- Не індексуємо сторінку подяки -->
   <meta name="robots" content="noindex,nofollow" />
+  <link rel="canonical" href="https://nazar228wate.github.io/med_ok/thank-you.html" />
 
-  <!-- Basic brand / icons -->
-  <link rel="icon" href="assets/medok-wordmark.png" />
-  <meta name="theme-color" content="#087B04" />
-  <link rel="manifest" href="manifest.webmanifest" />
+  <!-- Open Graph (на випадок, якщо шарять лінк) -->
+  <meta property="og:title" content="Дякуємо за замовлення — med_ok">
+  <meta property="og:description" content="Ваше замовлення прийняте. Ми скоро зв’яжемося для уточнення деталей.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nazar228wate.github.io/med_ok/thank-you.html">
+  <meta property="og:image" content="https://nazar228wate.github.io/med_ok/assets/prod-mixed.webp">
 
-  <!-- OG (не критично, але хай буде) -->
-  <meta property="og:title" content="Дякуємо за замовлення — med_ok" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://medok.ink/assets/prod-mixed.webp" />
+  <!-- Favicons / PWA -->
+  <link rel="icon" href="assets/medok-wordmark.png">
+  <meta name="theme-color" content="#087B04">
+  <link rel="manifest" href="manifest.webmanifest">
 
   <style>
     :root{
       --bg:#fff9f2; --card:#ffffff; --text:#222; --muted:#666;
       --accent:#f5b942; --accent-2:#ffcf66; --ok:#2ecc71;
-      --border:#eee; --shadow:0 10px 30px rgba(0,0,0,.06)
+      --border:#eee; --shadow:0 10px 30px rgba(0,0,0,.06);
     }
     *{box-sizing:border-box}
     body{font-family:Inter,system-ui,sans-serif;margin:0;color:var(--text);background:linear-gradient(160deg,var(--bg) 0%,#fff 60%)}
@@ -33,9 +36,12 @@
     .hgroup p{margin:6px 0 0;color:var(--muted)}
     .mark{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,var(--accent-2),var(--accent));color:#000;padding:6px 10px;border-radius:10px;font-weight:600}
     .code{display:inline-flex;align-items:center;gap:10px;user-select:text;background:#fff7dc;border:1px dashed #f0c153;border-radius:12px;padding:6px 10px;font-variant-numeric:tabular-nums}
-    .row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1 1 220px}
-    .section{margin-top:20px}.section h3{margin:0 0 10px;font-size:18px}
-    .list{margin:8px 0 0 16px}.list li{margin:4px 0}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .row>div{flex:1 1 220px}
+    .section{margin-top:20px}
+    .section h3{margin:0 0 10px;font-size:18px}
+    .list{margin:8px 0 0 16px}
+    .list li{margin:4px 0}
     .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:12px;text-decoration:none;border:1px solid var(--border);background:#fff;color:#111;transition:.2s transform,.2s box-shadow}
     .btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.06)}
@@ -44,7 +50,7 @@
     .check{width:54px;height:54px;min-width:54px;border-radius:50%;background:radial-gradient(65% 65% at 50% 50%,#d5ffd5 0%,#c4f3c4 100%);display:grid;place-items:center;box-shadow:0 8px 24px rgba(46,204,113,.35)}
     .check svg{width:30px;height:30px;stroke:#1e9e54;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
     .draw{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .7s .15s ease forwards}
-    @keyframes draw{to{stroke-dashoffset:0}}
+    @keyframes draw { to { stroke-dashoffset:0 } }
     .muted{color:var(--muted)}
     .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s opacity;font-size:14px}
     .toast.show{opacity:1}
@@ -64,6 +70,7 @@
     </div>
 
     <p class="muted" style="margin:8px 0 14px">Збережіть номер замовлення — його попросять при уточненні.</p>
+
     <p class="code">
       <strong>Номер замовлення:</strong>
       <span id="orderId">—</span>
@@ -87,7 +94,7 @@
 
     <div class="actions">
       <a class="btn primary" href="index.html">До каталогу меду</a>
-      <a class="btn" href="index.html#products">Ще баночку 🍯</a>
+      <a class="btn" href="index.html#products">Подивитися продукцію</a>
     </div>
   </div>
 </div>
@@ -96,16 +103,16 @@
 
 <script>
 (function(){
-  // 1) Витягуємо orderId з URL
+  // 1) Підставляємо orderId з ?order=...
   const params = new URLSearchParams(location.search);
   const orderId = params.get('order') || '—';
   document.getElementById('orderId').textContent = orderId;
 
-  // 2) Показуємо підсумок, якщо фронт його зберіг
-  try{
+  // 2) Підсумок із sessionStorage (кладе order.js перед редиректом)
+  try {
     const data = JSON.parse(sessionStorage.getItem('medok_last_order') || 'null');
-    if(data){
-      const $ = (id)=>document.getElementById(id);
+    if (data) {
+      const $ = id => document.getElementById(id);
       $('summary').hidden = false;
       $('name').textContent  = data.name || '';
       $('phone').textContent = data.phone || '';
@@ -115,35 +122,39 @@
 
       const items = document.getElementById('items');
       if (data.from_cart && Array.isArray(data.cart)) {
-        const h = document.createElement('h3'); h.textContent='Товари';
+        const title = document.createElement('h3'); title.textContent = 'Товари';
         const ul = document.createElement('ul'); ul.className='list';
-        data.cart.forEach(i=>{ const li=document.createElement('li'); li.textContent=`${i.type} — ${i.qty} л × ${i.count} шт`; ul.appendChild(li); });
-        items.append(h, ul);
+        data.cart.forEach(i=>{
+          const li = document.createElement('li');
+          li.textContent = `${i.type} — ${i.qty} л × ${i.count} шт`;
+          ul.appendChild(li);
+        });
+        items.append(title, ul);
         const sum = (typeof data.total === 'number') ? data.total : null;
         if (sum != null) document.getElementById('total').innerHTML = `<b>Разом:</b> ${sum} грн`;
-      } else if (data.honey){
-        const h=document.createElement('h3'); h.textContent='Товар';
-        const p=document.createElement('p'); p.textContent=`${data.honey}, кількість: ${data.qty} л`;
-        items.append(h,p);
+      } else if (data.honey) {
+        const title = document.createElement('h3'); title.textContent = 'Товар';
+        const p = document.createElement('p'); p.textContent = `${data.honey}, кількість: ${data.qty} л`;
+        items.append(title, p);
       }
-      // чистимо, щоб не залишалось після F5
+      // очистимо, щоб після F5 не висіло
       sessionStorage.removeItem('medok_last_order');
+      // прибрати ?order=… з адресного рядка (косметика)
+      history.replaceState({}, '', 'thank-you.html');
     }
-  }catch{}
+  } catch {}
 
-  // 3) Кнопка копіювання
-  document.getElementById('copyBtn')?.addEventListener('click', async ()=>{
-    try{
+  // 3) Кнопка "Скопіювати"
+  const copyBtn = document.getElementById('copyBtn');
+  const toast = document.getElementById('toast');
+  copyBtn?.addEventListener('click', async () => {
+    try {
       await navigator.clipboard.writeText(document.getElementById('orderId').textContent.trim());
-      const toast=document.getElementById('toast');
-      toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),1200);
-    }catch{}
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), 1200);
+    } catch {}
   });
 })();
-</script>
-
-<script>
-  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 </script>
 </body>
 </html>
