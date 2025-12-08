@@ -3,55 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Відгуки — med_ok | натуральний мед з пасіки</title>
+  <title>Відгуки — med_ok</title>
 
-  <!-- Primary SEO -->
-  <meta name="description" content="Відгуки клієнтів про натуральний мед med_ok. Реальні історії покупців і форма, щоб залишити власний відгук." />
-  <meta name="keywords" content="відгуки про мед, натуральний мед відгуки, мед з пасіки, мед Київська область, мед доставка Україна" />
-  <link rel="canonical" href="https://medok.ink/reviews.html" />
+  <!-- Canonical + robots -->
+  <link rel="canonical" href="https://nazar228wate.github.io/med_ok/reviews.html" />
+  <meta name="robots" content="index,follow" />
 
-  <!-- Open Graph / Twitter -->
-  <meta property="og:site_name" content="med_ok" />
-  <meta property="og:title" content="Відгуки — med_ok" />
-  <meta property="og:description" content="Дізнайтеся, що говорять клієнти про наш мед, та залиште свій відгук." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://medok.ink/reviews.html" />
-  <meta property="og:image" content="https://medok.ink/assets/prod-mixed.webp" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <!-- Base SEO -->
+  <meta name="description" content="Відгуки клієнтів про натуральний мед med_ok. Читайте історії наших покупців та поділіться власною думкою!">
+  <meta name="keywords" content="мед відгуки, натуральний мед, пасіка Київська область, купити мед онлайн, відгуки покупців мед">
 
-  <!-- Icons / PWA -->
-  <link rel="icon" href="assets/medok-wordmark.png" />
-  <meta name="theme-color" content="#087B04" />
-  <link rel="manifest" href="manifest.webmanifest" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Відгуки — med_ok">
+  <meta property="og:description" content="Дізнайтеся, що говорять клієнти про наш мед, та залиште свій відгук.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nazar228wate.github.io/med_ok/reviews.html">
+  <meta property="og:image" content="https://nazar228wate.github.io/med_ok/assets/prod-mixed.webp">
 
-  <!-- Perf -->
+  <!-- Favicons / PWA -->
+  <link rel="icon" href="assets/medok-wordmark.png">
+  <meta name="theme-color" content="#087B04">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Preconnect до API -->
   <link rel="preconnect" href="https://medok-proxy.veter010709.workers.dev" crossorigin>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css?v=13" />
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css?v=12">
 
-  <!-- Structured data (Breadcrumbs + WebSite) -->
+  <!-- Schema.org -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
-    "@type":"BreadcrumbList",
-    "itemListElement":[
-      {"@type":"ListItem","position":1,"name":"Головна","item":"https://medok.ink/"},
-      {"@type":"ListItem","position":2,"name":"Відгуки","item":"https://medok.ink/reviews.html"}
-    ]
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"WebSite",
-    "name":"med_ok",
-    "url":"https://medok.ink/",
-    "potentialAction":{
-      "@type":"SearchAction",
-      "target":"https://medok.ink/?q={search_term_string}",
-      "query-input":"required name=search_term_string"
-    }
+    "@type":"WebPage",
+    "name":"Відгуки — med_ok",
+    "url":"https://nazar228wate.github.io/med_ok/reviews.html",
+    "description":"Відгуки клієнтів про натуральний мед med_ok."
   }
   </script>
 </head>
@@ -93,23 +80,11 @@
     <h1>Відгуки клієнтів</h1>
     <p class="section-subtitle">Ми цінуємо ваші думки. Ознайомтеся з відгуками інших клієнтів або залиште свій!</p>
 
-    <div class="grid testimonials-grid" aria-live="polite">
-      <!-- Статичні приклади (залишив як «заглушки» нижче динамічних) -->
-      <article class="card">
-        <p>“Замовляла акацієвий мед для всієї родини — смак неймовірний, як у дитинстві!”</p>
-        <p class="muted">— Олена, м. Київ</p>
-      </article>
-      <article class="card">
-        <p>“Дякуємо за якісний продукт та швидку доставку. Дітям дуже подобається різнотрав’я.”</p>
-        <p class="muted">— Сергій, м. Львів</p>
-      </article>
-      <article class="card">
-        <p>“Мед від med_ok завжди натуральний. Беру для себе та на подарунки друзям.”</p>
-        <p class="muted">— Наталія, м. Одеса</p>
-      </article>
+    <div class="grid testimonials-grid" id="reviewsList">
+      <!-- Серверні відгуки приїдуть скриптом нижче -->
     </div>
 
-    <!-- Форма відгуку -->
+    <!-- Форма для додавання відгуку -->
     <section class="card" style="margin-top:30px;">
       <h2 class="section-subtitle">Залишити відгук</h2>
       <form id="reviewForm" style="display:grid; gap:12px;">
@@ -167,60 +142,43 @@
 </footer>
 
 <script>
-  // просте додавання відгуку без сервера (локально в DOM)
-  document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('reviewForm');
-    const list = document.querySelector('#reviews .testimonials-grid');
-    if (!form || !list) return;
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name  = form.querySelector('#reviewName').value.trim();
-      const city  = form.querySelector('#reviewCity').value.trim();
-      const text  = form.querySelector('#reviewText').value.trim();
-      if (!name || !city || !text) return;
-      const card = document.createElement('article');
-      card.className = 'card';
-      card.innerHTML = `<p>“${text}”</p><p class="muted">— ${name}, м. ${city}</p>`;
-      list.insertBefore(card, list.firstChild);
-      form.reset();
-    });
-  });
-</script>
-
-<!-- Динаміка через Worker (створення/редагування/видалення) -->
-<script>
-(() => {
+(function(){
   const API_BASE = 'https://medok-proxy.veter010709.workers.dev';
 
-  const listEl = document.querySelector('#reviews .testimonials-grid');
+  const listEl = document.getElementById('reviewsList');
   const form   = document.getElementById('reviewForm');
   const nameEl = document.getElementById('reviewName');
   const cityEl = document.getElementById('reviewCity');
   const textEl = document.getElementById('reviewText');
 
+  // admin режим: ?admin=KEY
   const url = new URL(location.href);
   const urlAdmin = url.searchParams.get('admin');
   if (urlAdmin) localStorage.setItem('medok_admin_key', urlAdmin);
   const ADMIN_KEY = localStorage.getItem('medok_admin_key') || '';
   const isAdmin = !!ADMIN_KEY;
 
-  function escapeHtml(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  const escapeHtml = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
   function makeCard(r){
     const el = document.createElement('article');
     el.className = 'card';
     el.dataset.id = r.id;
-    el.innerHTML = `<p style="margin-top:0;white-space:pre-wrap">“${escapeHtml(r.text)}”</p><p class="muted">— ${escapeHtml(r.name)}, м. ${escapeHtml(r.city)}</p>`;
-    if (isAdmin){
+    el.innerHTML = `
+      <p style="margin-top:0; white-space:pre-wrap">“${escapeHtml(r.text)}”</p>
+      <p class="muted">— ${escapeHtml(r.name)}, м. ${escapeHtml(r.city)}</p>
+    `;
+    if (isAdmin) {
       const bar = document.createElement('div');
       bar.style.display='flex'; bar.style.gap='8px'; bar.style.marginTop='8px';
       const editBtn = Object.assign(document.createElement('button'),{type:'button',className:'btn btn-sm',textContent:'Редагувати'});
       const delBtn  = Object.assign(document.createElement('button'),{type:'button',className:'btn btn-sm btn-danger',textContent:'Видалити'});
+
       editBtn.onclick = async () => {
         const name = prompt('Імʼя', r.name); if (name==null) return;
         const city = prompt('Місто', r.city); if (city==null) return;
         const text = prompt('Відгук', r.text); if (text==null) return;
-        const ok = await apiPatch(r.id,{name,city,text});
+        const ok = await apiPatch(r.id, {name,city,text});
         if (ok){ r.name=name; r.city=city; r.text=text; el.replaceWith(makeCard(r)); }
       };
       delBtn.onclick = async () => {
@@ -233,33 +191,65 @@
     }
     return el;
   }
-  const prependCard = (r) => { const c = makeCard(r); listEl.insertBefore(c, listEl.firstChild); return c; };
+  const prepend = r => listEl.insertBefore(makeCard(r), listEl.firstChild);
 
-  async function apiGet(){ const r=await fetch(`${API_BASE}/reviews`); const j=await r.json(); return j?.ok?j.data:[]; }
-  async function apiPost(p){ const r=await fetch(`${API_BASE}/reviews`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)}); return r.json(); }
-  async function apiPatch(id,p){ const r=await fetch(`${API_BASE}/reviews/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${ADMIN_KEY}`},body:JSON.stringify(p)}); const j=await r.json().catch(()=>({})); if(!r.ok||!j?.ok){alert(j?.error||'Помилка');return false;} return true; }
-  async function apiDelete(id){ const r=await fetch(`${API_BASE}/reviews/${id}`,{method:'DELETE',headers:{'Authorization':`Bearer ${ADMIN_KEY}`}}); const j=await r.json().catch(()=>({})); if(!r.ok||!j?.ok){alert(j?.error||'Помилка');return false;} return true; }
+  async function apiGet(){
+    const r = await fetch(`${API_BASE}/reviews`);
+    const j = await r.json().catch(()=>({}));
+    return j?.ok ? j.data : [];
+  }
+  async function apiPost(payload){
+    const r = await fetch(`${API_BASE}/reviews`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    return r.json().catch(()=>({ok:false,error:'network'}));
+  }
+  async function apiPatch(id, payload){
+    const r = await fetch(`${API_BASE}/reviews/${id}`, {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${ADMIN_KEY}`},
+      body: JSON.stringify(payload)
+    });
+    const j = await r.json().catch(()=>({}));
+    if (!r.ok || !j?.ok) { alert(j?.error || 'Помилка'); return false; }
+    return true;
+  }
+  async function apiDelete(id){
+    const r = await fetch(`${API_BASE}/reviews/${id}`, {
+      method:'DELETE', headers:{'Authorization':`Bearer ${ADMIN_KEY}`}
+    });
+    const j = await r.json().catch(()=>({}));
+    if (!r.ok || !j?.ok) { alert(j?.error || 'Помилка'); return false; }
+    return true;
+  }
 
-  (async()=>{ try{ const data = await apiGet(); data.forEach(r=>listEl.insertBefore(makeCard(r), listEl.firstChild)); }catch(e){ console.warn('reviews load failed',e); } })();
+  // завантаження списку
+  apiGet().then(data => data.forEach(r => prepend(r))).catch(()=>{});
 
+  // відправка форми
   form?.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    const name=nameEl.value.trim(), city=cityEl.value.trim(), text=textEl.value.trim();
-    if(!name||!city||!text) return;
-    const optimistic = prependCard({id:'tmp',name,city,text});
+    const name = nameEl.value.trim();
+    const city = cityEl.value.trim();
+    const text = textEl.value.trim();
+    if (!name || !city || !text) return;
+
+    const optimistic = prepend({ id:'tmp', name, city, text });
     form.reset();
-    try{
-      const j=await apiPost({name,city,text});
-      if(j?.ok){ optimistic.replaceWith(makeCard(j.data)); }
-      else{ optimistic.remove(); alert(j?.error||'Не вдалося надіслати відгук'); }
-    }catch{ optimistic.remove(); alert('Немає звʼязку. Спробуйте пізніше.'); }
+
+    const j = await apiPost({ name, city, text });
+    if (j?.ok) optimistic.replaceWith(makeCard(j.data));
+    else { optimistic.remove(); alert(j?.error || 'Не вдалося надіслати відгук'); }
   });
+
+  // рік у футері
+  const y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
+
+  // SW
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 })();
 </script>
-
 <script src="app.js" defer></script>
-<script>
-  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
-</script>
 </body>
 </html>
