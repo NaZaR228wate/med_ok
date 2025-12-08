@@ -9,28 +9,20 @@
   <meta name="robots" content="noindex,nofollow" />
   <link rel="canonical" href="https://nazar228wate.github.io/med_ok/thank-you.html" />
 
-  <!-- Open Graph (на випадок, якщо шарять лінк) -->
+  <!-- OG (на випадок шерингу) -->
   <meta property="og:title" content="Дякуємо за замовлення — med_ok">
   <meta property="og:description" content="Ваше замовлення прийняте. Ми скоро зв’яжемося для уточнення деталей.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://nazar228wate.github.io/med_ok/thank-you.html">
   <meta property="og:image" content="https://nazar228wate.github.io/med_ok/assets/prod-mixed.webp">
 
-  <!-- Favicons / PWA -->
+  <!-- PWA -->
   <link rel="icon" href="assets/medok-wordmark.png">
   <meta name="theme-color" content="#087B04">
   <link rel="manifest" href="manifest.webmanifest">
 
-<meta name="robots" content="noindex,nofollow" />
-<link rel="canonical" href="https://nazar228wate.github.io/med_ok/thank-you.html" />
-<meta property="og:url" content="https://nazar228wate.github.io/med_ok/thank-you.html" />
-
   <style>
-    :root{
-      --bg:#fff9f2; --card:#ffffff; --text:#222; --muted:#666;
-      --accent:#f5b942; --accent-2:#ffcf66; --ok:#2ecc71;
-      --border:#eee; --shadow:0 10px 30px rgba(0,0,0,.06);
-    }
+    :root{--bg:#fff9f2;--card:#ffffff;--text:#222;--muted:#666;--accent:#f5b942;--accent-2:#ffcf66;--ok:#2ecc71;--border:#eee;--shadow:0 10px 30px rgba(0,0,0,.06)}
     *{box-sizing:border-box}
     body{font-family:Inter,system-ui,sans-serif;margin:0;color:var(--text);background:linear-gradient(160deg,var(--bg) 0%,#fff 60%)}
     .wrap{max-width:760px;margin:48px auto;padding:0 20px}
@@ -107,12 +99,12 @@
 
 <script>
 (function(){
-  // 1) Підставляємо orderId з ?order=...
+  // 1) orderId з URL
   const params = new URLSearchParams(location.search);
   const orderId = params.get('order') || '—';
   document.getElementById('orderId').textContent = orderId;
 
-  // 2) Підсумок із sessionStorage (кладе order.js перед редиректом)
+  // 2) Підсумок із sessionStorage
   try {
     const data = JSON.parse(sessionStorage.getItem('medok_last_order') || 'null');
     if (data) {
@@ -141,14 +133,15 @@
         const p = document.createElement('p'); p.textContent = `${data.honey}, кількість: ${data.qty} л`;
         items.append(title, p);
       }
-      // очистимо, щоб після F5 не висіло
+
+      // очистити після показу
       sessionStorage.removeItem('medok_last_order');
-      // прибрати ?order=… з адресного рядка (косметика)
+      // прибрати ?order=… (косметика)
       history.replaceState({}, '', 'thank-you.html');
     }
   } catch {}
 
-  // 3) Кнопка "Скопіювати"
+  // 3) Copy button
   const copyBtn = document.getElementById('copyBtn');
   const toast = document.getElementById('toast');
   copyBtn?.addEventListener('click', async () => {
