@@ -1,249 +1,285 @@
 <!doctype html>
 <html lang="uk">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Відгуки — med_ok</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Відгуки — med_ok</title>
 
-  <!-- Canonical + robots -->
-  <link rel="canonical" href="https://nazar228wate.github.io/med_ok/reviews.html" />
-  <meta name="robots" content="index,follow" />
+    <!-- Canonical + robots -->
+    <link rel="canonical" href="https://nazar228wate.github.io/med_ok/reviews.html" />
+    <meta name="robots" content="index,follow" />
 
-  <!-- Base SEO -->
-  <meta name="description" content="Відгуки клієнтів про натуральний мед med_ok. Читайте історії наших покупців та поділіться власною думкою!">
-  <meta name="keywords" content="мед відгуки, натуральний мед, пасіка Київська область, купити мед онлайн, відгуки покупців мед">
+    <!-- Base SEO -->
+    <meta name="description" content="Відгуки клієнтів про натуральний мед med_ok. Читайте історії наших покупців та поділіться власною думкою!">
+    <meta name="keywords" content="мед відгуки, натуральний мед, пасіка Київська область, купити мед онлайн, відгуки покупців мед">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Відгуки — med_ok">
-  <meta property="og:description" content="Дізнайтеся, що говорять клієнти про наш мед, та залиште свій відгук.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://nazar228wate.github.io/med_ok/reviews.html">
-  <meta property="og:image" content="https://nazar228wate.github.io/med_ok/assets/prod-mixed.webp">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Відгуки — med_ok">
+    <meta property="og:description" content="Дізнайтеся, що говорять клієнти про наш мед, та залиште свій відгук.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nazar228wate.github.io/med_ok/reviews.html">
+    <meta property="og:image" content="https://nazar228wate.github.io/med_ok/assets/prod-mixed.webp">
 
-  <!-- PWA -->
-  <link rel="icon" href="assets/medok-wordmark.png">
-  <meta name="theme-color" content="#087B04">
-  <link rel="manifest" href="manifest.webmanifest">
+    <!-- PWA -->
+    <link rel="icon" href="assets/medok-wordmark.png">
+    <meta name="theme-color" content="#087B04">
+    <link rel="manifest" href="manifest.webmanifest">
 
-  <!-- Perf -->
-  <link rel="preconnect" href="https://medok-proxy.veter010709.workers.dev" crossorigin>
+    <!-- Perf -->
+    <link rel="preconnect" href="https://medok-proxy.veter010709.workers.dev" crossorigin>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css?v=12">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css?v=12">
 
-  <!-- Schema.org -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"WebPage",
-    "name":"Відгуки — med_ok",
-    "url":"https://nazar228wate.github.io/med_ok/reviews.html",
-    "description":"Відгуки клієнтів про натуральний мед med_ok."
-  }
-  </script>
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+        {
+            "@context":"https://schema.org",
+            "@type":"WebPage",
+            "name":"Відгуки — med_ok",
+            "url":"https://nazar228wate.github.io/med_ok/reviews.html",
+            "description":"Відгуки клієнтів про натуральний мед med_ok."
+        }
+    </script>
+
+<!-- medok fixes: footer logo scale + header logo behavior -->
+<style>
+/* Footer logo must never stretch */
+footer img[alt*="medok"],
+.site-footer .logo img,
+.footer .logo img,
+img.footer-logo {
+  height: auto !important;
+  width: auto !important;
+  max-height: 48px;
+  max-width: 180px;
+  object-fit: contain !important;
+}
+/* Prevent generic img rules from stretching logos */
+footer .logo, .site-footer .logo { display: inline-flex; align-items: center; }
+</style>
+
+<script>
+// Avoid full reload if user already on home when clicking brand logo
+(function(){
+  function norm(p){ try{ return (p || location.pathname).replace(/\/index\.html$/,'/'); }catch(e){ return '/'; } }
+  document.querySelectorAll('a[href="/"], a[href$="index.html"].js-home-logo, a.brand-logo, a.logo-link').forEach(function(a){
+    a.classList.add('js-home-logo');
+    a.addEventListener('click', function(e){
+      var here = norm(location.pathname);
+      var target = norm(a.getAttribute('href') || '/');
+      if (here === '/' && target === '/') {
+        e.preventDefault();
+        // Just scroll to top smoothly instead of reloading
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, {passive:false});
+  });
+})();
+</script>
 </head>
 <body>
 <a class="visually-hidden" href="#main">Перейти до контенту</a>
 
 <header>
-  <div class="container nav">
-    <a href="index.html" class="brand" aria-label="med_ok">
-      <img class="brand-wordmark" src="assets/medok-wordmark.png" alt="med_ok" width="140" height="40">
-    </a>
+    <div class="container nav">
+        <a href="index.html" class="js-home-logo brand" aria-label="med_ok">
+            <img class="brand-wordmark" src="assets/medok-wordmark.png" alt="med_ok" width="140" height="40">
+        </a>
 
-    <nav id="primary-nav" data-open="false" aria-hidden="true">
-      <a href="index.html#products">Продукція</a>
-      <a href="index.html#about">Про пасіку</a>
-      <a href="index.html#why">Чому обирають нас</a>
-      <a href="reviews.html" aria-current="page">Відгуки</a>
-      <a class="cta" href="index.html#products">Замовити</a>
-    </nav>
+        <nav id="primary-nav" data-open="false" aria-hidden="true">
+            <a href="index.html#products">Продукція</a>
+            <a href="index.html#about">Про пасіку</a>
+            <a href="index.html#why">Чому обирають нас</a>
+            <a href="../../Downloads/reviews.html" aria-current="page">Відгуки</a>
+            <a class="cta" href="index.html#products">Замовити</a>
+        </nav>
 
-    <div class="nav-right">
-      <span id="cartTotalHeader" class="cart-total-header" aria-hidden="true">₴0</span>
-      <button id="cartBtn" class="cart-header-btn" aria-label="Відкрити кошик">
-        🛒 <span id="cartQtyBadge" class="cart-badge">0</span>
-      </button>
+        <div class="nav-right">
+            <span id="cartTotalHeader" class="cart-total-header" aria-hidden="true">₴0</span>
+            <button id="cartBtn" class="cart-header-btn" aria-label="Відкрити кошик">
+                🛒 <span id="cartQtyBadge" class="cart-badge">0</span>
+            </button>
+        </div>
+
+        <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
+            <span class="menu-toggle__bar"></span>
+            <span class="menu-toggle__bar"></span>
+            <span class="menu-toggle__bar"></span>
+            <span class="visually-hidden">Меню</span>
+        </button>
     </div>
-
-    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
-      <span class="menu-toggle__bar"></span>
-      <span class="menu-toggle__bar"></span>
-      <span class="menu-toggle__bar"></span>
-      <span class="visually-hidden">Меню</span>
-    </button>
-  </div>
 </header>
 
 <main id="main">
-  <section class="container" id="reviews">
-    <h1>Відгуки клієнтів</h1>
-    <p class="section-subtitle">Ми цінуємо ваші думки. Ознайомтеся з відгуками інших клієнтів або залиште свій!</p>
+    <section class="container" id="reviews">
+        <h1>Відгуки клієнтів</h1>
+        <p class="section-subtitle">Ми цінуємо ваші думки. Ознайомтеся з відгуками інших клієнтів або залиште свій!</p>
 
-    <div class="grid testimonials-grid" id="reviewsList"></div>
+        <div class="grid testimonials-grid" id="reviewsList"></div>
 
-    <section class="card" style="margin-top:30px;">
-      <h2 class="section-subtitle">Залишити відгук</h2>
-      <form id="reviewForm" style="display:grid; gap:12px;">
-        <div class="grid">
-          <div class="col-6">
-            <label for="reviewName">Ваше ім’я *</label>
-            <input id="reviewName" type="text" required placeholder="Ім’я" />
-          </div>
-          <div class="col-6">
-            <label for="reviewCity">Місто *</label>
-            <input id="reviewCity" type="text" required placeholder="Ваше місто" />
-          </div>
-        </div>
-        <div class="col-12">
-          <label for="reviewText">Ваш відгук *</label>
-          <textarea id="reviewText" required placeholder="Поділіться враженнями…"></textarea>
-        </div>
-        <div style="display:flex; justify-content:flex-end;">
-          <button type="submit" class="btn">Надіслати</button>
-        </div>
-      </form>
+        <section class="card" style="margin-top:30px;">
+            <h2 class="section-subtitle">Залишити відгук</h2>
+            <form id="reviewForm" style="display:grid; gap:12px;">
+                <div class="grid">
+                    <div class="col-6">
+                        <label for="reviewName">Ваше ім’я *</label>
+                        <input id="reviewName" type="text" required placeholder="Ім’я" />
+                    </div>
+                    <div class="col-6">
+                        <label for="reviewCity">Місто *</label>
+                        <input id="reviewCity" type="text" required placeholder="Ваше місто" />
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label for="reviewText">Ваш відгук *</label>
+                    <textarea id="reviewText" required placeholder="Поділіться враженнями…"></textarea>
+                </div>
+                <div style="display:flex; justify-content:flex-end;">
+                    <button type="submit" class="btn">Надіслати</button>
+                </div>
+            </form>
+        </section>
     </section>
-  </section>
 </main>
 
 <footer class="footer">
-  <div class="container footer-grid">
-    <div class="footer-brand">
-      <img src="assets/medok-wordmark.png"
-     alt="medok"
-     class="footer-logo">
-      <p class="muted">Натуральний мед із сімейної пасіки в Київській області. Готуємо з любов’ю та чесністю, як для себе.</p>
-      <div class="footer-tags"><span class="chip">40+ років досвіду</span><span class="chip">Без домішок</span><span class="chip">Доставка по Україні</span></div>
+    <div class="container footer-grid">
+        <div class="footer-brand">
+            <img src="assets/medok-wordmark.png"
+                 alt="medok"
+                 class="footer-logo">
+            <p class="muted">Натуральний мед із сімейної пасіки в Київській області. Готуємо з любов’ю та чесністю, як для себе.</p>
+            <div class="footer-tags"><span class="chip">40+ років досвіду</span><span class="chip">Без домішок</span><span class="chip">Доставка по Україні</span></div>
+        </div>
+        <div class="footer-col">
+            <h4>Швидко до розділу</h4>
+            <a href="index.html#products">🍯 Продукція</a>
+            <a href="index.html#about">🐝 Про пасіку</a>
+            <a href="index.html#why">👍 Чому нас обирають</a>
+            <a href="../../Downloads/reviews.html">🗣️ Відгуки</a>
+        </div>
+        <div class="footer-col">
+            <h4>Зв’язок</h4>
+            <a class="footer-link" href="tel:+380632369027">📞 +380 63 236 9027</a>
+            <a class="footer-link" href="viber://chat?number=%2B380632369027">💬 Написати у Viber</a>
+            <div class="footer-badge">Відправка Новою поштою щодня</div>
+        </div>
     </div>
-    <div class="footer-col">
-      <h4>Швидко до розділу</h4>
-      <a href="index.html#products">🍯 Продукція</a>
-      <a href="index.html#about">🐝 Про пасіку</a>
-      <a href="index.html#why">👍 Чому нас обирають</a>
-      <a href="reviews.html">🗣️ Відгуки</a>
+    <div class="container footer-bottom">
+        <div>© <span id="y"></span> med_ok. Натуральний мед з пасіки.</div>
+        <div class="footer-bottom__right">Бориспільський район, Київська область.</div>
     </div>
-    <div class="footer-col">
-      <h4>Зв’язок</h4>
-      <a class="footer-link" href="tel:+380632369027">📞 +380 63 236 9027</a>
-      <a class="footer-link" href="viber://chat?number=%2B380632369027">💬 Написати у Viber</a>
-      <div class="footer-badge">Відправка Новою поштою щодня</div>
-    </div>
-  </div>
-  <div class="container footer-bottom">
-    <div>© <span id="y"></span> med_ok. Натуральний мед з пасіки.</div>
-    <div class="footer-bottom__right">Бориспільський район, Київська область.</div>
-  </div>
 </footer>
 
 <script>
-(function(){
-  const API_BASE = 'https://medok-proxy.veter010709.workers.dev';
+    (function(){
+        const API_BASE = 'https://medok-proxy.veter010709.workers.dev';
 
-  const listEl = document.getElementById('reviewsList');
-  const form   = document.getElementById('reviewForm');
-  const nameEl = document.getElementById('reviewName');
-  const cityEl = document.getElementById('reviewCity');
-  const textEl = document.getElementById('reviewText');
+        const listEl = document.getElementById('reviewsList');
+        const form   = document.getElementById('reviewForm');
+        const nameEl = document.getElementById('reviewName');
+        const cityEl = document.getElementById('reviewCity');
+        const textEl = document.getElementById('reviewText');
 
-  // admin режим: ?admin=KEY
-  const url = new URL(location.href);
-  const urlAdmin = url.searchParams.get('admin');
-  if (urlAdmin) localStorage.setItem('medok_admin_key', urlAdmin);
-  const ADMIN_KEY = localStorage.getItem('medok_admin_key') || '';
-  const isAdmin = !!ADMIN_KEY;
+        // admin режим: ?admin=KEY
+        const url = new URL(location.href);
+        const urlAdmin = url.searchParams.get('admin');
+        if (urlAdmin) localStorage.setItem('medok_admin_key', urlAdmin);
+        const ADMIN_KEY = localStorage.getItem('medok_admin_key') || '';
+        const isAdmin = !!ADMIN_KEY;
 
-  const escapeHtml = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+        const escapeHtml = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-  function makeCard(r){
-    const el = document.createElement('article');
-    el.className = 'card';
-    el.dataset.id = r.id;
-    el.innerHTML = `
+        function makeCard(r){
+            const el = document.createElement('article');
+            el.className = 'card';
+            el.dataset.id = r.id;
+            el.innerHTML = `
       <p style="margin-top:0; white-space:pre-wrap">“${escapeHtml(r.text)}”</p>
       <p class="muted">— ${escapeHtml(r.name)}, м. ${escapeHtml(r.city)}</p>
     `;
-    if (isAdmin) {
-      const bar = document.createElement('div');
-      bar.style.display='flex'; bar.style.gap='8px'; bar.style.marginTop='8px';
-      const editBtn = Object.assign(document.createElement('button'),{type:'button',className:'btn btn-sm',textContent:'Редагувати'});
-      const delBtn  = Object.assign(document.createElement('button'),{type:'button',className:'btn btn-sm btn-danger',textContent:'Видалити'});
+            if (isAdmin) {
+                const bar = document.createElement('div');
+                bar.style.display='flex'; bar.style.gap='8px'; bar.style.marginTop='8px';
+                const editBtn = Object.assign(document.createElement('button'),{type:'button',className:'btn btn-sm',textContent:'Редагувати'});
+                const delBtn  = Object.assign(document.createElement('button'),{type:'button',className:'btn btn-sm btn-danger',textContent:'Видалити'});
 
-      editBtn.onclick = async () => {
-        const name = prompt('Імʼя', r.name); if (name==null) return;
-        const city = prompt('Місто', r.city); if (city==null) return;
-        const text = prompt('Відгук', r.text); if (text==null) return;
-        const ok = await apiPatch(r.id, {name,city,text});
-        if (ok){ r.name=name; r.city=city; r.text=text; el.replaceWith(makeCard(r)); }
-      };
-      delBtn.onclick = async () => {
-        if (!confirm('Точно видалити?')) return;
-        const ok = await apiDelete(r.id);
-        if (ok) el.remove();
-      };
-      bar.append(editBtn, delBtn);
-      el.append(bar);
-    }
-    return el;
-  }
-  const prepend = r => listEl.insertBefore(makeCard(r), listEl.firstChild);
+                editBtn.onclick = async () => {
+                    const name = prompt('Імʼя', r.name); if (name==null) return;
+                    const city = prompt('Місто', r.city); if (city==null) return;
+                    const text = prompt('Відгук', r.text); if (text==null) return;
+                    const ok = await apiPatch(r.id, {name,city,text});
+                    if (ok){ r.name=name; r.city=city; r.text=text; el.replaceWith(makeCard(r)); }
+                };
+                delBtn.onclick = async () => {
+                    if (!confirm('Точно видалити?')) return;
+                    const ok = await apiDelete(r.id);
+                    if (ok) el.remove();
+                };
+                bar.append(editBtn, delBtn);
+                el.append(bar);
+            }
+            return el;
+        }
+        const prepend = r => listEl.insertBefore(makeCard(r), listEl.firstChild);
 
-  async function apiGet(){
-    const r = await fetch(`${API_BASE}/reviews`);
-    const j = await r.json().catch(()=>({}));
-    return j?.ok ? j.data : [];
-  }
-  async function apiPost(payload){
-    const r = await fetch(`${API_BASE}/reviews`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    });
-    return r.json().catch(()=>({ok:false,error:'network'}));
-  }
-  async function apiPatch(id, payload){
-    const r = await fetch(`${API_BASE}/reviews/${id}`, {
-      method:'PATCH',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${ADMIN_KEY}`},
-      body: JSON.stringify(payload)
-    });
-    const j = await r.json().catch(()=>({}));
-    if (!r.ok || !j?.ok) { alert(j?.error || 'Помилка'); return false; }
-    return true;
-  }
-  async function apiDelete(id){
-    const r = await fetch(`${API_BASE}/reviews/${id}`, {
-      method:'DELETE', headers:{'Authorization':`Bearer ${ADMIN_KEY}`}
-    });
-    const j = await r.json().catch(()=>({}));
-    if (!r.ok || !j?.ok) { alert(j?.error || 'Помилка'); return false; }
-    return true;
-  }
+        async function apiGet(){
+            const r = await fetch(`${API_BASE}/reviews`);
+            const j = await r.json().catch(()=>({}));
+            return j?.ok ? j.data : [];
+        }
+        async function apiPost(payload){
+            const r = await fetch(`${API_BASE}/reviews`, {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify(payload)
+            });
+            return r.json().catch(()=>({ok:false,error:'network'}));
+        }
+        async function apiPatch(id, payload){
+            const r = await fetch(`${API_BASE}/reviews/${id}`, {
+                method:'PATCH',
+                headers:{'Content-Type':'application/json','Authorization':`Bearer ${ADMIN_KEY}`},
+                body: JSON.stringify(payload)
+            });
+            const j = await r.json().catch(()=>({}));
+            if (!r.ok || !j?.ok) { alert(j?.error || 'Помилка'); return false; }
+            return true;
+        }
+        async function apiDelete(id){
+            const r = await fetch(`${API_BASE}/reviews/${id}`, {
+                method:'DELETE', headers:{'Authorization':`Bearer ${ADMIN_KEY}`}
+            });
+            const j = await r.json().catch(()=>({}));
+            if (!r.ok || !j?.ok) { alert(j?.error || 'Помилка'); return false; }
+            return true;
+        }
 
-  // завантаження списку
-  apiGet().then(data => data.forEach(r => prepend(r))).catch(()=>{});
+        // завантаження списку
+        apiGet().then(data => data.forEach(r => prepend(r))).catch(()=>{});
 
-  // відправка форми
-  form?.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const name = nameEl.value.trim();
-    const city = cityEl.value.trim();
-    const text = textEl.value.trim();
-    if (!name || !city || !text) return;
+        // відправка форми
+        form?.addEventListener('submit', async (e)=>{
+            e.preventDefault();
+            const name = nameEl.value.trim();
+            const city = cityEl.value.trim();
+            const text = textEl.value.trim();
+            if (!name || !city || !text) return;
 
-    const optimistic = prepend({ id:'tmp', name, city, text });
-    form.reset();
+            const optimistic = prepend({ id:'tmp', name, city, text });
+            form.reset();
 
-    const j = await apiPost({ name, city, text });
-    if (j?.ok) optimistic.replaceWith(makeCard(j.data));
-    else { optimistic.remove(); alert(j?.error || 'Не вдалося надіслати відгук'); }
-  });
+            const j = await apiPost({ name, city, text });
+            if (j?.ok) optimistic.replaceWith(makeCard(j.data));
+            else { optimistic.remove(); alert(j?.error || 'Не вдалося надіслати відгук'); }
+        });
 
-  // рік у футері
-  const y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
+        // рік у футері
+        const y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
 
-  // SW
-  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
-})();
+        // SW
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
+    })();
 </script>
 <script src="app.js" defer></script>
 </body>
