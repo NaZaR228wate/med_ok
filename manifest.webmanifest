@@ -1,15 +1,15 @@
 {
-  "name": "medok",
+  "name": "medok — натуральний мед",
   "short_name": "medok",
+  "lang": "uk",
+  "description": "Натуральний мед із власної пасіки. Без антибіотиків, прямо з вулика до баночки.",
   "start_url": "./",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#087B04",
   "icons": [
-    {
-      "src": "assets/medok-wordmark.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    { "src": "assets/medok-wordmark.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/medok-wordmark.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
