@@ -4,65 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Оформлення замовлення — med_ok</title>
-
-    <!-- Canonical -->
-    <link rel="canonical" href="https://nazar228wate.github.io/med_ok/order.html" />
-
-    <!-- Open Graph -->
-    <meta property="og:url" content="https://nazar228wate.github.io/med_ok/order.html" />
-    <meta property="og:image" content="https://nazar228wate.github.io/med_ok/assets/prod-mixed.webp" />
-
-    <!-- PWA -->
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Favicons and PWA meta -->
     <link rel="icon" href="assets/medok-wordmark.png">
     <meta name="theme-color" content="#087B04">
     <link rel="manifest" href="manifest.webmanifest">
-
-    <!-- Preconnect API -->
+    <!-- Preconnect to API for faster NP queries -->
     <link rel="preconnect" href="https://medok-proxy.veter010709.workers.dev" crossorigin>
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles.css" />
-
-<!-- medok fixes: footer logo scale + header logo behavior -->
-<style>
-/* Footer logo must never stretch */
-footer img[alt*="medok"],
-.site-footer .logo img,
-.footer .logo img,
-img.footer-logo {
-  height: auto !important;
-  width: auto !important;
-  max-height: 48px;
-  max-width: 180px;
-  object-fit: contain !important;
-}
-/* Prevent generic img rules from stretching logos */
-footer .logo, .site-footer .logo { display: inline-flex; align-items: center; }
-</style>
-
-<script>
-// Avoid full reload if user already on home when clicking brand logo
-(function(){
-  function norm(p){ try{ return (p || location.pathname).replace(/\/index\.html$/,'/'); }catch(e){ return '/'; } }
-  document.querySelectorAll('a[href="/"], a[href$="index.html"].js-home-logo, a.brand-logo, a.logo-link').forEach(function(a){
-    a.classList.add('js-home-logo');
-    a.addEventListener('click', function(e){
-      var here = norm(location.pathname);
-      var target = norm(a.getAttribute('href') || '/');
-      if (here === '/' && target === '/') {
-        e.preventDefault();
-        // Just scroll to top smoothly instead of reloading
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, {passive:false});
-  });
-})();
-</script>
 </head>
 <body>
 <header>
     <div class="container nav">
-        <a href="index.html" class="js-home-logo brand" aria-label="med_ok">
+        <a href="index.html" class="brand" aria-label="med_ok">
             <img class="brand-wordmark" src="assets/medok-wordmark.png" alt="med_ok" width="140" height="40">
         </a>
 
@@ -70,8 +23,8 @@ footer .logo, .site-footer .logo { display: inline-flex; align-items: center; }
             <a href="index.html#products">Продукція</a>
             <a href="index.html#about">Про пасіку</a>
             <a href="index.html#why">Чому обирають нас</a>
-            <a href="../../Downloads/reviews.html">Відгуки</a>
-            <a class="cta" href="index.html#products">Замовити</a>
+            <a href="reviews.html">Відгуки</a>
+            <a class="cta" href="order.html">Замовити</a>
         </nav>
 
         <div class="nav-right">
@@ -90,11 +43,17 @@ footer .logo, .site-footer .logo { display: inline-flex; align-items: center; }
     </div>
 </header>
 
+
+<!-- ===== PAGE ===== -->
 <main class="container">
     <h1 class="section-title">Оформлення замовлення</h1>
-    <p class="muted" style="margin-top:-6px; margin-bottom:14px">Заповніть форму. Поля зі * — обов’язкові.</p>
+    <p class="muted" style="margin-top:-6px; margin-bottom:14px">
+        Заповніть форму. Поля зі * — обов’язкові.
+    </p>
 
+    <!-- ВАЖЛИВО: id="order" (так очікує твій CSS) -->
     <form id="order" class="card">
+        <!-- Ім'я / Телефон -->
         <div class="grid">
             <div class="col-6">
                 <label for="name">Ім’я *</label>
@@ -106,6 +65,7 @@ footer .logo, .site-footer .logo { display: inline-flex; align-items: center; }
             </div>
         </div>
 
+        <!-- Доставка -->
         <h2 class="section-subtitle">Доставка</h2>
         <div class="grid">
             <div class="col-12">
@@ -116,6 +76,7 @@ footer .logo, .site-footer .logo { display: inline-flex; align-items: center; }
             </div>
         </div>
 
+        <!-- Оплата + сума в оплаті -->
         <div class="grid">
             <div class="col-12">
                 <label>Оплата *</label>
@@ -123,12 +84,17 @@ footer .logo, .site-footer .logo { display: inline-flex; align-items: center; }
                     <label><input type="radio" name="pay" value="cod" checked> Накладений платіж</label>
                     <label><input type="radio" name="pay" value="prepay"> Повна передоплата</label>
                 </div>
+                <!-- суму стилізуємо твоїм блоком .summary -->
                 <div class="summary" style="margin-top:10px">
-                    <div class="summary-row total"><span>Сума до сплати</span><b id="payTotal">—</b></div>
+                    <div class="summary-row total">
+                        <span>Сума до сплати</span>
+                        <b id="payTotal">—</b>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- Нова пошта -->
         <div class="grid">
             <div class="col-12">
                 <label for="citySearch">Пошук міста (2+ літери)</label>
@@ -151,6 +117,7 @@ footer .logo, .site-footer .logo { display: inline-flex; align-items: center; }
             </div>
         </div>
 
+        <!-- Коментар -->
         <div class="grid">
             <div class="col-12">
                 <label for="comment">Коментар</label>
@@ -169,28 +136,33 @@ footer .logo, .site-footer .logo { display: inline-flex; align-items: center; }
         <div class="footer-brand">
             <img src="assets/medok-wordmark.png" alt="medok" class="footer-logo">
             <p class="muted">Свій мед із сімейної пасіки: від вуликів до баночки контролюємо кожен етап.</p>
-            <div class="footer-tags"><span class="chip">Чесна вага</span><span class="chip">Без антибіотиків</span><span class="chip">Доставка Новою поштою</span></div>
+            <div class="footer-tags">
+                <span class="chip">Чесна вага</span>
+                <span class="chip">Без антибіотиків</span>
+                <span class="chip">Доставка Новою поштою</span>
+            </div>
         </div>
+
         <div class="footer-col">
             <h4>Головні сторінки</h4>
             <a href="index.html#products">🍯 Продукція</a>
             <a href="index.html#about">🐝 Про пасіку</a>
             <a href="index.html#why">👍 Чому нас обирають</a>
         </div>
+
         <div class="footer-col">
             <h4>Контакти</h4>
             <a class="footer-link" href="tel:+380632369027">📞 +380 63 236 9027</a>
             <a class="footer-link" href="viber://chat?number=%2B380632369027">💬 Написати у Viber</a>
             <div class="footer-badge">Відправляємо замовлення щодня</div>
         </div>
+
     </div>
     <div class="container footer-bottom">
         <div>© <span id="y"></span> med_ok. Натуральний мед з пасіки.</div>
         <div class="footer-bottom__right">Бориспільський район, Київська область.</div>
     </div>
 </footer>
-
-<!-- ГОЛОВНИЙ JS цієї сторінки -->
-<script src="../../Downloads/order.js" defer></script>
+<script src="order.js" defer></script>
 </body>
 </html>
