@@ -796,8 +796,16 @@ header img {
   max-height: 50px; /* або менше, якщо треба */
   width: auto;       /* щоб не спотворювалось */
 }
-.footer-logo {
-    max-width: 140px; /* відповідний розмір логотипа */
-    height: auto;     /* зберігає пропорції, не розтягує */
-    display: block;
+/* універсальний анти-стретч */
+img { max-width: 100%; height: auto; }
+
+/* спеціально для order.html */
+.order-hero img{
+  display:block;
+  width:100%;
+  height:auto;          /* ключове — не фіксуємо висоту */
+  object-fit: contain;  /* картинка не «сплющується» */
+  aspect-ratio:auto;    /* раптом десь задано інше */
+  margin: 0 auto;
+  max-width: 680px;     /* щоб на мобілці не виглядала гігантською */
 }
