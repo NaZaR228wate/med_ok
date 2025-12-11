@@ -4,10 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Оформлення замовлення — med_ok</title>
+
+  <!-- СТИЛІ -->
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Favicon / PWA -->
   <link rel="icon" href="assets/medok-wordmark.png">
   <meta name="theme-color" content="#087B04">
   <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Прискорення до проксі API -->
   <link rel="preconnect" href="https://medok-proxy.veter010709.workers.dev" crossorigin>
 </head>
 <body class="page--order">
@@ -22,7 +28,7 @@
       <a href="index.html#about">Про пасіку</a>
       <a href="index.html#why">Чому обирають нас</a>
       <a href="reviews.html">Відгуки</a>
-      <a class="cta" href="order.html">Замовити</a>
+      <a class="cta" href="order.html" aria-current="page">Замовити</a>
     </nav>
 
     <div class="nav-right">
@@ -42,10 +48,12 @@
 
 <main class="container">
   <h1 class="section-title">Оформлення замовлення</h1>
-  <p class="muted" style="margin-top:-6px; margin-bottom:14px">Заповніть форму. Поля зі * — обов’язкові.</p>
+  <p class="muted" style="margin-top:-6px;margin-bottom:14px">Заповніть форму. Поля зі * — обов’язкові.</p>
+
+  <!-- блок кошика підставиться скриптом вище форми -->
 
   <form id="order" class="card">
-    <!-- Ім'я / Телефон -->
+    <!-- Ім’я / Телефон -->
     <div class="grid">
       <div class="col-6">
         <label for="name">Ім’я *</label>
@@ -105,7 +113,6 @@
           <option value="">Спочатку оберіть місто</option>
         </select>
         <div id="wh-status" class="muted" role="status" aria-live="polite" style="margin-top:6px"></div>
-        <!-- показуємо повну назву вибраного відділення -->
         <div id="wh-full" class="muted small"></div>
       </div>
     </div>
@@ -156,7 +163,7 @@
   </div>
 </footer>
 
+<!-- СКРИПТ -->
 <script src="order.js" defer></script>
-<script src="order-page-patch.js" defer></script>
 </body>
 </html>
