@@ -861,3 +861,57 @@ select { background:#fff; }
 
 /* Уникнути випадкового розтягування картинок у футері */
 .footer-logo { max-width:160px; height:auto; }
+/* ====== NAV: оф-канвас + бекдроп ====== */
+.site-header { position: sticky; top: 0; z-index: 50; background: #fffef7; }
+.nav { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:64px; }
+.brand-wordmark { display:block; height:auto; width:148px; }
+.nav-right { display:flex; align-items:center; gap:10px; }
+
+/* hamburger */
+.menu-toggle { display:inline-flex; flex-direction:column; gap:4px; padding:10px; border:0; background:#fff; border-radius:999px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+.menu-toggle__bar { display:block; width:18px; height:2px; background:#212121; }
+
+/* drawer */
+.nav-drawer { position:fixed; right:0; top:0; height:100dvh; width:82vw; max-width:320px;
+  background:#fff; padding:20px; display:flex; flex-direction:column; gap:14px;
+  box-shadow:-4px 0 16px rgba(0,0,0,.12);
+  transform:translateX(100%); transition:transform .25s ease; z-index:60;
+}
+.nav-drawer a { padding:10px 6px; border-radius:8px; }
+.nav-drawer[data-open="true"] { transform:translateX(0); }
+.body--no-scroll { overflow:hidden; }
+
+.nav-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.28); backdrop-filter:saturate(70%) blur(2px);
+  opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:55;
+}
+.nav-backdrop[data-show="true"] { opacity:1; pointer-events:auto; }
+
+/* desktop: розкриваємо меню як звичайний ряд */
+@media (min-width: 900px){
+  .menu-toggle{ display:none !important; }
+  #primary-nav.nav-drawer{
+    position:static; transform:none !important; box-shadow:none; height:auto; width:auto; max-width:none;
+    flex-direction:row; gap:18px; padding:0;
+  }
+}
+
+/* ====== ORDER: сітка та поля ====== */
+#order.card { padding:16px; }
+.grid { display:grid; gap:12px; grid-template-columns: 1fr 1fr; }
+.col-12 { grid-column: 1 / -1; }
+.col-6 { grid-column: span 1; }
+@media (max-width: 680px){
+  .brand-wordmark { width:120px; }
+  .grid { grid-template-columns: 1fr; }
+  .col-6 { grid-column: 1 / -1; }
+}
+
+input, select, textarea, .btn { font-size:16px; line-height:1.4; padding:12px 12px; border-radius:12px; }
+select { background:#fff; }
+.radios { display:flex; gap:22px; align-items:center; flex-wrap:wrap; }
+
+/* повна адреса під селектом */
+#wh-full.small { font-size:13px; margin-top:6px; color:#6b6b6b; }
+
+/* уникаємо розтягування логотипу у футері */
+.footer-logo { max-width:160px; height:auto; }
