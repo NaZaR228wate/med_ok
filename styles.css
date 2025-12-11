@@ -805,4 +805,59 @@ header img {
   object-fit: contain; /* не розтягує */
   margin: 0 auto;      /* центрує */
 }
+/* ——— Хедер/навігація ——— */
+.site-header { position: sticky; top: 0; z-index: 50; background: #fffef7; }
+.nav { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:64px; }
+.brand-wordmark { display:block; height:auto; width:148px; }
+.nav-right { display:flex; align-items:center; gap:10px; }
 
+/* Кнопка меню (гамбургер) */
+.menu-toggle { display:inline-flex; flex-direction:column; gap:4px; padding:10px; border:0; background:#fff; border-radius:999px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+.menu-toggle__bar { display:block; width:18px; height:2px; background:#212121; }
+
+/* Оф-канвас меню */
+.nav-drawer { position:fixed; right:0; top:0; height:100dvh; width:82vw; max-width:320px;
+  background:#fff; padding:20px; display:flex; flex-direction:column; gap:14px;
+  box-shadow:-4px 0 16px rgba(0,0,0,.12);
+  transform:translateX(100%); transition:transform .25s ease; z-index:60;
+}
+.nav-drawer a { padding:10px 6px; border-radius:8px; }
+.nav-drawer[data-open="true"] { transform:translateX(0); }
+.body--no-scroll { overflow:hidden; }
+
+/* Бекдроп для меню */
+.nav-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.28); backdrop-filter:saturate(70%) blur(2px);
+  opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:55;
+}
+.nav-backdrop[data-show="true"] { opacity:1; pointer-events:auto; }
+
+/* Кошик у хедері */
+.cart-header-btn { padding:8px 10px; border-radius:999px; border:0; background:#111; color:#fff; font-size:14px; }
+.cart-badge { margin-left:6px; font-weight:600; }
+
+/* ——— Форма ——— */
+#order.card { padding:16px; }
+.grid { display:grid; gap:12px; grid-template-columns: 1fr 1fr; }
+.col-12 { grid-column: 1 / -1; }
+.col-6 { grid-column: span 1; }
+@media (max-width: 680px){
+  .brand-wordmark { width:120px; }            /* менший логотип */
+  .grid { grid-template-columns: 1fr; }       /* все в одну колонку */
+  .col-6 { grid-column: 1 / -1; }
+}
+
+/* Більші клікабельні зони */
+input, select, textarea, .btn {
+  font-size:16px; line-height:1.4; padding:12px 12px; border-radius:12px;
+}
+select { background:#fff; }
+.radios { display:flex; gap:22px; align-items:center; flex-wrap:wrap; }
+
+/* Плашка з повною адресою відділення */
+#wh-full.small { font-size:13px; margin-top:6px; }
+
+/* Футер, щоб не злипався */
+.footer { margin-top:32px; }
+
+/* Уникнути випадкового розтягування картинок у футері */
+.footer-logo { max-width:160px; height:auto; }
