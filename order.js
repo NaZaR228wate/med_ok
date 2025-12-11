@@ -354,3 +354,57 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch {}
   });
 })();
+<script>
+/* оф-канвас меню + бекдроп */
+(function(){
+  const btn = document.getElementById('menu-toggle');
+  const nav = document.getElementById('primary-nav');
+  const body = document.body;
+
+  // створюємо бекдроп один раз
+  let backdrop = document.querySelector('.nav-backdrop');
+  if(!backdrop){
+    backdrop = document.createElement('div');
+    backdrop.className = 'nav-backdrop';
+    document.body.appendChild(backdrop);
+  }
+
+  function openNav() {
+    nav.setAttribute('data-open','true');
+    nav.setAttribute('aria-hidden','false');
+    btn.setAttribute('aria-expanded','true');
+    backdrop.setAttribute('data-show','true');
+    body.classList.add('body--no-scroll');
+  }
+  function closeNav() {
+    nav.setAttribute('data-open','false');
+    nav.setAttribute('aria-hidden','true');
+    btn.setAttribute('aria-expanded','false');
+    backdrop.removeAttribute('data-show');
+    body.classList.remove('body--no-scroll');
+  }
+
+  btn?.addEventListener('click', () => {
+    (nav.getAttribute('data-open') === 'true') ? closeNav() : openNav();
+  });
+  backdrop.addEventListener('click', closeNav);
+  window.addEventListener('keydown', e => { if(e.key === 'Escape') closeNav(); });
+
+  /* Показуємо повну назву вибраного відділення під селектом */
+  const wh = document.getElementById('warehouse');
+  const whFull = document.getElementById('wh-full');
+  if (wh && whFull) {
+    const show = () => {
+      const opt = wh.options[wh.selectedIndex];
+      whFull.textContent = opt && opt.value ? opt.text : '';
+    };
+    wh.addEventListener('change', show);
+    // якщо order.js підставив значення до onload — також відобразимо
+    document.addEventListener('DOMContentLoaded', show);
+  }
+
+  // оновлюємо рік у футері
+  const y = document.getElementById('y');
+  if (y) y.textContent = new Date().getFullYear();
+})();
+</script>
