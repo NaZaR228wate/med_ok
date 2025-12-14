@@ -375,3 +375,13 @@ select { background:#fff; }
 #wh-full.small { font-size:13px; margin-top:6px; }
 .footer { margin-top:32px; }
 .footer-logo { max-width:160px; height:auto; }
+
+/* === Unified footer logo sizing (fix jumping logo) === */
+.footer-logo{
+  display:block;
+  margin:0 auto;
+  max-width:160px;
+  height:auto;
+  object-fit:contain;
+}
+
