@@ -290,10 +290,9 @@ textarea{min-height:96px; resize:vertical}
 .about-images img:first-child{ grid-row:1 / span 2; }
 
 /* ---- WHY SECTION ---- */
-.why-grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:24px; }
-.why-card{ grid-column:span 4; background:var(--card); border:1px solid #eee; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column; transition:transform .25s ease, box-shadow .25s ease; }
+.why-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; justify-items:center; }
+.why-card{ width:100%; max-width:360px; background:var(--card); border:1px solid #eee; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column; transition:transform .25s ease, box-shadow .25s ease; }
 .why-card:hover{ transform:translateY(-4px); box-shadow:0 16px 32px rgba(0,0,0,.12); }
-@media(max-width:900px){ .why-card{ grid-column:span 12; } }
 .why-img{ width:100%; height:180px; object-fit:cover; }
 .why-content{ padding:20px; }
 .why-content h3{ margin:0 0 8px 0; font-size:clamp(18px,2vw,22px); font-weight:800; }
