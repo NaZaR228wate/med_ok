@@ -19,35 +19,43 @@
 <body>
 <a class="visually-hidden" href="#main">Перейти до контенту</a>
 
-<header>
-    <div class="container nav">
-        <a href="index.html" class="brand" aria-label="med_ok">
-            <img class="brand-wordmark" src="assets/medok-wordmark.png" alt="med_ok" width="140" height="40">
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="header-logo" aria-label="На головну">
+            <img src="assets/medok-wordmark.png" alt="med_ok">
         </a>
 
-        <nav id="primary-nav" data-open="false" aria-hidden="true">
-            <a href="index.html#products">Продукція</a>
-            <a href="index.html#about">Про пасіку</a>
-            <a href="index.html#why">Чому обирають нас</a>
-            <a href="reviews.html">Відгуки</a>
-            <a class="cta" href="order.html">Замовити</a>
+        <nav class="header-nav">
+            <a href="index.html#products" class="header-link">Продукція</a>
+            <a href="index.html#about" class="header-link">Про пасіку</a>
+            <a href="reviews.html" class="header-link">Відгуки</a>
         </nav>
 
-        <div class="nav-right">
-            <span id="cartTotalHeader" class="cart-total-header" aria-hidden="true">₴0</span>
-            <button id="cartBtn" class="cart-header-btn" aria-label="Відкрити кошик">
-                🛒 <span id="cartQtyBadge" class="cart-badge">0</span>
+        <div class="header-actions">
+            <button id="cartBtn" class="cart-icon-btn" aria-label="Кошик">
+                🛒 <span id="cartQtyBadge" class="cart-badge" style="display:none">0</span>
+            </button>
+
+            <a href="order.html" class="btn-header-cta">Замовити мед</a>
+
+            <button id="burgerBtn" class="burger-menu" aria-label="Меню">
+                <span></span><span></span><span></span>
             </button>
         </div>
-
-        <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
-            <span class="menu-toggle__bar"></span>
-            <span class="menu-toggle__bar"></span>
-            <span class="menu-toggle__bar"></span>
-            <span class="visually-hidden">Меню</span>
-        </button>
     </div>
 </header>
+
+<div id="mobileBackdrop" class="mobile-nav-overlay"></div>
+<div id="mobileMenu" class="mobile-nav-drawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <span style="font-weight:800; font-size:20px;">Меню</span>
+        <button id="closeMenuBtn" style="background:none; border:none; font-size:24px; cursor:pointer;">✕</button>
+    </div>
+    <a href="index.html#products" class="mobile-link">🍯 Продукція</a>
+    <a href="index.html#about" class="mobile-link">🐝 Про пасіку</a>
+    <a href="reviews.html" class="mobile-link">💬 Відгуки</a>
+    <a href="order.html" class="btn-header-cta" style="display:block; text-align:center; margin-top:20px;">Оформити замовлення</a>
+</div>
 
 
 <!-- ===== MAIN ===== -->
@@ -56,15 +64,6 @@
         <h1>Відгуки клієнтів</h1>
         <p class="section-subtitle">Ми цінуємо ваші думки. Ознайомтеся з відгуками інших клієнтів або залиште свій!</p>
         <div class="grid testimonials-grid">
-            <!-- Приклади відгуків: ви можете додати свої -->
-            <article class="card">
-                <p>“Замовляла акацієвий мед для всієї родини — смак неймовірний, як у дитинстві!”</p>
-                <p class="muted">— Олена, м. Київ</p>
-            </article>
-            <article class="card">
-                <p>“Дякуємо за якісний продукт та швидку доставку. Дітям дуже подобається різнотрав’я.”</p>
-                <p class="muted">— Сергій, м. Львів</p>
-            </article>
         </div>
 
         <!-- Форма для додавання відгуку -->
@@ -126,34 +125,34 @@
 </footer>
 
 <script>
-// Невеликий скрипт для додавання нового відгуку без серверу
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('reviewForm');
-    const list = document.querySelector('#reviews .testimonials-grid');
-    if (!form || !list) return;
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name  = form.querySelector('#reviewName').value.trim();
-        const city  = form.querySelector('#reviewCity').value.trim();
-        const text  = form.querySelector('#reviewText').value.trim();
-        if (!name || !city || !text) return;
-        // Створюємо новий блок відгуку
-        const card = document.createElement('article');
-        card.className = 'card';
-        card.innerHTML = `<p>“${text}”</p><p class="muted">— ${name}, м. ${city}</p>`;
-        // Додаємо на початок списку
-        list.insertBefore(card, list.firstChild);
-        // Очищаємо форму
-        form.reset();
+    // Невеликий скрипт для додавання нового відгуку без серверу
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('reviewForm');
+        const list = document.querySelector('#reviews .testimonials-grid');
+        if (!form || !list) return;
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name  = form.querySelector('#reviewName').value.trim();
+            const city  = form.querySelector('#reviewCity').value.trim();
+            const text  = form.querySelector('#reviewText').value.trim();
+            if (!name || !city || !text) return;
+            // Створюємо новий блок відгуку
+            const card = document.createElement('article');
+            card.className = 'card';
+            card.innerHTML = `<p>“${text}”</p><p class="muted">— ${name}, м. ${city}</p>`;
+            // Додаємо на початок списку
+            list.insertBefore(card, list.firstChild);
+            // Очищаємо форму
+            form.reset();
+        });
     });
-});
 </script>
 <script src="app.js" defer></script>
 <!-- Register service worker for offline support -->
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(()=>{});
-}
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    }
 </script>
 <script>
     (() => {
