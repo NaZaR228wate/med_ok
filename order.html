@@ -8,41 +8,48 @@
     <!-- Favicons and PWA meta -->
     <link rel="icon" href="assets/medok-wordmark.png">
     <meta name="theme-color" content="#087B04">
-    <link rel="manifest" href="../../Documents/рррр/manifest.webmanifest">
+    <link rel="manifest" href="manifest.webmanifest">
     <!-- Preconnect to API for faster NP queries -->
     <link rel="preconnect" href="https://medok-proxy.veter010709.workers.dev" crossorigin>
 </head>
 <body>
-<header>
-    <div class="container nav">
-        <a href="index.html" class="brand" aria-label="med_ok">
-            <img class="brand-wordmark" src="assets/medok-wordmark.png" alt="med_ok" width="140" height="40">
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="header-logo" aria-label="На головну">
+            <img src="assets/medok-wordmark.png" alt="med_ok">
         </a>
 
-        <nav id="primary-nav" data-open="false" aria-hidden="true">
-            <a href="index.html#products">Продукція</a>
-            <a href="index.html#about">Про пасіку</a>
-            <a href="index.html#why">Чому обирають нас</a>
-            <a href="reviews.html">Відгуки</a>
-            <a class="cta" href="order.html">Замовити</a>
+        <nav class="header-nav">
+            <a href="index.html#products" class="header-link">Продукція</a>
+            <a href="index.html#about" class="header-link">Про пасіку</a>
+            <a href="reviews.html" class="header-link">Відгуки</a>
         </nav>
 
-        <div class="nav-right">
-            <span id="cartTotalHeader" class="cart-total-header" aria-hidden="true">₴0</span>
-            <button id="cartBtn" class="cart-header-btn" aria-label="Відкрити кошик">
-                🛒 <span id="cartQtyBadge" class="cart-badge">0</span>
+        <div class="header-actions">
+            <a href="index.html" class="header-link" style="font-size:14px; color:#555;">← На головну</a>
+
+            <button id="cartBtn" class="cart-icon-btn" aria-label="Кошик">
+                🛒 <span id="cartQtyBadge" class="cart-badge" style="display:none">0</span>
+            </button>
+
+            <button id="burgerBtn" class="burger-menu" aria-label="Меню">
+                <span></span><span></span><span></span>
             </button>
         </div>
-
-        <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
-            <span class="menu-toggle__bar"></span>
-            <span class="menu-toggle__bar"></span>
-            <span class="menu-toggle__bar"></span>
-            <span class="visually-hidden">Меню</span>
-        </button>
     </div>
 </header>
 
+<div id="mobileBackdrop" class="mobile-nav-overlay"></div>
+<div id="mobileMenu" class="mobile-nav-drawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <span style="font-weight:800; font-size:20px;">Меню</span>
+        <button id="closeMenuBtn" style="background:none; border:none; font-size:24px; cursor:pointer;">✕</button>
+    </div>
+    <a href="index.html" class="mobile-link">🏠 На головну</a>
+    <a href="index.html#products" class="mobile-link">🍯 Продукція</a>
+    <a href="index.html#about" class="mobile-link">🐝 Про пасіку</a>
+    <a href="reviews.html" class="mobile-link">💬 Відгуки</a>
+</div>
 
 <!-- ===== PAGE ===== -->
 <main class="container">
