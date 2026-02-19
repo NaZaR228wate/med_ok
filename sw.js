@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_NAME = 'medok-v4';
+const CACHE_NAME = 'medok-v10';
 const ASSETS_TO_CACHE = [
   './styles.css',
   './app.js',
