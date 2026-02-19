@@ -435,3 +435,13 @@ textarea { min-height: 96px; resize: vertical; }
         border-radius: 24px;
     }
 }
+.field-error {
+    border-color: #ff4d4d !important;
+    background-color: #fff5f5 !important;
+}
+.error-text {
+    color: #ff4d4d;
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: 600;
+}
