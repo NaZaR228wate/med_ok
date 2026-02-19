@@ -3,35 +3,32 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Оформлення замовлення — med_ok</title>
-<link rel="stylesheet" href="styles.css?v=13">
-    <!-- Favicons and PWA meta -->
+    <title>Замовити мед — натуральний мед з пасіки | Medok</title>
+    <meta name="description" content="Замовлення натурального меду з пасіки. Доставка Новою поштою по Києву та Україні. Заповніть форму — ми зателефонуємо й підтвердимо замовлення." />
+    <link rel="canonical" href="https://medok.ink/order.html" />
+    <link rel="stylesheet" href="styles.css?v=14">
+
     <link rel="icon" href="assets/medok-wordmark.png">
     <meta name="theme-color" content="#087B04">
     <link rel="manifest" href="manifest.webmanifest">
-    <!-- Preconnect to API for faster NP queries -->
     <link rel="preconnect" href="https://medok-proxy.veter010709.workers.dev" crossorigin>
 </head>
 <body>
 <header class="site-header">
     <div class="header-inner">
         <a href="index.html" class="header-logo" aria-label="На головну">
-            <img src="assets/medok-wordmark.png" alt="med_ok">
+            <img src="assets/medok-wordmark.png" alt="Medok">
         </a>
-
         <nav class="header-nav">
             <a href="index.html#products" class="header-link">Продукція</a>
             <a href="index.html#about" class="header-link">Про пасіку</a>
             <a href="reviews.html" class="header-link">Відгуки</a>
         </nav>
-
         <div class="header-actions">
             <a href="index.html" class="header-link" style="font-size:14px; color:#555;">← На головну</a>
-
             <button id="cartBtn" class="cart-icon-btn" aria-label="Кошик">
                 🛒 <span id="cartQtyBadge" class="cart-badge" style="display:none">0</span>
             </button>
-
             <button id="burgerBtn" class="burger-menu" aria-label="Меню">
                 <span></span><span></span><span></span>
             </button>
@@ -51,14 +48,23 @@
     <a href="reviews.html" class="mobile-link">💬 Відгуки</a>
 </div>
 
-<!-- ===== PAGE ===== -->
 <main class="container">
     <h1 class="section-title">Оформлення замовлення</h1>
     <p class="muted" style="margin-top:-6px; margin-bottom:14px">
-        Заповніть форму. Поля зі * — обов’язкові.
+        Заповніть форму — і ми зателефонуємо вам для підтвердження. Поля зі * — обов’язкові.
     </p>
 
-    <!-- ВАЖЛИВО: id="order" (так очікує твій CSS) -->
+    <!-- Блок довіри -->
+    <div class="card" style="margin-bottom:20px; background:#F9FFF6;">
+        <h2 style="margin-top:0;">Чому варто замовити мед у нас?</h2>
+        <ul class="check">
+            <li>40+ років досвіду та сімейні традиції</li>
+            <li>Гарантія натуральності — без домішок</li>
+            <li>Доставка Новою поштою за 1–2 дні</li>
+            <li>Підтримка сімейного бізнесу в Київській області</li>
+        </ul>
+    </div>
+
     <form id="order" class="card">
         <!-- Ім'я / Телефон -->
         <div class="grid">
@@ -68,7 +74,7 @@
             </div>
             <div class="col-6">
                 <label for="phone">Телефон *</label>
-                <input id="phone" type="tel" placeholder="+380..." required />
+                <input id="phone" type="tel" placeholder="+38063..." pattern="\\+?3?8?0\\d{9}" required />
             </div>
         </div>
 
@@ -91,7 +97,6 @@
                     <label><input type="radio" name="pay" value="cod" checked> Накладений платіж</label>
                     <label><input type="radio" name="pay" value="prepay"> Повна передоплата</label>
                 </div>
-                <!-- суму стилізуємо твоїм блоком .summary -->
                 <div class="summary" style="margin-top:10px">
                     <div class="summary-row total">
                         <span>Сума до сплати</span>
@@ -149,27 +154,24 @@
                 <span class="chip">Доставка Новою поштою</span>
             </div>
         </div>
-
         <div class="footer-col">
             <h4>Головні сторінки</h4>
             <a href="index.html#products">🍯 Продукція</a>
             <a href="index.html#about">🐝 Про пасіку</a>
             <a href="index.html#why">👍 Чому нас обирають</a>
         </div>
-
         <div class="footer-col">
             <h4>Контакти</h4>
             <a class="footer-link" href="tel:+380632369027">📞 +380 63 236 9027</a>
             <a class="footer-link" href="viber://chat?number=%2B380632369027">💬 Написати у Viber</a>
             <div class="footer-badge">Відправляємо замовлення щодня</div>
         </div>
-
     </div>
     <div class="container footer-bottom">
-        <div>© <span id="y"></span> med_ok. Натуральний мед з пасіки.</div>
+        <div>© <span id="y"></span> Medok. Натуральний мед з пасіки.</div>
         <div class="footer-bottom__right">Бориспільський район, Київська область.</div>
     </div>
 </footer>
-<script src="order.js" defer></script>
+<script src="order.js?v=14" defer></script>
 </body>
 </html>
