@@ -250,10 +250,6 @@
                     <span class="years-label">років досвіду</span>
                 </div>
             </div>
-            <figure class="col-6 about-photo card">
-                <img src="assets/founder.webp" alt="Наш дідусь, засновник пасіки, з рамкою меду" loading="lazy" width="600" height="400">
-                <figcaption>Засновник пасіки — дідусь, що передав нам любов до бджіл</figcaption>
-            </figure>
         </div>
     </section>
 
@@ -284,27 +280,6 @@
             </article>
         </div>
     </section>
-
-    <!-- Drawer кошика -->
-    <div id="cartDrawer" aria-hidden="true" style="position:fixed; inset:0; z-index:1000; display:none;">
-        <div id="cartBackdrop" style="position:absolute; inset:0; background:rgba(0,0,0,.45);"></div>
-        <aside style="position:absolute; right:0; top:0; bottom:0; width:min(420px, 92vw); background:#fff; box-shadow:-10px 0 30px rgba(0,0,0,.15); padding:16px; overflow:auto">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-                <h3 style="margin:0">Ваш кошик</h3>
-                <button id="cartClose" class="btn btn-secondary" style="background:#fff;color:#111;border:1px solid #ddd;">✕</button>
-            </div>
-            <div id="cartList" style="margin-top:12px;display:grid;gap:10px"></div>
-            <div id="cartEmpty" class="muted" style="text-align:center;padding:20px 6px;display:none;">Кошик порожній. Додайте продукцію ❤️</div>
-            <div id="cartSummary" style="margin-top:12px;border-top:1px solid #eee;padding-top:12px;display:none">
-                <div class="summary-row"><span class="summary-label">Товарів</span><span id="cartItemsCount" class="summary-value">0</span></div>
-                <div class="summary-row total"><span>Разом</span><span id="cartTotal" class="summary-value">₴0</span></div>
-                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px;">
-                    <button id="cartClear" class="btn-secondary">Очистити</button>
-                    <a id="cartCheckout" href="order.html" class="btn">Оформити</a>
-                </div>
-            </div>
-        </aside>
-    </div>
 
     <!-- ===== Quantity selection overlay (stepper) ===== -->
     <div id="qtyMenu" aria-hidden="true" style="position:fixed; inset:0; z-index:1050; display:none;">
@@ -386,5 +361,6 @@
         navigator.serviceWorker.register('./sw.js').catch(()=>{});
     }
 </script>
+<script src="cart.js?v=16" defer></script>
 </body>
 </html>
