@@ -3,32 +3,65 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Замовити мед — натуральний мед з пасіки | Medok</title>
-    <meta name="description" content="Замовлення натурального меду з пасіки. Доставка Новою поштою по Києву та Україні. Заповніть форму — ми зателефонуємо й підтвердимо замовлення." />
-    <link rel="canonical" href="https://medok.ink/order.html" />
-    <link rel="stylesheet" href="styles.css?v=14">
+    <title>Оформлення замовлення — Medok</title>
+    <meta name="description" content="Замовте натуральний мед із сімейної пасіки. Доставка Новою поштою. Заповніть форму — підтвердимо та відправимо." />
 
+    <link rel="stylesheet" href="styles.css?v=16">
     <link rel="icon" href="assets/medok-wordmark.png">
     <meta name="theme-color" content="#087B04">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preconnect" href="https://medok-proxy.veter010709.workers.dev" crossorigin>
+
+    <style>
+        .order-wrap{max-width:980px;margin:0 auto}
+        .order-card{padding:18px}
+        .trustline{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+        .trustchip{background:rgba(8,123,4,.08);color:#064d03;border:1px solid rgba(8,123,4,.18);padding:8px 10px;border-radius:999px;font-weight:700;font-size:13px}
+        .divider{height:1px;background:#eee;margin:14px 0}
+        .help-hint{font-size:13px;color:#666;margin-top:6px}
+        .field-error{border-color:#d93025 !important; box-shadow:0 0 0 3px rgba(217,48,37,.10) !important;}
+        .error-text{color:#d93025;font-size:12px;margin-top:6px}
+        .oneclick{background:#fff9e6;border:1px solid #ffe39a;border-radius:14px;padding:12px;margin-bottom:14px}
+        .oneclick .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+        .oneclick input{flex:1;min-width:220px}
+        .sticky-orderbar{display:none}
+        @media(max-width:640px){
+            .sticky-orderbar{
+                display:flex; position:fixed; left:0; right:0; bottom:0;
+                background:#fffdf7; border-top:1px solid #eee;
+                padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+                gap:10px; align-items:center; z-index:1200;
+            }
+            .sticky-orderbar .s-left{flex:1; min-width:0}
+            .sticky-orderbar .s-total{font-weight:900;color:#087B04;font-size:16px;white-space:nowrap}
+            .sticky-orderbar .s-sub{font-size:12px;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+            .sticky-orderbar .s-btn{width:auto; padding:12px 14px; border-radius:14px; font-size:15px}
+            body{padding-bottom:74px}
+        }
+    </style>
 </head>
+
 <body>
 <header class="site-header">
     <div class="header-inner">
         <a href="index.html" class="header-logo" aria-label="На головну">
             <img src="assets/medok-wordmark.png" alt="Medok">
         </a>
+
         <nav class="header-nav">
             <a href="index.html#products" class="header-link">Продукція</a>
             <a href="index.html#about" class="header-link">Про пасіку</a>
             <a href="reviews.html" class="header-link">Відгуки</a>
         </nav>
+
         <div class="header-actions">
-            <a href="index.html" class="header-link" style="font-size:14px; color:#555;">← На головну</a>
+            <a href="index.html" class="header-link" style="font-size:14px;color:#555;">← На головну</a>
+
+            <!-- ✅ важливо: ці id потрібні для cart.js -->
             <button id="cartBtn" class="cart-icon-btn" aria-label="Кошик">
                 🛒 <span id="cartQtyBadge" class="cart-badge" style="display:none">0</span>
             </button>
+
             <button id="burgerBtn" class="burger-menu" aria-label="Меню">
                 <span></span><span></span><span></span>
             </button>
@@ -38,85 +71,73 @@
 
 <div id="mobileBackdrop" class="mobile-nav-overlay"></div>
 <div id="mobileMenu" class="mobile-nav-drawer">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <span style="font-weight:800; font-size:20px;">Меню</span>
-        <button id="closeMenuBtn" style="background:none; border:none; font-size:24px; cursor:pointer;">✕</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <span style="font-weight:800;font-size:20px;">Меню</span>
+        <button id="closeMenuBtn" style="background:none;border:none;font-size:24px;cursor:pointer;">✕</button>
     </div>
     <a href="index.html" class="mobile-link">🏠 На головну</a>
     <a href="index.html#products" class="mobile-link">🍯 Продукція</a>
     <a href="index.html#about" class="mobile-link">🐝 Про пасіку</a>
     <a href="reviews.html" class="mobile-link">💬 Відгуки</a>
+    <a href="order.html" class="btn-header-cta" style="display:block;text-align:center;margin-top:20px;">Оформити замовлення</a>
 </div>
 
-<main class="container">
+<main class="container order-wrap">
     <h1 class="section-title">Оформлення замовлення</h1>
-    <p class="muted" style="margin-top:-6px; margin-bottom:14px">
-        Заповніть форму — і ми зателефонуємо вам для підтвердження. Поля зі * — обов’язкові.
-    </p>
 
-    <!-- Блок довіри -->
-    <div class="card" style="margin-bottom:20px; background:#F9FFF6;">
-        <h2 style="margin-top:0;">Чому варто замовити мед у нас?</h2>
-        <ul class="check">
-            <li>40+ років досвіду та сімейні традиції</li>
-            <li>Гарантія натуральності — без домішок</li>
-            <li>Доставка Новою поштою за 1–2 дні</li>
-            <li>Підтримка сімейного бізнесу в Київській області</li>
-        </ul>
+    <div class="trustline" style="margin-bottom:14px;">
+        <span class="trustchip">🍯 100% натуральний</span>
+        <span class="trustchip">📦 Відправка щодня</span>
+        <span class="trustchip">✅ Підтвердження 1–3 хв</span>
     </div>
 
-    <form id="order" class="card">
-        <!-- Ім'я / Телефон -->
+    <!-- ✅ 1-клік блок -->
+    <div class="oneclick">
+        <b style="display:block;margin-bottom:6px;">⚡ Замовити в 1 клік</b>
+        <div class="help-hint" style="margin-top:0;margin-bottom:10px;">
+            Залиш телефон — ми передзвонимо й уточнимо місто/відділення. (Кошик має бути заповнений)
+        </div>
+        <div class="row">
+            <input id="oneclickPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+380 (__) ___ __ __">
+            <button class="btn" id="oneclickBtn" type="button">Передзвоніть мені</button>
+        </div>
+        <div class="help-hint" id="oneclickHint">✅ Без оплати на сайті. Просто підтвердження.</div>
+    </div>
+
+    <!-- form -->
+    <form id="order" class="card order-card" novalidate>
+        <h2 class="section-subtitle" style="margin-bottom:8px;">Контакти</h2>
+
         <div class="grid">
             <div class="col-6">
                 <label for="name">Ім’я *</label>
-                <input id="name" type="text" placeholder="Ваше ім’я" required />
+                <input id="name" type="text" placeholder="Ваше ім’я" autocomplete="name" required />
+                <div class="error-text" id="err-name" style="display:none;"></div>
             </div>
+
             <div class="col-6">
                 <label for="phone">Телефон *</label>
-                <input id="phone" type="tel" placeholder="+38063..." pattern="\\+?3?8?0\\d{9}" required />
+                <input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+380 (__) ___ __ __" required />
+                <div class="help-hint">Щоб ми швидко підтвердили замовлення.</div>
+                <div class="error-text" id="err-phone" style="display:none;"></div>
             </div>
         </div>
 
-        <!-- Доставка -->
-        <h2 class="section-subtitle">Доставка</h2>
-        <div class="grid">
-            <div class="col-12">
-                <label for="ship">Спосіб доставки *</label>
-                <select id="ship" required>
-                    <option value="np_branch">Нова пошта — відділення</option>
-                </select>
-            </div>
-        </div>
+        <div class="divider"></div>
 
-        <!-- Оплата + сума в оплаті -->
-        <div class="grid">
-            <div class="col-12">
-                <label>Оплата *</label>
-                <div class="radios" style="display:flex; gap:22px; align-items:center;">
-                    <label><input type="radio" name="pay" value="cod" checked> Накладений платіж</label>
-                    <label><input type="radio" name="pay" value="prepay"> Повна передоплата</label>
-                </div>
-                <div class="summary" style="margin-top:10px">
-                    <div class="summary-row total">
-                        <span>Сума до сплати</span>
-                        <b id="payTotal">—</b>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <h2 class="section-subtitle" style="margin-bottom:8px;">Доставка Новою поштою</h2>
 
-        <!-- Нова пошта -->
         <div class="grid">
             <div class="col-12">
                 <label for="citySearch">Пошук міста (2+ літери)</label>
-                <input id="citySearch" type="text" placeholder="Почніть вводити назву… (напр., Ки)" />
+                <input id="citySearch" type="text" placeholder="Почніть вводити… (напр., Ки)" />
+                <div class="error-text" id="err-city" style="display:none;"></div>
             </div>
 
             <div class="col-12">
                 <label for="city">Місто (Нова пошта) *</label>
                 <select id="city" required disabled>
-                    <option value="">Спочатку введіть 2+ літери у полі вище…</option>
+                    <option value="">Спочатку введіть 2+ літери…</option>
                 </select>
             </div>
 
@@ -126,52 +147,63 @@
                     <option value="">Спочатку оберіть місто</option>
                 </select>
                 <div id="wh-status" class="muted" role="status" aria-live="polite" style="margin-top:6px"></div>
+                <div class="error-text" id="err-warehouse" style="display:none;"></div>
             </div>
         </div>
 
-        <!-- Коментар -->
+        <div class="divider"></div>
+
+        <h2 class="section-subtitle" style="margin-bottom:8px;">Оплата</h2>
+        <div class="grid">
+            <div class="col-12">
+                <div class="radios" style="display:flex;gap:22px;align-items:center;flex-wrap:wrap;">
+                    <label><input type="radio" name="pay" value="cod" checked> Накладений платіж</label>
+                    <label><input type="radio" name="pay" value="prepay"> Повна передоплата</label>
+                </div>
+
+                <div class="summary" style="margin-top:10px">
+                    <div class="summary-row total">
+                        <span>Сума до сплати</span>
+                        <b id="payTotal">—</b>
+                    </div>
+                    <div class="help-hint" id="payHint" style="margin-top:6px">💡 Накладений платіж — можна оплатити при отриманні.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 class="section-subtitle" style="margin-bottom:8px;">Коментар (необов’язково)</h2>
         <div class="grid">
             <div class="col-12">
                 <label for="comment">Коментар</label>
-                <textarea id="comment" placeholder="Зручний час дзвінка, деталі замовлення тощо"></textarea>
+                <textarea id="comment" placeholder="Напр.: після 18:00, або важливі деталі"></textarea>
             </div>
         </div>
 
-        <div class="actions">
-            <button class="btn" type="submit">Надіслати замовлення</button>
+        <div class="actions" style="margin-top:10px;">
+            <button class="btn" id="submitBtn" type="submit">✅ Підтвердити замовлення</button>
         </div>
     </form>
 </main>
 
-<footer class="footer">
-    <div class="container footer-grid">
-        <div class="footer-brand">
-            <img src="assets/medok-wordmark.png" alt="medok" class="footer-logo">
-            <p class="muted">Свій мед із сімейної пасіки: від вуликів до баночки контролюємо кожен етап.</p>
-            <div class="footer-tags">
-                <span class="chip">Чесна вага</span>
-                <span class="chip">Без антибіотиків</span>
-                <span class="chip">Доставка Новою поштою</span>
-            </div>
-        </div>
-        <div class="footer-col">
-            <h4>Головні сторінки</h4>
-            <a href="index.html#products">🍯 Продукція</a>
-            <a href="index.html#about">🐝 Про пасіку</a>
-            <a href="index.html#why">👍 Чому нас обирають</a>
-        </div>
-        <div class="footer-col">
-            <h4>Контакти</h4>
-            <a class="footer-link" href="tel:+380632369027">📞 +380 63 236 9027</a>
-            <a class="footer-link" href="viber://chat?number=%2B380632369027">💬 Написати у Viber</a>
-            <div class="footer-badge">Відправляємо замовлення щодня</div>
-        </div>
+<div class="sticky-orderbar" id="stickyBar">
+    <div class="s-left">
+        <div class="s-sub" id="stickySub">Швидке оформлення — 1 хв</div>
+        <div class="s-total" id="stickyTotal">₴—</div>
     </div>
+    <button class="btn s-btn" id="stickyBtn" type="button">Замовити</button>
+</div>
+
+<footer class="footer">
     <div class="container footer-bottom">
-        <div>© <span id="y"></span> Medok. Натуральний мед з пасіки.</div>
-        <div class="footer-bottom__right">Бориспільський район, Київська область.</div>
+        <div>© <span id="y"></span> Medok.</div>
     </div>
 </footer>
-<script src="order.js?v=14" defer></script>
+
+<!-- ✅ ВАЖЛИВО: підключаємо кошик на цій сторінці -->
+<script src="cart.js?v=16" defer></script>
+
+<script src="order.js?v=16" defer></script>
 </body>
 </html>
