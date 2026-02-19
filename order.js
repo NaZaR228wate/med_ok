@@ -1,386 +1,370 @@
-/* order.js — conversion + 1-click + NP */
+/*
+  order.js (drop-in)
+  - Works with existing order.html (no HTML changes required)
+  - Reads cart from localStorage (same key as cart.js)
+  - Correct API routes for Cloudflare Worker: /order, /np/cities, /np/warehouses
+  - "1 клік" (callback) button is disabled until phone is provided
+  - Sends Telegram message for fast order via /order with quick_order: true
+*/
 
-const CART_KEY  = 'medok_cart_v1';
-const API_BASE  = 'https://medok-proxy.veter010709.workers.dev';
-const API_ORDER = `${API_BASE}/order`;
+(() => {
+  'use strict';
 
-const $  = (s, r=document) => r.querySelector(s);
-const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
-const formatUAH = (n) => '₴' + Number(n||0).toLocaleString('uk-UA');
-const debounce = (fn, ms=350) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; };
+  // Same key as cart.js
+  const CART_KEY = 'medok_cart_v1';
 
-(function initYear(){
-    const y = $('#y');
-    if (y) y.textContent = new Date().getFullYear();
-})();
+  // If you set window.MEDOK_API_BASE in HTML, it will be used (e.g. "https://medok.ink")
+  // Otherwise use same-origin.
+  const API_BASE = (window.MEDOK_API_BASE || '').replace(/\/$/, '');
 
-function toast(msg='✅ Готово'){
-    let el = document.querySelector('.toast');
-    if (!el){
-        el = document.createElement('div');
-        el.className = 'toast';
-        document.body.appendChild(el);
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  const els = {
+    // Cart summary block in order.html
+    orderItems: $('#orderItems'),
+    payTotal: $('#payTotal'),
+
+    // Form fields
+    name: $('#name'),
+    phone: $('#phone'),
+    comment: $('#comment'),
+
+    // NP fields
+    npCityInput: $('#npCityInput'),
+    npCitySelect: $('#npCitySelect'),
+    npWarehouseSelect: $('#npWarehouseSelect'),
+
+    // Payment
+    payCod: $('#pay_cod'),
+    payPrepay: $('#pay_prepay'),
+
+    // Buttons
+    submitBtn: $('#submitOrder'),
+    quickBtn: $('#quickOrder'), // optional in HTML
+
+    // Status
+    status: $('#orderStatus'),
+  };
+
+  function money(n) {
+    const x = Number(n) || 0;
+    return `₴${x.toLocaleString('uk-UA')}`;
+  }
+
+  function readCart() {
+    try {
+      const raw = localStorage.getItem(CART_KEY);
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (!parsed || !Array.isArray(parsed.items)) return { items: [] };
+      // normalize
+      const items = parsed.items
+        .map(i => ({
+          type: String(i.type || '').trim(),
+          qty: String(i.qty || '').trim(),
+          price: Number(i.price) || 0,
+          count: Math.max(0, Number(i.count) || 0),
+        }))
+        .filter(i => i.type && i.qty && i.count > 0);
+      return { items };
+    } catch {
+      return { items: [] };
     }
-    el.textContent = msg;
-    el.classList.add('show');
-    setTimeout(()=>el.classList.remove('show'), 1700);
-}
+  }
 
-function loadCart(){
-    try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
-    catch { return []; }
-}
-function cartTotal(items){ return items.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.count)||0), 0); }
+  function cartTotal(items) {
+    return items.reduce((s, i) => s + (Number(i.price) || 0) * (Number(i.count) || 0), 0);
+  }
 
-function normalizePhone(raw){
-    const d = String(raw||'').replace(/[^\d+]/g,'');
-    if (/^0\d{9}$/.test(d)) return '+38' + d;
-    if (/^\+?380\d{9}$/.test(d)) return d.startsWith('+') ? d : ('+'+d);
-    return d;
-}
-function formatPhoneDisplay(raw){
-    const digits = String(raw||'').replace(/\D/g,'');
-    let d = digits;
-    if (d.startsWith('380')) d = d.slice(3);
-    if (d.startsWith('0')) d = d.slice(1);
-    const p = (i,j)=> d.slice(i,j);
-    const out = `+380 (${p(0,2)}) ${p(2,5)} ${p(5,7)} ${p(7,9)}`.trim();
-    return out.replace(/\s+/g,' ');
-}
+  function renderCartToOrder() {
+    if (!els.orderItems || !els.payTotal) return;
 
-function applyPhoneMask(id){
-    const phone = $('#'+id);
-    if (!phone) return;
+    const { items } = readCart();
 
-    phone.addEventListener('input', ()=>{
-        const digits = phone.value.replace(/\D/g,'');
-        if (digits.length >= 9) phone.value = formatPhoneDisplay(phone.value);
-    });
+    if (!items.length) {
+      els.orderItems.innerHTML = '<div class="muted">Кошик порожній. Додайте мед на головній сторінці 🙂</div>';
+      els.payTotal.textContent = '—';
+      return;
+    }
 
-    phone.addEventListener('blur', ()=>{
-        phone.value = formatPhoneDisplay(phone.value);
-    });
-}
+    const rows = items.map((i, idx) => {
+      const lineSum = (Number(i.price) || 0) * (Number(i.count) || 0);
+      return `
+        <div class="order-item">
+          <div class="order-item__left">
+            <div class="order-item__title">${idx + 1}. ${escapeHtml(i.type)}</div>
+            <div class="order-item__sub">${escapeHtml(i.qty)} л × ${i.count} шт</div>
+          </div>
+          <div class="order-item__right">${money(lineSum)}</div>
+        </div>
+      `;
+    }).join('');
 
-/* NP API */
-async function fetchCities(q){
-    if ((q||'').trim().length < 2) return [];
-    const r = await fetch(`${API_BASE}/np/cities?q=${encodeURIComponent(q)}`);
-    const j = await r.json().catch(()=>({}));
-    return Array.isArray(j?.data) ? j.data : [];
-}
-async function fetchWarehousesByCityName(city){
-    if (!city) return [];
-    const r = await fetch(`${API_BASE}/np/warehouses?city=${encodeURIComponent(city)}`);
-    const j = await r.json().catch(()=>({}));
-    return Array.isArray(j?.data) ? j.data : [];
-}
+    els.orderItems.innerHTML = rows;
+    els.payTotal.textContent = money(cartTotal(items));
+  }
 
-function initNovaPoshta(){
-    const cityInput = $('#citySearch');
-    const citySel   = $('#city');
-    const whSel     = $('#warehouse');
-    const whStatus  = $('#wh-status');
-    if (!cityInput || !citySel || !whSel) return;
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 
-    cityInput.addEventListener('keydown', (e)=>{ if (e.key==='Enter') e.preventDefault(); });
+  function setStatus(msg, kind = 'info') {
+    if (!els.status) return;
+    els.status.textContent = msg || '';
+    els.status.className = `status status--${kind}`;
+  }
 
-    const SAVED_CITY_KEY = 'medok_np_city';
-    const SAVED_WH_KEY   = 'medok_np_warehouse';
+  function selectedPay() {
+    // default: prepay if exists & checked, else cod
+    if (els.payPrepay && els.payPrepay.checked) return 'prepay';
+    return 'cod';
+  }
 
-    const setEmptyCity = (text='Спочатку введіть 2+ літери')=>{
-        citySel.innerHTML = `<option value="">— ${text} —</option>`;
-        citySel.disabled = false;
-    };
-    const setEmptyWh = (text='Спочатку оберіть місто')=>{
-        whSel.innerHTML = `<option value="">— ${text} —</option>`;
-        whSel.disabled = false;
-    };
-
-    setEmptyCity();
-    setEmptyWh();
-
-    cityInput.addEventListener('input', debounce(async ()=>{
-        const q = cityInput.value.trim();
-        if (q.length < 2){
-            setEmptyCity('Спочатку введіть 2+ літери');
-            setEmptyWh('Спочатку оберіть місто');
-            if (whStatus) whStatus.textContent = '';
-            return;
-        }
-
-        setEmptyCity('Завантаження…');
-        setEmptyWh('Спочатку оберіть місто');
-        if (whStatus) whStatus.textContent = '';
-
-        try{
-            const cities = await fetchCities(q);
-            if (!cities.length){
-                setEmptyCity('Місто не знайдено');
-                return;
-            }
-            citySel.innerHTML = [
-                `<option value="">— Оберіть місто —</option>`,
-                ...cities.map(c=>`<option value="${c.Description}">${c.Description}</option>`)
-            ].join('');
-            citySel.disabled = false;
-        }catch{
-            setEmptyCity('Помилка завантаження');
-        }
-    }, 320));
-
-    citySel.addEventListener('change', async ()=>{
-        const city = citySel.value;
-        if (!city){ setEmptyWh('Спочатку оберіть місто'); return; }
-
-        localStorage.setItem(SAVED_CITY_KEY, city);
-        localStorage.removeItem(SAVED_WH_KEY);
-
-        if (whStatus) whStatus.textContent = '🔄 Завантаження відділень…';
-        setEmptyWh('Завантаження…');
-
-        try{
-            const list = await fetchWarehousesByCityName(city);
-            if (!list.length){
-                setEmptyWh('Немає відділень');
-                if (whStatus) whStatus.textContent = '';
-                return;
-            }
-            whSel.innerHTML = [
-                `<option value="">— Оберіть відділення —</option>`,
-                ...list.map(w=>`<option value="${w.Description}">${w.Description}</option>`)
-            ].join('');
-            whSel.disabled = false;
-
-            const savedWh = localStorage.getItem(SAVED_WH_KEY);
-            if (savedWh) whSel.value = savedWh;
-
-            if (whStatus) whStatus.textContent = '';
-        }catch{
-            setEmptyWh('Помилка завантаження');
-            if (whStatus) whStatus.textContent = 'Помилка завантаження';
-        }
-    });
-
-    whSel.addEventListener('change', ()=>{
-        const v = whSel.value;
-        if (v) localStorage.setItem(SAVED_WH_KEY, v);
-        else localStorage.removeItem(SAVED_WH_KEY);
-    });
-
-    (async ()=>{
-        const savedCity = localStorage.getItem(SAVED_CITY_KEY);
-        if (!savedCity) return;
-        cityInput.value = savedCity;
-
-        try{
-            const cities = await fetchCities(savedCity);
-            if (cities.length){
-                citySel.innerHTML = [
-                    `<option value="">— Оберіть місто —</option>`,
-                    ...cities.map(c=>`<option value="${c.Description}">${c.Description}</option>`)
-                ].join('');
-                citySel.value = savedCity;
-            }
-
-            if (whStatus) whStatus.textContent = '🔄 Завантаження відділень…';
-            const list = await fetchWarehousesByCityName(savedCity);
-            whSel.innerHTML = [
-                `<option value="">— Оберіть відділення —</option>`,
-                ...list.map(w=>`<option value="${w.Description}">${w.Description}</option>`)
-            ].join('');
-            const savedWh = localStorage.getItem(SAVED_WH_KEY);
-            if (savedWh) whSel.value = savedWh;
-            if (whStatus) whStatus.textContent = '';
-            whSel.disabled = false;
-        }catch{
-            if (whStatus) whStatus.textContent = '';
-        }
-    })();
-}
-
-async function sendOrder(payload){
-    const r = await fetch(API_ORDER, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
-    });
-    const j = await r.json().catch(()=>({}));
+  async function apiGet(path, params) {
+    const u = new URL((API_BASE || '') + path, window.location.origin);
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && String(v).trim() !== '') u.searchParams.set(k, String(v));
+      });
+    }
+    const r = await fetch(u.toString(), { method: 'GET', headers: { 'Accept': 'application/json' } });
+    const j = await r.json().catch(() => ({}));
     if (!r.ok || j?.ok === false) throw new Error(j?.error || `HTTP ${r.status}`);
     return j;
-}
+  }
 
-/* 1-click */
-function initOneClick(){
-    const btn = $('#oneclickBtn');
-    const input = $('#oneclickPhone');
-    const hint = $('#oneclickHint');
-    if (!btn || !input) return;
-
-    applyPhoneMask('oneclickPhone');
-
-    btn.addEventListener('click', async ()=>{
-        const items = loadCart();
-        if (!items.length){
-            toast('🛒 Спочатку додайте товар у кошик');
-            return;
-        }
-
-        const phoneRaw = input.value.trim();
-        const phone = normalizePhone(phoneRaw);
-        const digits = phone.replace(/\D/g,'');
-        if (!(digits.length === 12 && digits.startsWith('380'))){
-            toast('⚠️ Вкажіть телефон у форматі +380...');
-            input.focus();
-            navigator.vibrate?.(20);
-            return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = '⏳ Надсилаємо…';
-        if (hint) hint.textContent = 'Надсилаємо запит…';
-
-        try{
-            const payload = {
-                from_cart: true,
-                cart: items,
-                cart_total: cartTotal(items),
-                phone,
-                name: '',
-                pay: 'cod',
-                comment: '⚡ Замовлення в 1 клік. Передзвоніть, щоб уточнити місто/відділення.'
-            };
-
-            const res = await sendOrder(payload);
-            navigator.vibrate?.(50);
-            toast('✅ Прийнято! Ми передзвонимо за 1–3 хв');
-
-            if (hint) hint.textContent = '✅ Готово! Очікуйте дзвінок/повідомлення.';
-            input.value = '';
-            setTimeout(()=>{
-                const orderId = res?.order_id || '';
-                window.location.href = orderId ? `thank-you.html?order=${encodeURIComponent(orderId)}` : 'thank-you.html';
-            }, 700);
-
-        }catch(err){
-            console.error(err);
-            toast('❌ Помилка: ' + (err?.message || 'невідомо'));
-            if (hint) hint.textContent = 'Спробуйте ще раз або оформіть через форму нижче.';
-            btn.disabled = false;
-            btn.textContent = 'Передзвоніть мені';
-            navigator.vibrate?.(20);
-        }
+  async function apiPost(path, payload) {
+    const u = new URL((API_BASE || '') + path, window.location.origin);
+    const r = await fetch(u.toString(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload || {}),
     });
-}
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || j?.ok === false) throw new Error(j?.error || `HTTP ${r.status}`);
+    return j;
+  }
 
-/* Full form submit */
-function initSubmit(){
-    const form = $('#order');
-    if (!form) return;
+  // -------- NP binding --------
+  let npCityTimer = null;
 
-    applyPhoneMask('phone');
+  function bindNovaPoshta() {
+    if (!els.npCityInput || !els.npCitySelect || !els.npWarehouseSelect) return;
 
-    form.addEventListener('submit', async (e)=>{
-        e.preventDefault();
+    els.npCityInput.addEventListener('input', () => {
+      clearTimeout(npCityTimer);
+      const q = String(els.npCityInput.value || '').trim();
 
-        const items = loadCart();
-        if (!items.length){
-            toast('🛒 Кошик порожній — додайте товари');
+      // reset
+      els.npCitySelect.innerHTML = '<option value="">Почніть вводити 2+ літери…</option>';
+      els.npWarehouseSelect.innerHTML = '<option value="">Спочатку оберіть місто</option>';
+
+      if (q.length < 2) return;
+
+      npCityTimer = setTimeout(async () => {
+        try {
+          const res = await apiGet('/np/cities', { q });
+          const data = Array.isArray(res.data) ? res.data : [];
+          if (!data.length) {
+            els.npCitySelect.innerHTML = '<option value="">Місто не знайдено</option>';
             return;
+          }
+
+          els.npCitySelect.innerHTML = '<option value="">Оберіть місто…</option>' +
+            data.map(c => {
+              const name = c.Description || c.DescriptionUa || c.DescriptionRU || '';
+              const ref = c.Ref || '';
+              return `<option value="${escapeHtml(ref)}" data-name="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+            }).join('');
+
+        } catch (e) {
+          console.error('[NP cities]', e);
+          els.npCitySelect.innerHTML = '<option value="">Помилка завантаження міст</option>';
         }
-
-        const name = $('#name')?.value.trim();
-        const phone = normalizePhone($('#phone')?.value.trim());
-        const city = $('#city')?.value.trim();
-        const wh = $('#warehouse')?.value.trim();
-
-        if (!name || !phone || !city || !wh){
-            toast('⚠️ Заповніть усі обовʼязкові поля');
-            navigator.vibrate?.(20);
-            return;
-        }
-
-        const btn = $('#submitBtn');
-        if (btn){ btn.disabled = true; btn.textContent = '⏳ Надсилаємо…'; }
-
-        try{
-            const payload = {
-                from_cart: true,
-                cart: items,
-                cart_total: cartTotal(items),
-                name,
-                phone,
-                pay: document.querySelector('input[name="pay"]:checked')?.value || 'cod',
-                np_city: city,
-                np_warehouse: wh,
-                comment: $('#comment')?.value.trim()
-            };
-
-            const res = await sendOrder(payload);
-            navigator.vibrate?.(50);
-            toast('✅ Замовлення прийнято!');
-
-            localStorage.removeItem(CART_KEY);
-
-            setTimeout(()=>{
-                const orderId = res?.order_id || '';
-                window.location.href = orderId ? `thank-you.html?order=${encodeURIComponent(orderId)}` : 'thank-you.html';
-            }, 650);
-
-        }catch(err){
-            console.error(err);
-            toast('❌ Не вдалося надіслати: ' + (err?.message || 'помилка'));
-            if (btn){ btn.disabled = false; btn.textContent = '✅ Підтвердити замовлення'; }
-        }
-    });
-}
-
-/* Mobile menu */
-function initMobileMenu(){
-    const burger = $('#burgerBtn');
-    const menu   = $('#mobileMenu');
-    const back   = $('#mobileBackdrop');
-    const close  = $('#closeMenuBtn');
-    if (!burger || !menu || !back || !close) return;
-
-    const open = ()=>{ menu.classList.add('active'); back.classList.add('active'); document.body.style.overflow='hidden'; };
-    const shut = ()=>{ menu.classList.remove('active'); back.classList.remove('active'); document.body.style.overflow=''; };
-
-    burger.addEventListener('click', open);
-    back.addEventListener('click', shut);
-    close.addEventListener('click', shut);
-}
-
-/* Sticky CTA */
-function initSticky(){
-    const bar = $('#stickyBar');
-    const btn = $('#stickyBtn');
-    const total = $('#stickyTotal');
-    if (!bar || !btn) return;
-
-    const items = loadCart();
-    if (total) total.textContent = formatUAH(cartTotal(items));
-
-    btn.addEventListener('click', ()=>{
-        $('#submitBtn')?.click();
-        navigator.vibrate?.(20);
+      }, 250);
     });
 
-    const onScroll = ()=>{
-        const submit = $('#submitBtn');
-        if (!submit) return;
-        const r = submit.getBoundingClientRect();
-        const near = r.top < window.innerHeight && r.bottom > 0;
-        bar.style.display = near ? 'none' : '';
+    els.npCitySelect.addEventListener('change', async () => {
+      const cityRef = els.npCitySelect.value;
+      const opt = els.npCitySelect.selectedOptions?.[0];
+      const cityName = opt?.dataset?.name || '';
+
+      els.npWarehouseSelect.innerHTML = '<option value="">Завантаження…</option>';
+
+      if (!cityRef && !cityName) {
+        els.npWarehouseSelect.innerHTML = '<option value="">Спочатку оберіть місто</option>';
+        return;
+      }
+
+      try {
+        const res = await apiGet('/np/warehouses', cityRef ? { cityRef } : { city: cityName });
+        const data = Array.isArray(res.data) ? res.data : [];
+
+        if (!data.length) {
+          els.npWarehouseSelect.innerHTML = '<option value="">Відділень не знайдено</option>';
+          return;
+        }
+
+        els.npWarehouseSelect.innerHTML = '<option value="">Оберіть відділення…</option>' +
+          data.map(w => {
+            const title = w.Description || w.DescriptionUa || '';
+            return `<option value="${escapeHtml(title)}">${escapeHtml(title)}</option>`;
+          }).join('');
+
+      } catch (e) {
+        console.error('[NP wh]', e);
+        els.npWarehouseSelect.innerHTML = '<option value="">Помилка завантаження відділень</option>';
+      }
+    });
+  }
+
+  // -------- quick order (callback) --------
+  function bindQuickOrderValidation() {
+    if (!els.quickBtn) return;
+
+    const sync = () => {
+      const phone = String(els.phone?.value || '').trim();
+      const ok = phone.replace(/\D/g, '').length >= 10; // UA-like length
+      els.quickBtn.disabled = !ok;
+      els.quickBtn.setAttribute('aria-disabled', String(!ok));
+      els.quickBtn.title = ok ? '' : 'Вкажіть номер телефону, щоб ми могли передзвонити';
     };
-    window.addEventListener('scroll', onScroll, {passive:true});
-    onScroll();
-}
 
-document.addEventListener('DOMContentLoaded', ()=>{
-    initNovaPoshta();
-    initOneClick();
-    initSubmit();
-    initMobileMenu();
-    initSticky();
-});
+    sync();
+    els.phone?.addEventListener('input', sync);
+
+    els.quickBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const phone = String(els.phone?.value || '').trim();
+      if (phone.replace(/\D/g, '').length < 10) {
+        setStatus('Спочатку введіть номер телефону 🙂', 'warn');
+        els.phone?.focus();
+        return;
+      }
+
+      // Fast order payload: minimal + cart snapshot if available
+      const { items } = readCart();
+      const total = cartTotal(items);
+
+      const payload = {
+        quick_order: true,
+        name: String(els.name?.value || '').trim(),
+        phone,
+        // attach cart if exists
+        from_cart: !!items.length,
+        cart: items.length ? items.map(i => ({ type: i.type, qty: i.qty, count: i.count, price: i.price })) : [],
+        cart_total: total,
+        // note: do not require delivery fields for quick callback
+        comment: (String(els.comment?.value || '').trim() || 'Передзвоніть мені (швидке замовлення)')
+      };
+
+      try {
+        els.quickBtn.disabled = true;
+        setStatus('Відправляємо…', 'info');
+        await apiPost('/order', payload);
+        setStatus('✅ Дякуємо! Ми передзвонимо вам найближчим часом.', 'ok');
+        if (navigator.vibrate) navigator.vibrate(50);
+      } catch (err) {
+        console.error('[quick order]', err);
+        setStatus('❌ Не вдалося відправити. Спробуйте ще раз або напишіть у Viber.', 'error');
+        els.quickBtn.disabled = false;
+      }
+    });
+  }
+
+  // -------- full order submit --------
+  function bindFullOrderSubmit() {
+    if (!els.submitBtn) return;
+
+    els.submitBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      const name = String(els.name?.value || '').trim();
+      const phone = String(els.phone?.value || '').trim();
+      const npCityOpt = els.npCitySelect?.selectedOptions?.[0];
+      const npCityName = npCityOpt?.dataset?.name || '';
+      const npWarehouse = String(els.npWarehouseSelect?.value || '').trim();
+
+      if (!phone || phone.replace(/\D/g, '').length < 10) {
+        setStatus('Вкажіть номер телефону (мін. 10 цифр)', 'warn');
+        els.phone?.focus();
+        return;
+      }
+
+      // Delivery fields are required for full order
+      if (!npCityName) {
+        setStatus('Оберіть місто Нової пошти', 'warn');
+        els.npCitySelect?.focus();
+        return;
+      }
+      if (!npWarehouse) {
+        setStatus('Оберіть відділення Нової пошти', 'warn');
+        els.npWarehouseSelect?.focus();
+        return;
+      }
+
+      const { items } = readCart();
+      if (!items.length) {
+        setStatus('Кошик порожній. Додайте мед на головній сторінці 🙂', 'warn');
+        return;
+      }
+
+      const total = cartTotal(items);
+
+      const payload = {
+        from_cart: true,
+        cart: items.map(i => ({ type: i.type, qty: i.qty, count: i.count, price: i.price })),
+        cart_total: total,
+        name,
+        phone,
+        np_city: npCityName,
+        np_cityRef: String(els.npCitySelect?.value || '').trim(),
+        np_warehouse: npWarehouse,
+        pay: selectedPay(),
+        comment: String(els.comment?.value || '').trim(),
+      };
+
+      try {
+        els.submitBtn.disabled = true;
+        setStatus('Відправляємо замовлення…', 'info');
+        const res = await apiPost('/order', payload);
+
+        // Clear cart after success
+        try { localStorage.removeItem(CART_KEY); } catch {}
+
+        renderCartToOrder();
+        setStatus(`✅ Замовлення прийнято! Номер: ${res.order_id || '—'}. Ми з вами звʼяжемося.`, 'ok');
+        if (navigator.vibrate) navigator.vibrate(50);
+      } catch (err) {
+        console.error('[order submit]', err);
+        setStatus('❌ Помилка відправки. Перевірте інтернет або спробуйте ще раз.', 'error');
+      } finally {
+        els.submitBtn.disabled = false;
+      }
+    });
+  }
+
+  // -------- init --------
+  function init() {
+    try {
+      renderCartToOrder();
+    } catch (e) {
+      console.error('[renderCartToOrder]', e);
+    }
+
+    bindNovaPoshta();
+    bindQuickOrderValidation();
+    bindFullOrderSubmit();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
