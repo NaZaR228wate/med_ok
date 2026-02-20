@@ -28,51 +28,44 @@ function updateCartBadge(){
 function ensureCartUI(){
     if ($('#cartOverlay')) return;
 
+    // Фон (overlay)
     const overlay = document.createElement('div');
     overlay.id = 'cartOverlay';
     overlay.style.cssText = `
-    position:fixed; inset:0; background:rgba(0,0,0,.45);
-    opacity:0; pointer-events:none; transition:.2s;
-    z-index:2000;
-  `;
+        position:fixed; inset:0; background:rgba(0,0,0,.45);
+        opacity:0; pointer-events:none; transition:.2s; z-index:2000;
+    `;
 
+    // Вікно кошика (drawer)
     const drawer = document.createElement('div');
     drawer.id = 'cartDrawer';
     drawer.style.cssText = `
-    position:fixed; top:0; right:0; height:100vh; width:min(420px, 92vw);
-    background:#fff; transform:translateX(105%);
-    transition:.25s; z-index:2001; box-shadow:-10px 0 30px rgba(0,0,0,.2);
-    display:flex; flex-direction:column;
-  `;
+        position:fixed; top:0; right:0; height:100dvh; width:min(420px, 92vw);
+        background:#fff; transform:translateX(105%);
+        transition:.25s; z-index:2001; box-shadow:-10px 0 30px rgba(0,0,0,.2);
+        display:flex; flex-direction:column; /* ВАЖЛИВО для скролу */
+    `;
 
     drawer.innerHTML = `
-    <div style="padding:14px 14px 10px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between;">
-      <div style="font-weight:900; font-size:18px;">🛒 Кошик</div>
-      <button id="cartCloseBtn" style="border:none;background:#f3f3f3;border-radius:12px;padding:10px 12px;cursor:pointer;">✕</button>
+    <div style="padding:16px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
+      <div style="font-weight:900; font-size:20px;">🛒 Кошик</div>
+      <button id="cartCloseBtn" style="border:none;background:#f3f3f3;border-radius:12px;padding:10px 15px;cursor:pointer;font-size:18px;">✕</button>
     </div>
 
-    <div id="cartBody" style="padding:12px 14px; overflow:auto; flex:1;"></div>
+    <!-- Область зі списком товарів - тепер вона буде гортатися -->
+    <div id="cartBody" style="padding:16px; overflow-y:auto; flex-grow:1; -webkit-overflow-scrolling:touch;"></div>
 
-    <div style="padding:12px 14px; border-top:1px solid #eee;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <b>Разом</b>
-        <b id="cartTotal" style="color:#087B04; font-size:18px;">₴0</b>
+    <div style="padding:16px; border-top:1px solid #eee; flex-shrink:0; background:#fff;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <b style="font-size:18px;">Разом</b>
+        <b id="cartTotal" style="color:#087B04; font-size:22px;">₴0</b>
       </div>
-
       <div style="display:flex; gap:10px;">
-        <button id="cartClearBtn" style="flex:1;border:none;background:#f3f3f3;border-radius:14px;padding:12px;cursor:pointer;font-weight:800;">
-          Очистити
-        </button>
-        <a id="cartCheckoutBtn" href="order.html" style="flex:1;text-align:center;text-decoration:none;background:#087B04;color:#fff;border-radius:14px;padding:12px;font-weight:900;">
-          Оформити
-        </a>
-      </div>
-
-      <div style="font-size:12px;color:#666;margin-top:8px;">
-        ✅ Підтвердження за 1–3 хв • 📦 Відправка щодня
+        <button id="cartClearBtn" style="flex:1;border:none;background:#f3f3f3;border-radius:14px;padding:14px;cursor:pointer;font-weight:800;">Очистити</button>
+        <a href="order.html" style="flex:1.5;text-align:center;text-decoration:none;background:#087B04;color:#fff;border-radius:14px;padding:14px;font-weight:900;font-size:18px;">Оформити</a>
       </div>
     </div>
-  `;
+    `;
 
     document.body.appendChild(overlay);
     document.body.appendChild(drawer);
