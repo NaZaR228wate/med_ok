@@ -23,52 +23,61 @@
         return total;
     }
 
-    /* --- ПОКРАЩЕНА МАСКА ТЕЛЕФОНУ +38 (0XX) XXX-XX-XX --- */
+   /* --- РОЗУМНА МАСКА ТЕЛЕФОНУ +38 (0XX) XXX-XX-XX --- */
     function initPhoneMask(el) {
         if (!el) return;
 
         el.addEventListener('input', (e) => {
-            let cursor = e.target.selectionStart;
             let value = e.target.value;
+            // Отримуємо тільки цифри
             let digits = value.replace(/\D/g, '');
 
-            // Якщо користувач почав вводити з 380, прибираємо 38
+            // 1. Якщо людина вводить 380... -> лишаємо 0... (прибираємо 38)
             if (digits.startsWith('380')) {
                 digits = digits.substring(2);
-            } else if (digits.startsWith('38')) {
-                digits = digits.substring(2);
+            } 
+            // 2. Якщо вводить 387... (забув 0) -> перетворюємо на 07...
+            else if (digits.startsWith('38') && digits.length > 2 && digits[2] !== '0') {
+                digits = '0' + digits.substring(2);
+            }
+            // 3. Якщо вводить 73... (без 0 і без 38) -> додаємо 0 в початок
+            else if (digits.length > 0 && digits[0] !== '0') {
+                digits = '0' + digits;
             }
 
-            // Обмежуємо 10 цифрами (0631234567)
+            // Обмежуємо 10 цифрами (від 063 до останньої цифри номера)
             digits = digits.substring(0, 10);
 
+            // Форматування маски
             let formatted = '+38 (';
-            if (digits.length > 0) formatted += digits.substring(0, 3);
-            if (digits.length >= 4) formatted += ') ' + digits.substring(3, 6);
-            if (digits.length >= 7) formatted += '-' + digits.substring(6, 8);
-            if (digits.length >= 9) formatted += '-' + digits.substring(8, 10);
+            if (digits.length > 0) {
+                formatted += digits.substring(0, 3);
+            }
+            if (digits.length >= 4) {
+                formatted += ') ' + digits.substring(3, 6);
+            }
+            if (digits.length >= 7) {
+                formatted += '-' + digits.substring(6, 8);
+            }
+            if (digits.length >= 9) {
+                formatted += '-' + digits.substring(8, 10);
+            }
 
             el.value = formatted;
-
-            // Логіка, щоб курсор не стрибав у кінець при редагуванні всередині
-            if (cursor < formatted.length) {
-                el.setSelectionRange(cursor, cursor);
-            }
         });
 
-        // При натисканні на поле, якщо воно порожнє, одразу ставимо префікс
-        el.addEventListener('focus', () => {
-            if (el.value.length < 5) el.value = '+38 (';
-        });
-
-        // Забороняємо видаляти префікс "+38 (" через Backspace
+        // Блокуємо видалення префікса
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Backspace' && el.value.length <= 5) {
                 e.preventDefault();
             }
         });
-    }
 
+        // Автозаповнення при фокусі
+        el.addEventListener('focus', () => {
+            if (el.value.length < 5) el.value = '+38 (';
+        });
+    }
     /* --- НОВА ПОШТА --- */
     function initNP() {
         const search = $('#citySearch'), select = $('#city'), wh = $('#warehouse');
