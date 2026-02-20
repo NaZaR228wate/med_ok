@@ -1,4 +1,4 @@
-/* cart.js — фінальна версія з виправленим скролом для мобільних */
+/* cart.js — максимально стабільна версія для мобільних */
 
 const CART_KEY = 'medok_cart_v1';
 
@@ -15,10 +15,6 @@ function saveCart(items){
     updateCartBadge();
 }
 
-function cartTotal(items){ 
-    return items.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.count)||0), 0); 
-}
-
 function updateCartBadge(){
     const badge = $('#cartQtyBadge');
     if (!badge) return;
@@ -28,62 +24,60 @@ function updateCartBadge(){
     badge.style.display = qty ? 'inline-block' : 'none';
 }
 
-// Додаємо стилі окремим блоком для надійності
+// 1. СТИЛІ (максимальна сумісність)
 function injectCartStyles() {
     if ($('#cartStyles')) return;
     const style = document.createElement('style');
     style.id = 'cartStyles';
     style.innerHTML = `
         #cartOverlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-            opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 2000;
-            backdrop-filter: blur(2px);
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); opacity: 0; pointer-events: none;
+            transition: opacity 0.3s; z-index: 99999; backdrop-filter: blur(4px);
         }
         #cartOverlay.active { opacity: 1; pointer-events: auto; }
 
         #cartDrawer {
             position: fixed; top: 0; right: 0; bottom: 0;
-            width: 100%; max-width: 400px; background: #fff;
-            transform: translateX(105%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 2001; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-            display: flex; flex-direction: column;
-            height: 100dvh;
+            width: 100%; max-width: 420px; background: #fff;
+            transform: translateX(100%); transition: transform 0.3s ease-out;
+            z-index: 100000; display: flex; flex-direction: column;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.2);
         }
         #cartDrawer.active { transform: translateX(0); }
 
         .cart-header {
-            padding: 20px; border-bottom: 1px solid #eee;
-            display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+            padding: 16px 20px; border-bottom: 1px solid #eee;
+            display: flex; align-items: center; justify-content: space-between;
         }
         .cart-body {
-            padding: 20px; overflow-y: auto; flex-grow: 1;
+            flex: 1; overflow-y: auto; padding: 20px;
             -webkit-overflow-scrolling: touch;
         }
         .cart-footer {
-            padding: 20px; border-top: 1px solid #eee; flex-shrink: 0;
+            padding: 20px; border-top: 1px solid #eee; background: #fff;
             padding-bottom: calc(20px + env(safe-area-inset-bottom));
-            background: #fff;
         }
         .cart-item {
-            border: 1px solid #f0f0f0; border-radius: 16px; padding: 15px;
-            margin-bottom: 15px; background: #fafafa;
+            background: #f9f9f9; border-radius: 14px; padding: 12px;
+            margin-bottom: 12px; border: 1px solid #eee;
         }
-        .cart-item-info { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .cart-item-title { font-weight: 800; font-size: 17px; color: #111; }
-        .cart-item-price { font-weight: 900; color: #087B04; font-size: 17px; }
-        .cart-controls { display: flex; align-items: center; justify-content: space-between; }
-        .qty-btns { 
-            display: flex; align-items: center; gap: 15px; 
-            background: #fff; border: 1px solid #eee; padding: 5px 10px; border-radius: 12px;
+        .qty-row {
+            display: flex; align-items: center; justify-content: space-between; margin-top: 10px;
+        }
+        .qty-ctrl {
+            display: flex; align-items: center; gap: 12px; background: #fff;
+            padding: 4px 8px; border-radius: 10px; border: 1px solid #ddd;
         }
         .qty-btn {
-            width: 32px; height: 32px; border: none; background: #f3f3f3;
-            border-radius: 8px; cursor: pointer; font-weight: 900; font-size: 18px;
+            width: 30px; height: 30px; border: none; background: #eee;
+            border-radius: 6px; font-weight: 900; cursor: pointer;
         }
     `;
     document.head.appendChild(style);
 }
 
+// 2. ЕЛЕМЕНТИ ТА ВІДКРИТТЯ
 function ensureCartUI(){
     if ($('#cartDrawer')) return;
     injectCartStyles();
@@ -95,18 +89,18 @@ function ensureCartUI(){
     drawer.id = 'cartDrawer';
     drawer.innerHTML = `
         <div class="cart-header">
-            <b style="font-size:22px;">🛒 Кошик</b>
-            <button id="cartCloseBtn" style="border:none;background:#f3f3f3;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:20px;">✕</button>
+            <b style="font-size:20px;">🛒 Кошик</b>
+            <button onclick="closeCart()" style="border:none;background:#eee;width:36px;height:36px;border-radius:50%;cursor:pointer;">✕</button>
         </div>
         <div id="cartBody" class="cart-body"></div>
         <div class="cart-footer">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <b style="font-size:18px; color:#666;">Разом</b>
-                <b id="cartTotal" style="color:#087B04; font-size:24px;">₴0</b>
+            <div style="display:flex;justify-content:space-between;margin-bottom:15px;">
+                <b>Разом</b>
+                <b id="cartTotal" style="color:#087B04;font-size:20px;">₴0</b>
             </div>
-            <div style="display:flex; gap:12px;">
-                <button id="cartClearBtn" style="flex:1; border:none; background:#f3f3f3; padding:16px; border-radius:14px; font-weight:800; color:#666;">Очистити</button>
-                <a href="order.html" style="flex:2; text-align:center; text-decoration:none; background:#087B04; color:#fff; padding:16px; border-radius:14px; font-weight:900; font-size:18px;">Оформити</a>
+            <div style="display:flex; gap:10px;">
+                <button onclick="clearAll()" style="flex:1;border:none;background:#f3f3f3;padding:12px;border-radius:12px;font-weight:700;">Очистити</button>
+                <a href="order.html" style="flex:2;text-align:center;text-decoration:none;background:#087B04;color:#fff;padding:12px;border-radius:12px;font-weight:900;">Оформити</a>
             </div>
         </div>
     `;
@@ -115,8 +109,6 @@ function ensureCartUI(){
     document.body.appendChild(drawer);
 
     overlay.onclick = closeCart;
-    $('#cartCloseBtn').onclick = closeCart;
-    $('#cartClearBtn').onclick = () => { if(confirm('Очистити кошик?')) { saveCart([]); renderCart(); } };
 }
 
 function renderCart(){
@@ -125,35 +117,59 @@ function renderCart(){
     if (!body || !totalEl) return;
 
     const items = loadCart();
-    totalEl.textContent = formatUAH(cartTotal(items));
+    const sum = items.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.count)||0), 0);
+    totalEl.textContent = formatUAH(sum);
 
     if (!items.length){
         body.innerHTML = `
-            <div style="text-align:center; padding:60px 20px;">
-                <div style="font-size:50px; margin-bottom:20px;">🍯</div>
-                <div style="color:#888; font-weight:600;">Ваш кошик ще порожній</div>
-                <button onclick="closeCart()" style="margin-top:20px; border:none; background:none; color:#087B04; font-weight:800; cursor:pointer;">Перейти до меду</button>
+            <div style="text-align:center; padding-top:50px;">
+                <div style="font-size:40px;">🍯</div>
+                <p style="color:#888; margin:15px 0;">Кошик порожній</p>
+                <a href="#products" id="backToProducts" style="color:#087B04; font-weight:800; text-decoration:none; border:2px solid #087B04; padding:10px 20px; border-radius:12px; display:inline-block;">Перейти до продукції</a>
             </div>`;
+        
+        // ЗАКРИТТЯ ПРИ КЛІКУ НА "ПЕРЕЙТИ ДО ПРОДУКЦІЇ"
+        const link = $('#backToProducts');
+        if (link) link.onclick = () => { closeCart(); };
         return;
     }
 
     body.innerHTML = items.map((i, idx) => `
         <div class="cart-item">
-            <div class="cart-item-info">
-                <div class="cart-item-title">${i.type} <br><small style="font-weight:400; color:#888;">${i.qty} л</small></div>
-                <div class="cart-item-price">${formatUAH(i.price * i.count)}</div>
+            <div style="display:flex;justify-content:space-between;font-weight:800;">
+                <span>${i.type} (${i.qty}л)</span>
+                <span style="color:#087B04;">${formatUAH(i.price * i.count)}</span>
             </div>
-            <div class="cart-controls">
-                <div class="qty-btns">
-                    <button class="qty-btn" onclick="changeQty(${idx}, -1)">−</button>
-                    <b style="min-width:20px; text-align:center; font-size:18px;">${i.count}</b>
-                    <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+            <div class="qty-row">
+                <div class="qty-ctrl">
+                    <button class="qty-btn" onclick="changeQty(${idx},-1)">−</button>
+                    <span>${i.count}</span>
+                    <button class="qty-btn" onclick="changeQty(${idx},1)">+</button>
                 </div>
-                <button onclick="removeItem(${idx})" style="border:none; background:none; color:#ff4d4d; font-weight:700; cursor:pointer;">Видалити</button>
+                <button onclick="removeItem(${idx})" style="border:none;background:none;color:#ff4d4d;font-weight:700;cursor:pointer;">Видалити</button>
             </div>
         </div>
     `).join('');
 }
+
+// 3. ГЛОБАЛЬНІ ФУНКЦІЇ ДЛЯ INTERACTION
+window.closeCart = () => {
+    const o = $('#cartOverlay');
+    const d = $('#cartDrawer');
+    if (o && d) {
+        o.classList.remove('active');
+        d.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+};
+
+window.openCart = () => {
+    ensureCartUI();
+    renderCart();
+    $('#cartOverlay').classList.add('active');
+    $('#cartDrawer').classList.add('active');
+    document.body.style.overflow = 'hidden';
+};
 
 window.changeQty = (idx, delta) => {
     const items = loadCart();
@@ -169,24 +185,14 @@ window.removeItem = (idx) => {
     renderCart();
 };
 
-function openCart(){
-    ensureCartUI();
-    renderCart();
-    // Додаємо класи active замість прямої зміни стилів
-    $('#cartOverlay').classList.add('active');
-    $('#cartDrawer').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
+window.clearAll = () => {
+    if(confirm('Очистити кошик?')) {
+        saveCart([]);
+        renderCart();
+    }
+};
 
-function closeCart(){
-    const overlay = $('#cartOverlay');
-    const drawer = $('#cartDrawer');
-    if (!overlay || !drawer) return;
-    overlay.classList.remove('active');
-    drawer.classList.remove('active');
-    document.body.style.overflow = '';
-}
-
+// 4. ЗАПУСК
 document.addEventListener('DOMContentLoaded', () => {
     updateCartBadge();
     const btn = $('#cartBtn');
