@@ -1,83 +1,118 @@
-// order.js
+// order.js (Версія з покращеною маскою телефону)
 (() => {
     'use strict';
     const CART_KEY = 'medok_cart_v1';
-    const API_BASE = ''; // Порожньо, бо сайт і API на одному домені (воркері)
+    const API_BASE = ''; 
 
     const $ = (s) => document.querySelector(s);
 
-    // Читання кошика
     function readCart() {
         try {
             return JSON.parse(localStorage.getItem(CART_KEY)) || [];
         } catch (e) { return []; }
     }
 
-    // Форматування ціни
     function formatUAH(n) {
-        return '₴' + Number(n || 0).toLocaleString('uk-UA');
+        return Number(n || 0).toLocaleString('uk-UA');
     }
 
-    // Оновлення суми на сторінці
     function updateTotals() {
         const items = readCart();
         const total = items.reduce((sum, i) => sum + (Number(i.price) || 0) * (Number(i.count) || 0), 0);
-        const totalStr = formatUAH(total);
-        if ($('#payTotal')) $('#payTotal').textContent = totalStr;
-        return totalStr;
+        if ($('#payTotal')) $('#payTotal').textContent = '₴' + formatUAH(total);
+        return total;
     }
 
-    /* --- Маска телефону +38 (0XX) XXX-XX-XX --- */
+    /* --- ПОКРАЩЕНА МАСКА ТЕЛЕФОНУ +38 (0XX) XXX-XX-XX --- */
     function initPhoneMask(el) {
         if (!el) return;
+
         el.addEventListener('input', (e) => {
-            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
-            if (!x) return;
-            if (!x[2]) { e.target.value = x[1] ? '+' + x[1] : ''; return; }
-            e.target.value = '+38 (' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+            let cursor = e.target.selectionStart;
+            let value = e.target.value;
+            let digits = value.replace(/\D/g, '');
+
+            // Якщо користувач почав вводити з 380, прибираємо 38
+            if (digits.startsWith('380')) {
+                digits = digits.substring(2);
+            } else if (digits.startsWith('38')) {
+                digits = digits.substring(2);
+            }
+
+            // Обмежуємо 10 цифрами (0631234567)
+            digits = digits.substring(0, 10);
+
+            let formatted = '+38 (';
+            if (digits.length > 0) formatted += digits.substring(0, 3);
+            if (digits.length >= 4) formatted += ') ' + digits.substring(3, 6);
+            if (digits.length >= 7) formatted += '-' + digits.substring(6, 8);
+            if (digits.length >= 9) formatted += '-' + digits.substring(8, 10);
+
+            el.value = formatted;
+
+            // Логіка, щоб курсор не стрибав у кінець при редагуванні всередині
+            if (cursor < formatted.length) {
+                el.setSelectionRange(cursor, cursor);
+            }
+        });
+
+        // При натисканні на поле, якщо воно порожнє, одразу ставимо префікс
+        el.addEventListener('focus', () => {
+            if (el.value.length < 5) el.value = '+38 (';
+        });
+
+        // Забороняємо видаляти префікс "+38 (" через Backspace
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && el.value.length <= 5) {
+                e.preventDefault();
+            }
         });
     }
 
-    /* --- Нова Пошта (Міста та Відділення) --- */
-    function initNovaPoshta() {
-        const searchInput = $('#citySearch'), citySelect = $('#city'), whSelect = $('#warehouse');
-        if (!searchInput) return;
+    /* --- НОВА ПОШТА --- */
+    function initNP() {
+        const search = $('#citySearch'), select = $('#city'), wh = $('#warehouse');
+        if (!search) return;
 
-        searchInput.addEventListener('input', async (e) => {
-            const q = e.target.value.trim();
-            if (q.length < 2) return;
+        search.addEventListener('input', async (e) => {
+            if (e.target.value.length < 2) return;
             try {
-                const r = await fetch(`${API_BASE}/np/cities?q=${encodeURIComponent(q)}`);
+                const r = await fetch(`${API_BASE}/np/cities?q=${encodeURIComponent(e.target.value)}`);
                 const j = await r.json();
                 if (j.ok && j.data.length) {
-                    citySelect.disabled = false;
-                    citySelect.innerHTML = '<option value="">Оберіть місто...</option>' +
+                    select.disabled = false;
+                    select.innerHTML = '<option value="">Оберіть місто...</option>' + 
                         j.data.map(c => `<option value="${c.Description}">${c.Description}</option>`).join('');
                 }
-            } catch (err) { console.error("NP Error:", err); }
+            } catch (err) { console.error("City fetch error"); }
         });
 
-        citySelect.addEventListener('change', async (e) => {
-            const cityName = e.target.value;
-            if (!cityName) return;
-            whSelect.disabled = false;
-            whSelect.innerHTML = '<option>Завантаження...</option>';
+        select.addEventListener('change', async (e) => {
+            if (!e.target.value) return;
+            wh.disabled = false;
+            wh.innerHTML = '<option>Завантаження...</option>';
             try {
-                const r = await fetch(`${API_BASE}/np/warehouses?city=${encodeURIComponent(cityName)}`);
+                const r = await fetch(`${API_BASE}/np/warehouses?city=${encodeURIComponent(e.target.value)}`);
                 const j = await r.json();
                 if (j.ok) {
-                    whSelect.innerHTML = '<option value="">Оберіть відділення...</option>' +
+                    wh.innerHTML = '<option value="">Оберіть відділення...</option>' + 
                         j.data.map(w => `<option value="${w.Description}">${w.Description}</option>`).join('');
                 }
-            } catch (err) { console.error("WH Error:", err); }
+            } catch (err) { wh.innerHTML = '<option>Помилка</option>'; }
         });
     }
 
-    /* --- Відправка замовлення --- */
+    /* --- ВІДПРАВКА --- */
     async function submitOrder(payload, btn) {
+        // Перевірка на заповненість номера
+        if (payload.phone.length < 19) { // Довжина повної маски "+38 (0XX) XXX-XX-XX"
+            alert('Будь ласка, введіть повний номер телефону');
+            return;
+        }
+
         const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '⏳ Надсилаємо...';
+        btn.innerHTML = '⏳...';
 
         try {
             const r = await fetch(`${API_BASE}/order`, {
@@ -90,66 +125,55 @@
                 localStorage.removeItem(CART_KEY);
                 window.location.href = `thank-you.html?order=${res.order_id}`;
             } else {
-                alert("Помилка: " + (res.error || "Невідома помилка"));
+                alert("Помилка: " + (res.error || "Спробуйте пізніше"));
                 btn.disabled = false;
                 btn.innerHTML = originalText;
             }
         } catch (e) {
-            alert('Помилка мережі. Спробуйте пізніше.');
+            alert('Помилка мережі. Перевірте з’єднання.');
             btn.disabled = false;
             btn.innerHTML = originalText;
         }
     }
 
-    /* --- Ініціалізація при завантаженні --- */
     document.addEventListener('DOMContentLoaded', () => {
-        updateTotals();
-        initNovaPoshta();
+        const currentTotal = updateTotals();
         initPhoneMask($('#phone'));
         initPhoneMask($('#oneclickPhone'));
+        initNP();
 
-        // Кнопка "Передзвоніть мені" (1 клік)
         $('#oneclickBtn')?.addEventListener('click', () => {
             const phone = $('#oneclickPhone').value;
             const items = readCart();
-            if (phone.length < 10) return alert('Введіть коректний номер телефону');
-            if (!items.length) return alert('Ваш кошик порожній');
-
-            const payload = {
-                phone,
-                name: "Швидке замовлення",
-                cart: items,
-                cart_total: updateTotals(),
-                one_click: true
-            };
-            submitOrder(payload, $('#oneclickBtn'));
+            if (!items.length) return alert('Кошик порожній');
+            
+            submitOrder({ 
+                phone, 
+                cart: items, 
+                cart_total: currentTotal, 
+                one_click: true 
+            }, $('#oneclickBtn'));
         });
 
-        // Повна форма
         $('#order')?.addEventListener('submit', (e) => {
             e.preventDefault();
             const items = readCart();
-            if (!items.length) return alert('Додайте товар у кошик');
+            if (!items.length) return alert('Кошик порожній');
 
             const payload = {
-                name: $('#name').value.trim(),
-                phone: $('#phone').value.trim(),
+                name: $('#name').value,
+                phone: $('#phone').value,
                 np_city: $('#city').value,
                 np_warehouse: $('#warehouse').value,
-                pay: $('input[name="pay"]:checked')?.value || 'cod',
-                comment: $('#comment').value.trim(),
                 cart: items,
-                cart_total: updateTotals()
+                cart_total: currentTotal,
+                pay: $('input[name="pay"]:checked')?.value || 'cod',
+                comment: $('#comment').value
             };
-
-            if (payload.phone.length < 10) return alert('Вкажіть номер телефону');
-            if (!payload.np_warehouse) return alert('Оберіть відділення Нової Пошти');
+            
+            if (!payload.np_warehouse) return alert('Оберіть відділення');
 
             submitOrder(payload, $('#submitBtn') || e.target.querySelector('button[type="submit"]'));
         });
-
-        // Рік у футері
-        const y = $('#y');
-        if (y) y.textContent = new Date().getFullYear();
     });
 })();
