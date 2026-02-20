@@ -1,4 +1,5 @@
-/* cart.js — Універсальний фікс скролу (v202) */
+/* cart.js — Фікс скролу та кнопки "До продукції" (v205) */
+
 const CART_KEY = 'medok_cart_v1';
 const $ = (s, r=document) => r.querySelector(s);
 const formatUAH = (n) => '₴' + Number(n||0).toLocaleString('uk-UA');
@@ -20,6 +21,7 @@ function updateCartBadge(){
     badge.style.display = qty ? 'inline-block' : 'none';
 }
 
+// 1. СТИЛІ
 function injectCartStyles() {
     if ($('#cartStyles')) return;
     const style = document.createElement('style');
@@ -34,20 +36,63 @@ function injectCartStyles() {
         #cartDrawer {
             position: fixed; top: 0; right: 0; bottom: 0;
             width: 100%; max-width: 420px; background: #fff;
-            transform: translateX(100%); transition: transform 0.3s ease-out;
+            transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 100001; display: flex; flex-direction: column;
-            box-shadow: -5px 0 30px rgba(0,0,0,0.3);
         }
         #cartDrawer.active { transform: translateX(0); }
-        .cart-header { padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        .cart-header { padding: 18px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
         .cart-body { flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
         .cart-footer { padding: 20px; border-top: 1px solid #eee; background: #fff; flex-shrink: 0; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
         .cart-item { background: #f9f9f9; border-radius: 16px; padding: 14px; margin-bottom: 12px; border: 1px solid #eee; }
-        body.no-scroll { overflow: hidden !important; height: 100vh !important; width: 100%; position: fixed; }
+        
+        /* ГАРАНТОВАНЕ РОЗБЛОКУВАННЯ СКРОЛУ */
+        body.cart-open { 
+            overflow: hidden !important; 
+            touch-action: none; 
+            height: 100% !important;
+            width: 100% !important;
+        }
     `;
     document.head.appendChild(style);
 }
 
+// 2. ЗАКРИТТЯ ТА СКРОЛ
+window.closeCart = () => {
+    const o = $('#cartOverlay'), d = $('#cartDrawer');
+    if (o) o.classList.remove('active');
+    if (d) d.classList.remove('active');
+    
+    // ПОВНЕ очищення блокувань
+    document.body.classList.remove('cart-open');
+    document.body.style.overflow = '';
+    document.body.style.height = '';
+    document.body.style.touchAction = '';
+};
+
+// Функція для кнопки "До продукції"
+window.goToProducts = (e) => {
+    if(e) e.preventDefault();
+    window.closeCart(); // Спочатку закриваємо і розблоковуємо екран
+    
+    setTimeout(() => {
+        const el = $('#products');
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth' }); // Плавний скрол до товарів
+        } else {
+            window.location.hash = '#products'; // Якщо ми на іншій сторінці
+        }
+    }, 300); // Невелика затримка, щоб кошик встиг зникнути
+};
+
+window.openCart = () => {
+    ensureCartUI();
+    renderCart();
+    $('#cartOverlay').classList.add('active');
+    $('#cartDrawer').classList.add('active');
+    document.body.classList.add('cart-open');
+};
+
+// 3. UI
 function ensureCartUI(){
     if ($('#cartDrawer')) return;
     injectCartStyles();
@@ -68,14 +113,20 @@ function ensureCartUI(){
 }
 
 function renderCart(){
-    const body = $('#cartBody'); const totalEl = $('#cartTotal'); const footer = $('#cartFooter');
+    const body = $('#cartBody'), totalEl = $('#cartTotal'), footer = $('#cartFooter');
     if (!body || !totalEl) return;
     const items = loadCart();
     const sum = items.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.count)||0), 0);
     totalEl.textContent = formatUAH(sum);
+
     if (!items.length){
         if(footer) footer.style.display = 'none';
-        body.innerHTML = `<div style="text-align:center;padding:50px 10px;"><div style="font-size:40px;">🍯</div><p style="color:#888;margin:15px 0;">Кошик порожній</p><a href="index.html#products" onclick="closeCart()" style="color:#087B04;font-weight:800;text-decoration:none;border:2px solid #087B04;padding:10px 20px;border-radius:12px;display:inline-block;">До продукції</a></div>`;
+        body.innerHTML = `
+            <div style="text-align:center;padding:50px 10px;">
+                <div style="font-size:40px;">🍯</div>
+                <p style="color:#888;margin:15px 0;">Кошик порожній</p>
+                <button onclick="goToProducts(event)" style="background:#087B04; color:#fff; border:none; padding:15px 25px; border-radius:12px; font-weight:900; cursor:pointer; font-size:16px;">ДО ПРОДУКЦІЇ</button>
+            </div>`;
         return;
     }
     if(footer) footer.style.display = 'block';
@@ -93,18 +144,6 @@ function renderCart(){
         </div>`).join('');
 }
 
-window.closeCart = () => {
-    const o = $('#cartOverlay'); const d = $('#cartDrawer');
-    if (o) o.classList.remove('active');
-    if (d) d.classList.remove('active');
-    document.body.classList.remove('no-scroll');
-};
-window.openCart = () => {
-    ensureCartUI(); renderCart();
-    $('#cartOverlay').classList.add('active');
-    $('#cartDrawer').classList.add('active');
-    document.body.classList.add('no-scroll');
-};
 window.changeQty = (idx, delta) => {
     const items = loadCart();
     items[idx].count = Math.max(1, (items[idx].count || 1) + delta);
