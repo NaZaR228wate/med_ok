@@ -377,19 +377,15 @@
         <div class="footer-bottom__right">Бориспільський район, Київська область.</div>
     </div>
 </footer>
-
-<script src="app.js?v=20" defer></script>
-<script src="cart.js?v=100" defer></script> <!-- ВИСОКА ВЕРСІЯ ДЛЯ ОБМАНУ КЕШУ -->
+<!-- В самому низу index.html ЗАМІСТЬ ваших скриптів: -->
+<script src="app.js?v=202" defer></script>
+<script src="cart.js?v=202" defer></script>
 
 <script>
-    // Цей код видаляє всі старі Service Worker, які тримають кеш
+    // Повне очищення старих воркерів
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            for(let registration of registrations) {
-                registration.unregister().then(() => {
-                    console.log('Old SW cleaned. Page will reload.');
-                });
-            }
+            for(let registration of registrations) { registration.unregister(); }
         });
     }
 </script>
