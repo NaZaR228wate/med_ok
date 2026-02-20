@@ -417,8 +417,14 @@
 </footer>
 <script src="app.js?v=14" defer></script>
 <script>
+    // Цей код видаляє старий Service Worker, який блокує оновлення
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').catch(()=>{});
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+                registration.unregister();
+                console.log('Old SW unregistered');
+            }
+        });
     }
 </script>
 <script src="cart.js?v=16" defer></script>
