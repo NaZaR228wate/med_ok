@@ -406,10 +406,7 @@ textarea { min-height: 96px; resize: vertical; }
 .mini-price .pill { border-radius: 999px; padding: 6px 10px; background: #fff9e6; color: #111; font-weight: 700; font-size: 14px; }
 #order.card { padding: 24px; }
 
-/* Sticky CTA (реставровано для мобільних) */
-.sticky-cta {
-    display: none; /* сховано за замовчуванням, буде показано в медіа-запиті */
-}
+
 @media (max-width: 640px) {
     .sticky-cta {
         display: flex !important;
