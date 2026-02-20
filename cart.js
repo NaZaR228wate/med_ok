@@ -69,19 +69,24 @@ window.closeCart = () => {
     document.body.style.touchAction = '';
 };
 
-// Функція для кнопки "До продукції"
+// Виправлена функція для кнопки "До продукції"
 window.goToProducts = (e) => {
     if(e) e.preventDefault();
-    window.closeCart(); // Спочатку закриваємо і розблоковуємо екран
+    
+    // 1. Закриваємо кошик і розблоковуємо екран
+    window.closeCart(); 
     
     setTimeout(() => {
-        const el = $('#products');
-        if (el) {
-            el.scrollIntoView({ behavior: 'smooth' }); // Плавний скрол до товарів
+        const productsElement = document.getElementById('products');
+        
+        if (productsElement) {
+            // Якщо ми на головній (де є блок #products) — плавно скролимо
+            productsElement.scrollIntoView({ behavior: 'smooth' });
         } else {
-            window.location.hash = '#products'; // Якщо ми на іншій сторінці
+            // Якщо ми на order.html або іншій сторінці — переходимо на головну до секції продуктів
+            window.location.href = 'index.html#products';
         }
-    }, 300); // Невелика затримка, щоб кошик встиг зникнути
+    }, 300); 
 };
 
 window.openCart = () => {
