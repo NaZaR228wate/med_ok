@@ -6,9 +6,8 @@
     <title>Купити мед Бориспільський район — натуральний мед з пасіки | Medok</title>
     <meta name="description" content="Натуральний мед з пасіки в Бориспільському районі. Липовий, акацієвий, соняшниковий мед. Доставка по Києву та всій Україні. Замовляйте онлайн." />
     <link rel="canonical" href="https://medok.ink/" />
-    <link rel="stylesheet" href="styles.css?v=14" />
+    <link rel="stylesheet" href="styles.css?v=20" /> <!-- Оновили версію стилів -->
     <meta name="keywords" content="мед київ купити мед бориспіль мед пасіка липовий мед акацієвий мед">
-
 
     <!-- Open Graph -->
     <meta property="og:title" content="Купити мед — натуральний мед з пасіки">
@@ -171,12 +170,10 @@
 </div>
 
 <main id="main">
-    <!-- додано прихований H1 для SEO -->
     <h1 class="visually-hidden">Купити натуральний мед з пасіки в Бориспільському районі</h1>
 
     <!-- ===== HERO ===== -->
     <section class="hero-slider" id="hero">
-        <!-- Акація -->
         <article class="slide active" data-flavor="acacia" aria-label="Акація">
             <div class="left">
                 <h1 class="bigword">АКАЦІЯ</h1>
@@ -187,7 +184,6 @@
                 </div>
             </div>
         </article>
-        <!-- Липа -->
         <article class="slide" data-flavor="linden" aria-label="Липовий">
             <div class="left">
                 <h1 class="bigword">ЛИПА</h1>
@@ -198,7 +194,6 @@
                 </div>
             </div>
         </article>
-        <!-- Соняшник -->
         <article class="slide" data-flavor="sunflower" aria-label="Соняшниковий">
             <div class="left">
                 <h1 class="bigword">СОНЯШНИК</h1>
@@ -209,10 +204,8 @@
                 </div>
             </div>
         </article>
-        <!-- стрілки -->
         <button class="navbtn prev" id="prev" aria-label="Попередній">‹</button>
         <button class="navbtn next" id="next" aria-label="Наступний">›</button>
-        <!-- велика центральна CTA -->
         <a class="hero-cta" href="#products">🍯 ХОЧУ БАНОЧКУ!</a>
     </section>
 
@@ -221,7 +214,6 @@
         <h2>Продукція</h2>
         <p class="section-subtitle">Свіжі сорти меду прямо з нашої пасіки</p>
         <div class="products-grid">
-            <!-- Різнотрав’я -->
             <article class="product-card reveal">
                 <figure class="prod-figure">
                     <img class="prod-img" src="assets/prod-mixed.webp" alt="Мед різнотрав’я" loading="lazy" width="800" height="600">
@@ -240,7 +232,6 @@
                     <div class="mini-price" data-bind-price="Різнотрав’я"></div>
                 </div>
             </article>
-            <!-- Липовий -->
             <article class="product-card reveal">
                 <figure class="prod-figure">
                     <img class="prod-img" src="assets/prod-linden.webp" alt="Липовий мед" loading="lazy" width="800" height="600">
@@ -259,7 +250,6 @@
                     <div class="mini-price" data-bind-price="Липовий"></div>
                 </div>
             </article>
-            <!-- Акація -->
             <article class="product-card reveal">
                 <figure class="prod-figure">
                     <img class="prod-img" src="assets/prod-acacia.webp" alt="Акацієвий мед" loading="lazy" width="800" height="600">
@@ -278,7 +268,6 @@
                     <div class="mini-price" data-bind-price="Акація"></div>
                 </div>
             </article>
-            <!-- Соняшниковий -->
             <article class="product-card reveal">
                 <figure class="prod-figure">
                     <img class="prod-img" src="assets/prod-sunflower.webp" alt="Соняшниковий мед" loading="lazy" width="800" height="600">
@@ -320,35 +309,7 @@
         </div>
     </section>
 
-    <!-- ===== WHY ===== -->
-    <section class="container" id="why">
-        <h2>Чому обирають нас</h2>
-        <div class="why-grid">
-            <article class="why-card">
-                <img class="why-img" src="assets/bee-flower.webp" alt="Еко-пасіка">
-                <div class="why-content">
-                    <h3>Еко-пасіка</h3>
-                    <p>Еко-пасіка просто в нашому саду — серед плодових дерев і лісу. Бджоли збирають нектар з квітучих дерев і лісових трав — тільки чиста природа і справжній смак.</p>
-                </div>
-            </article>
-            <article class="why-card">
-                <img class="why-img" src="assets/honeycomb.webp" alt="Сімейні традиції">
-                <div class="why-content">
-                    <h3>Сімейні традиції</h3>
-                    <p>Більше 40 років передаємо любов до бджіл із покоління в покоління.</p>
-                </div>
-            </article>
-            <article class="why-card">
-                <img class="why-img" src="assets/beekeepers.webp" alt="Сервіс з турботою">
-                <div class="why-content">
-                    <h3>Сервіс з турботою</h3>
-                    <p>Не впевнені, який мед підійде саме вам? Підкажемо! У нас — чистий мед без домішок, чесна вага, швидка відправка в день замовлення.</p>
-                </div>
-            </article>
-        </div>
-    </section>
-
-    <!-- ===== Quantity selection overlay (stepper) ===== -->
+    <!-- ===== Quantity selection overlay ===== -->
     <div id="qtyMenu" aria-hidden="true" style="position:fixed; inset:0; z-index:1050; display:none;">
         <div id="qtyBackdrop" style="position:absolute; inset:0; background:rgba(0,0,0,.45);"></div>
         <div class="qty-dialog">
@@ -385,7 +346,8 @@
             <p>Так, ви можете забрати мед самовивозом з нашої пасіки. Попередньо домовтесь про зручний час по телефону.</p>
         </details>
     </section>
-    
+</main>
+
 <footer class="footer">
     <div class="container footer-grid">
         <div class="footer-brand">
@@ -415,19 +377,21 @@
         <div class="footer-bottom__right">Бориспільський район, Київська область.</div>
     </div>
 </footer>
-<script src="app.js?v=14" defer></script>
+
+<script src="app.js?v=20" defer></script>
+<script src="cart.js?v=100" defer></script> <!-- ВИСОКА ВЕРСІЯ ДЛЯ ОБМАНУ КЕШУ -->
+
 <script>
-    // Цей код видаляє старий Service Worker, який блокує оновлення
+    // Цей код видаляє всі старі Service Worker, які тримають кеш
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
             for(let registration of registrations) {
-                registration.unregister();
-                console.log('Old SW unregistered');
+                registration.unregister().then(() => {
+                    console.log('Old SW cleaned. Page will reload.');
+                });
             }
         });
     }
 </script>
-<script src="cart.js?v=16" defer></script>
-<script src="cart.js?v=2" defer></script>
 </body>
 </html>
