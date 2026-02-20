@@ -23,51 +23,105 @@
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preconnect" href="https://medok-proxy.veter010709.workers.dev" crossorigin>
 
-    <!-- SEO: структуровані дані -->
     <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "Medok",
-            "url": "https://medok.ink/",
-            "logo": "https://medok.ink/assets/medok-wordmark.png",
-            "areaServed": "Бориспільський район, Київська область, Україна",
-            "sameAs": [ "tel:+380632369027" ]
+{
+  "@context": "https://schema.org/",
+  "@type": "ItemList",
+  "name": "Натуральний мед з пасіки Medok",
+  "description": "Свіжі сорти меду прямо з нашої сімейної пасіки в Бориспільському районі.",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "Product",
+        "name": "Мед Різнотрав’я",
+        "image": "https://medok.ink/assets/prod-mixed.webp",
+        "description": "Квітковий букет із лугів і гаїв Бориспільського району. Збалансований універсальний смак.",
+        "brand": { "@type": "Brand", "name": "Medok" },
+        "offers": {
+          "@type": "Offer",
+          "price": "140",
+          "priceCurrency": "UAH",
+          "availability": "https://schema.org/InStock",
+          "url": "https://medok.ink/order.html"
         }
-    </script>
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            "itemListElement": [
-                {"@type":"Product","name":"Різнотрав’я"},
-                {"@type":"Product","name":"Липовий"},
-                {"@type":"Product","name":"Акація"},
-                {"@type":"Product","name":"Соняшниковий"}
-            ]
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "Product",
+        "name": "Липовий мед",
+        "image": "https://medok.ink/assets/prod-linden.webp",
+        "description": "Запашний аромат липи. Найкращий вибір для профілактики застуди та для чаю.",
+        "brand": { "@type": "Brand", "name": "Medok" },
+        "offers": {
+          "@type": "Offer",
+          "price": "150",
+          "priceCurrency": "UAH",
+          "availability": "https://schema.org/InStock",
+          "url": "https://medok.ink/order.html"
         }
-    </script>
-    <!-- Схема для продукту “Липовий мед” -->
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "Product",
-            "name": "Липовий мед",
-            "description": "Запашний липовий мед з нашої пасіки в Бориспільському районі",
-            "image": "https://medok.ink/assets/prod-linden.webp",
-            "brand": {
-                "@type": "Brand",
-                "name": "Medok"
-            },
-            "offers": {
-                "@type": "Offer",
-                "url": "https://medok.ink/order.html",
-                "priceCurrency": "UAH",
-                "price": "150",
-                "availability": "https://schema.org/InStock"
-            }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "Product",
+        "name": "Акацієвий мед",
+        "image": "https://medok.ink/assets/prod-acacia.webp",
+        "description": "Ніжний гіпоалергенний мед, який дуже довго залишається рідким.",
+        "brand": { "@type": "Brand", "name": "Medok" },
+        "offers": {
+          "@type": "Offer",
+          "price": "170",
+          "priceCurrency": "UAH",
+          "availability": "https://schema.org/InStock",
+          "url": "https://medok.ink/order.html"
         }
-    </script>
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "item": {
+        "@type": "Product",
+        "name": "Соняшниковий мед",
+        "image": "https://medok.ink/assets/prod-sunflower.webp",
+        "description": "Насичений смак, швидка кристалізація. Ідеально підходить для випічки та тостів.",
+        "brand": { "@type": "Brand", "name": "Medok" },
+        "offers": {
+          "@type": "Offer",
+          "price": "130",
+          "priceCurrency": "UAH",
+          "availability": "https://schema.org/InStock",
+          "url": "https://medok.ink/order.html"
+        }
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Medok",
+  "url": "https://medok.ink/",
+  "logo": "https://medok.ink/assets/medok-wordmark.png",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+380632369027",
+    "contactType": "sales",
+    "areaServed": "UA",
+    "availableLanguage": "Ukrainian"
+  }
+}
+</script>
 </head>
 <body>
 <a class="visually-hidden" href="#main">Перейти до контенту</a>
