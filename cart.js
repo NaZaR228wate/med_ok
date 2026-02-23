@@ -30,7 +30,6 @@ function initMobileMenu() {
     if (close) close.onclick = () => toggle(false);
     if (backdrop) backdrop.onclick = () => toggle(false);
 
-    // Закриваємо при кліку на посилання
     links.forEach(link => {
         link.onclick = () => toggle(false);
     });
@@ -80,18 +79,9 @@ window.closeCart = () => {
     document.body.style.overflow = '';
 };
 
-window.goToProducts = (e) => {
-    if(e) e.preventDefault();
-    window.closeCart();
-    setTimeout(() => {
-        const el = $('#products');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-        else window.location.href = 'index.html#products';
-    }, 300);
-};
-
 window.openCart = () => {
-    ensureCartUI(); renderCart();
+    ensureCartUI(); 
+    renderCart();
     $('#cartOverlay').classList.add('active');
     $('#cartDrawer').classList.add('active');
     document.body.classList.add('cart-open');
@@ -122,6 +112,56 @@ function renderCart(){
     const items = loadCart();
     const sum = items.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.count)||0), 0);
     totalEl.textContent = formatUAH(sum);
+
     if (!items.length){
         if(footer) footer.style.display = 'none';
-        body.innerHTML
+        body.innerHTML = `<div style="text-align:center;padding:40px 0;"><p>Кошик порожній 🍯</p></div>`;
+        return;
+    }
+    
+    if(footer) footer.style.display = 'block';
+    body.innerHTML = items.map((i, idx) => `
+        <div class="cart-item">
+            <div style="display:flex;justify-content:space-between;font-weight:800;">
+                <span>${i.type} (${i.qty}л)</span>
+                <span>${formatUAH(i.price * i.count)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:10px;align-items:center;">
+                <div>К-сть: ${i.count}</div>
+                <button onclick="removeItem(${idx})" style="border:none;background:none;color:red;cursor:pointer;">Видалити</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+window.removeItem = (idx) => {
+    let items = loadCart();
+    items.splice(idx, 1);
+    saveCart(items);
+    renderCart();
+};
+
+window.clearAll = () => {
+    if(confirm('Очистити кошик?')) {
+        saveCart([]);
+        renderCart();
+    }
+};
+
+// --- 3. ІНІЦІАЛІЗАЦІЯ ПРИ ЗАВАНТАЖЕННІ СТОРІНКИ ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Ініціалізуємо бургер-меню
+    initMobileMenu();
+    
+    // Оновлюємо значок кількості товарів
+    updateCartBadge();
+
+    // Навішуємо відкриття кошика на кнопку
+    const cartBtn = $('#cartBtn');
+    if (cartBtn) {
+        cartBtn.onclick = (e) => {
+            e.preventDefault();
+            window.openCart();
+        };
+    }
+});
