@@ -1,468 +1,339 @@
-/* med_ok — зовнішній скрипт
- * Тут зібрана вся інтерактивна логіка: бургер-меню, слайдер, reveal-ефекти,
- * робота з кошиком, вибір літражу через степпер, та оновлення підсумку в шапці.
- */
-
 (() => {
-    /* ======= Утиліти ======= */
-    const $  = (sel, root = document) => root.querySelector(sel);
+    'use strict';
+
+    const $ = (sel, root = document) => root.querySelector(sel);
     const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-    const formatUAH = (n) => {
-        const num = Number(n || 0);
-        // Використовуємо HTML-entity або універсальний код для гривні, щоб уникнути проблем зі шрифтом
-        return '\u20B4' + num.toLocaleString('uk-UA');
-    };
-
-    /* ======= Оновлення року в футері ======= */
-    (() => {
-        const y = $('#y');
-        if (y) y.textContent = new Date().getFullYear();
-    })();
-
-    /* ======= Mobile Menu Logic (Updated) ======= */
-    (() => {
-        const burger = document.getElementById('burgerBtn');
-        const close  = document.getElementById('closeMenuBtn');
-        const menu   = document.getElementById('mobileMenu');
-        const bg     = document.getElementById('mobileBackdrop');
-        const links  = menu ? menu.querySelectorAll('a') : [];
-
-        function toggleMenu(show) {
-            if (!menu || !bg) return;
-            if (show) {
-                menu.classList.add('active');
-                bg.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Блокуємо скрол сторінки
-            } else {
-                menu.classList.remove('active');
-                bg.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        }
-
-        if(burger) burger.addEventListener('click', () => toggleMenu(true));
-        if(close)  close.addEventListener('click', () => toggleMenu(false));
-        if(bg)     bg.addEventListener('click', () => toggleMenu(false));
-
-        // Закриваємо при кліку на посилання
-        links.forEach(link => link.addEventListener('click', () => toggleMenu(false)));
-    })();
-
-    /* ======= Hero slider (autoplay) ======= */
-    (() => {
-        const slides  = $$('.hero-slider .slide');
-        const prevBtn = $('#prev');
-        const nextBtn = $('#next');
-        if (!slides.length || !prevBtn || !nextBtn) return;
-
-        const AUTOPLAY_MS = 3000;
-        const ANIM_MS     = 650;
-        let current = slides.findIndex((s) => s.classList.contains('active'));
-        if (current < 0) current = 0;
-        let isAnimating = false;
-        let autoplayId  = null;
-
-        const show = (idx) => {
-            if (isAnimating || idx === current) return;
-            isAnimating = true;
-            slides.forEach((s, k) => s.classList.toggle('active', k === idx));
-            current = idx;
-            setTimeout(() => { isAnimating = false; }, ANIM_MS);
-        };
-        const next = () => show((current + 1) % slides.length);
-        const prev = () => show((current - 1 + slides.length) % slides.length);
-
-        const schedule = () => {
-            clearTimeout(autoplayId);
-            autoplayId = setTimeout(function tick() {
-                next();
-                autoplayId = setTimeout(tick, AUTOPLAY_MS);
-            }, AUTOPLAY_MS);
-        };
-        const restart = () => {
-            clearTimeout(autoplayId);
-            schedule();
-        };
-
-        prevBtn.addEventListener('click', () => { prev(); restart(); });
-        nextBtn.addEventListener('click', () => { next(); restart(); });
-
-        schedule();
-    })();
-
-    /* ======= Scroll reveal для карток ======= */
-    (() => {
-        const els = $$('.reveal');
-        if (!els.length) return;
-        if (!('IntersectionObserver' in window)) {
-            els.forEach((e) => e.classList.add('in'));
-            return;
-        }
-        const io = new IntersectionObserver((entries) => {
-            entries.forEach((en) => {
-                if (en.isIntersecting) {
-                    en.target.classList.add('in');
-                    io.unobserve(en.target);
-                }
-            });
-        }, { rootMargin: '0px 0px -10% 0px' });
-        els.forEach((e) => io.observe(e));
-    })();
-
-    /* ======= Анімація лічильника років пасіки ======= */
-    (() => {
-        const yearsEl = document.getElementById('yearsCounter');
-        if (!yearsEl || !('IntersectionObserver' in window)) return;
-        const target = parseInt(yearsEl.dataset.target || '0', 10);
-        let started = false;
-        function animate() {
-            const duration = 2000; // тривалість анімації в мс
-            const startTimestamp = performance.now();
-            function tick(now) {
-                const progress = Math.min((now - startTimestamp) / duration, 1);
-                const value = Math.floor(progress * target);
-                yearsEl.textContent = value;
-                if (progress < 1) {
-                    requestAnimationFrame(tick);
-                } else {
-                    yearsEl.textContent = target;
-                }
-            }
-            requestAnimationFrame(tick);
-        }
-        const io = new IntersectionObserver((entries) => {
-            entries.forEach((en) => {
-                if (en.isIntersecting && !started) {
-                    started = true;
-                    animate();
-                    io.unobserve(en.target);
-                }
-            });
-        }, { threshold: 0.5 });
-        io.observe(yearsEl);
-    })();
-
-    /* ======= Кошик (localStorage) ======= */
-    const CART_KEY     = 'medok_cart_v1';
+    const catalog = window.MEDOK_CATALOG;
+    const CART_KEY = 'medok_cart_v1';
     const LAST_QTY_KEY = 'medok_last_qty_v1';
-    // Таблиця цін за об’єм (л) для різних сортів меду
-    const PRICES = {
-        'Акація':       { '0.5': 170, '1': 300, '2': 560, '3': 810, '4': 1040, '5': 1250 },
-        'Липовий':      { '0.5': 150, '1': 260, '2': 480, '3': 690, '4': 880,  '5': 1050 },
-        'Різнотрав’я':  { '0.5': 140, '1': 240, '2': 440, '3': 630, '4': 800,  '5': 960  },
-        'Соняшниковий': { '0.5': 130, '1': 220, '2': 400, '3': 570, '4': 720,  '5': 860  }
-    };
+    const formatUAH = (n) => '₴' + Number(n || 0).toLocaleString('uk-UA');
 
-    // Завантаження/збереження кошика
+    function showToast(text) {
+        const toast = document.createElement('div');
+        toast.className = 'toast show';
+        toast.textContent = text;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 200);
+        }, 1000);
+    }
+
     function loadCart() {
         try {
-            return JSON.parse(localStorage.getItem(CART_KEY)) || [];
-        } catch (e) {
+            const raw = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+            const normalized = catalog ? catalog.normalizeCart(raw) : raw;
+            if (catalog && catalog.hasCartChanged(raw, normalized)) saveCart(normalized);
+            return normalized;
+        } catch {
             return [];
         }
     }
+
     function saveCart(items) {
         localStorage.setItem(CART_KEY, JSON.stringify(items));
         window.dispatchEvent(new CustomEvent('cart:changed'));
     }
-    // Завантаження/збереження останнього вибору літражу для кожного типу
+
     function loadLastQty() {
         try {
             return JSON.parse(localStorage.getItem(LAST_QTY_KEY)) || {};
-        } catch (e) {
+        } catch {
             return {};
         }
     }
+
     function saveLastQty(map) {
         localStorage.setItem(LAST_QTY_KEY, JSON.stringify(map));
     }
 
-    function computeItemKey(type, qty) {
-        return `${type}|${qty}`;
-    }
+    function addToCart(productId, qtyLiters) {
+        const product = catalog?.getProduct(productId);
+        const qty = String(qtyLiters);
+        const price = product?.prices?.[qty];
 
-    // Заповнити блоки mini-price для товарів (показує 0.5 л та 1 л)
-    (() => {
-        const areas = document.querySelectorAll('[data-bind-price]');
-        if (!areas.length) return;
-        areas.forEach((area) => {
-            const type = area.getAttribute('data-bind-price');
-            const table = PRICES?.[type];
-            if (!table) return;
-            const keys = Object.keys(table).filter((k) => k === '0.5' || k === '1');
-            area.innerHTML = keys.map((k) => {
-                return `<span class="pill">${k} л — ${formatUAH(table[k])}</span>`;
-            }).join(' ');
-        });
-    })();
-
-    // Додати позицію в кошик
-    function addToCart(type, qtyLiters) {
-        const price = PRICES?.[type]?.[String(qtyLiters)];
+        if (!product || !product.inStock) {
+            alert('Цього меду зараз немає в наявності.');
+            return false;
+        }
         if (!price) {
             alert('Немає ціни для такого об’єму. Змініть кількість.');
-            return;
+            return false;
         }
+
         const items = loadCart();
-        const key   = computeItemKey(type, qtyLiters);
-        const existing = items.find((i) => i.key === key);
+        const key = catalog.itemKey(product.id, qty);
+        const existing = items.find((item) => item.key === key);
         if (existing) existing.count += 1;
-        else items.push({ key, type, qty: String(qtyLiters), price, count: 1 });
+        else items.push({ key, productId: product.id, type: product.name, qty, price: Number(price), count: 1 });
         saveCart(items);
-        // Показати невеликий тост
-        try {
-            const toast = document.createElement('div');
-            toast.className = 'toast show';
-            toast.textContent = 'Додано в кошик';
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 200);
-            }, 1000);
-        } catch (err) {}
-    }
-    // Зменшити кількість одного товару
-    function removeOne(key) {
-        const items = loadCart();
-        const ex = items.find((i) => i.key === key);
-        if (!ex) return;
-        ex.count--;
-        if (ex.count <= 0) items.splice(items.findIndex((i) => i.key === key), 1);
-        saveCart(items);
-    }
-    // Збільшити кількість одного товару
-    function addOne(key) {
-        const items = loadCart();
-        const ex = items.find((i) => i.key === key);
-        if (!ex) return;
-        ex.count++;
-        saveCart(items);
-    }
-    // Видалити рядок
-    function deleteLine(key) {
-        const items = loadCart().filter((i) => i.key !== key);
-        saveCart(items);
-    }
-    function clearCart() {
-        saveCart([]);
+        showToast('Додано в кошик');
+        return true;
     }
 
-    /* ======= Елементи DOM ======= */
-    const cartBtn         = $('#cartBtn');
-    const cartQtyBadge    = $('#cartQtyBadge');
-    const cartTotalHeader = $('#cartTotalHeader');
-    const cartDrawer      = $('#cartDrawer');
-    const cartBackdrop    = $('#cartBackdrop');
-    const cartClose       = $('#cartClose');
-    const cartList        = $('#cartList');
-    const cartEmpty       = $('#cartEmpty');
-    const cartSummary     = $('#cartSummary');
-    const cartItemsCount  = $('#cartItemsCount');
-    const cartTotal       = $('#cartTotal');
-    const cartClearBtn    = $('#cartClear');
+    function initYear() {
+        const y = $('#y');
+        if (y) y.textContent = new Date().getFullYear();
+    }
 
-    /* ======= Рендер кошика та підсумку ======= */
-    function renderCart() {
-        const items = loadCart();
-        const totalCount = items.reduce((s, i) => s + i.count, 0);
-        const totalPrice = items.reduce((s, i) => s + i.price * i.count, 0);
+    function initMobileMenu() {
+        const burger = $('#burgerBtn');
+        const close = $('#closeMenuBtn');
+        const menu = $('#mobileMenu');
+        const bg = $('#mobileBackdrop');
+        if (!burger || !menu) return;
 
-        // Оновити бейдж кількості
-        if (cartQtyBadge) {
-            if (totalCount > 0) {
-                cartQtyBadge.style.display = 'inline-block';
-                cartQtyBadge.textContent   = totalCount;
-            } else {
-                cartQtyBadge.style.display = 'none';
-            }
-        }
-        // Оновити суму в шапці
-        if (cartTotalHeader) {
-            if (totalCount > 0) {
-                cartTotalHeader.style.display = 'flex';
-                cartTotalHeader.textContent   = formatUAH(totalPrice);
-            } else {
-                // Якщо кошик порожній, показувати ₴0 або приховати зовсім
-                cartTotalHeader.style.display = 'none';
-            }
-        }
+        const toggleMenu = (show) => {
+            menu.classList.toggle('active', show);
+            bg?.classList.toggle('active', show);
+            document.body.style.overflow = show ? 'hidden' : '';
+        };
 
-        if (!cartList) return;
-        // Оновити дроуер
-        cartList.innerHTML = '';
-        if (items.length === 0) {
-            if (cartEmpty) cartEmpty.style.display = 'block';
-            if (cartSummary) cartSummary.style.display = 'none';
+        burger.addEventListener('click', () => toggleMenu(true));
+        close?.addEventListener('click', () => toggleMenu(false));
+        bg?.addEventListener('click', () => toggleMenu(false));
+        $$('.mobile-link', menu).forEach((link) => link.addEventListener('click', () => toggleMenu(false)));
+    }
+
+    function initHeroSlider() {
+        const slides = $$('.hero-slider .slide');
+        const prevBtn = $('#prev');
+        const nextBtn = $('#next');
+        if (!slides.length || !prevBtn || !nextBtn) return;
+
+        const autoplayMs = 3000;
+        const animMs = 650;
+        let current = Math.max(0, slides.findIndex((slide) => slide.classList.contains('active')));
+        let isAnimating = false;
+        let autoplayId = null;
+
+        const show = (idx) => {
+            if (isAnimating || idx === current) return;
+            isAnimating = true;
+            slides.forEach((slide, index) => slide.classList.toggle('active', index === idx));
+            current = idx;
+            setTimeout(() => { isAnimating = false; }, animMs);
+        };
+        const next = () => show((current + 1) % slides.length);
+        const prev = () => show((current - 1 + slides.length) % slides.length);
+        const schedule = () => {
+            clearTimeout(autoplayId);
+            autoplayId = setTimeout(function tick() {
+                next();
+                autoplayId = setTimeout(tick, autoplayMs);
+            }, autoplayMs);
+        };
+
+        prevBtn.addEventListener('click', () => { prev(); schedule(); });
+        nextBtn.addEventListener('click', () => { next(); schedule(); });
+        schedule();
+    }
+
+    function initReveal() {
+        const els = $$('.reveal');
+        if (!els.length) return;
+        if (!('IntersectionObserver' in window)) {
+            els.forEach((el) => el.classList.add('in'));
             return;
         }
-        if (cartEmpty) cartEmpty.style.display = 'none';
-        if (cartSummary) cartSummary.style.display = 'block';
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+            });
+        }, { rootMargin: '0px 0px -10% 0px' });
+        els.forEach((el) => io.observe(el));
+    }
 
-        items.forEach((i) => {
-            const lineTotal = i.price * i.count;
-            const el = document.createElement('div');
-            el.className = 'card';
-            el.style.display = 'grid';
-            el.style.gap = '8px';
-            el.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
-          <div>
-            <div style="font-weight:800">${i.type}</div>
-            <div class="muted">${i.qty} л — ${formatUAH(i.price)} / шт</div>
-          </div>
-          <button data-del="${i.key}" class="btn-secondary" title="Видалити" style="background:#fff;border:1px solid #ddd;">🗑</button>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div>
-            <button data-minus="${i.key}" class="btn-secondary" style="padding:6px 10px;">−</button>
-            <span style="display:inline-block;min-width:28px;text-align:center;font-weight:800">${i.count}</span>
-            <button data-plus="${i.key}" class="btn-secondary" style="padding:6px 10px;">+</button>
-          </div>
-          <div style="font-weight:800">${formatUAH(lineTotal)}</div>
-        </div>
-      `;
-            cartList.appendChild(el);
+    function initYearsCounter() {
+        const yearsEl = $('#yearsCounter');
+        if (!yearsEl) return;
+        const target = Number.parseInt(yearsEl.dataset.target || yearsEl.textContent || '40', 10) || 40;
+
+        if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            yearsEl.textContent = target;
+            return;
+        }
+
+        let started = false;
+        const animate = () => {
+            const duration = 1600;
+            const start = performance.now();
+            const tick = (now) => {
+                const progress = Math.min((now - start) / duration, 1);
+                yearsEl.textContent = Math.floor(progress * target);
+                if (progress < 1) requestAnimationFrame(tick);
+                else yearsEl.textContent = target;
+            };
+            requestAnimationFrame(tick);
+        };
+
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting || started) return;
+                started = true;
+                animate();
+                io.unobserve(entry.target);
+            });
+        }, { threshold: 0.5 });
+        io.observe(yearsEl);
+    }
+
+    function hydrateProducts() {
+        if (!catalog) return;
+
+        $$('.product-card[data-product-id]').forEach((card) => {
+            const product = catalog.getProduct(card.dataset.productId);
+            if (!product) return;
+            const img = $('.prod-img', card);
+            const badge = $('.badge', card);
+            const priceBadge = $('.price-badge', card);
+            const title = $('.product-title', card);
+            const bullets = $('.p-bullets', card);
+            const button = $('.addToCart', card);
+            const miniPrice = $('.mini-price', card);
+
+            if (img) {
+                img.src = product.image;
+                img.alt = product.alt;
+            }
+            if (badge) {
+                badge.textContent = product.inStock ? 'В НАЯВНОСТІ' : 'НЕМАЄ В НАЯВНОСТІ';
+                badge.classList.toggle('badge--out', !product.inStock);
+            }
+            if (priceBadge) priceBadge.textContent = product.inStock ? `від ${formatUAH(catalog.minPrice(product))}` : 'Немає в наявності';
+            if (title) title.textContent = product.name;
+            if (bullets) bullets.innerHTML = product.bullets.map((text) => `<li>${text}</li>`).join('');
+            if (button) {
+                button.dataset.productId = product.id;
+                button.dataset.qty = button.dataset.qty || '1';
+                button.disabled = !product.inStock;
+                button.textContent = product.inStock ? 'У кошик' : 'Немає в наявності';
+                button.setAttribute('aria-disabled', String(!product.inStock));
+            }
+            if (miniPrice) {
+                miniPrice.dataset.productId = product.id;
+                miniPrice.innerHTML = Object.entries(product.prices)
+                    .filter(([qty]) => qty === '0.5' || qty === '1')
+                    .sort(([a], [b]) => Number(a) - Number(b))
+                    .map(([qty, price]) => `<span class="pill">${qty} л — ${formatUAH(price)}</span>`)
+                    .join(' ');
+            }
         });
-        if (cartItemsCount) cartItemsCount.textContent = totalCount;
-        if (cartTotal) cartTotal.textContent = formatUAH(totalPrice);
     }
 
-    // Відкрити/закрити кошик
-    function openCart() {
-        if (cartDrawer) cartDrawer.style.display = 'block';
-        // Prevent background page from scrolling when cart is open
-        document.body.style.overflow = 'hidden';
-    }
-    function closeCartDrawer() {
-        if (cartDrawer) cartDrawer.style.display = 'none';
-        // Restore scroll when cart is closed
-        document.body.style.overflow = '';
+    function injectProductJsonLd() {
+        if (!catalog || $('#productJsonLd')) return;
+        const script = document.createElement('script');
+        script.id = 'productJsonLd';
+        script.type = 'application/ld+json';
+        script.textContent = JSON.stringify(catalog.productJsonLd());
+        document.head.appendChild(script);
     }
 
-    // Події кошика
-    cartBtn      && cartBtn.addEventListener('click', openCart);
-    cartBackdrop && cartBackdrop.addEventListener('click', closeCartDrawer);
-    cartClose    && cartClose.addEventListener('click', closeCartDrawer);
-    cartClearBtn && cartClearBtn.addEventListener('click', () => {
-        if (confirm('Очистити кошик?')) clearCart();
-    });
-    cartList     && cartList.addEventListener('click', (e) => {
-        const t = e.target;
-        const plus  = t.closest('[data-plus]');
-        const minus = t.closest('[data-minus]');
-        const del   = t.closest('[data-del]');
-        if (plus)  addOne(plus.getAttribute('data-plus'));
-        if (minus) removeOne(minus.getAttribute('data-minus'));
-        if (del)   deleteLine(del.getAttribute('data-del'));
-    });
-
-    // Слухати змін кошика
-    window.addEventListener('cart:changed', renderCart);
-    // Початковий рендер
-    renderCart();
-
-    // Make cart total clickable to open cart drawer
-    if (cartTotalHeader) {
-        cartTotalHeader.style.cursor = 'pointer';
-        cartTotalHeader.addEventListener('click', openCart);
-    }
-
-    /* ======= Кнопки "У кошик" у продуктах ======= */
-    document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.addToCart');
-        if (!btn) return;
-        const type = btn.getAttribute('data-type') || btn.textContent.trim();
-        const qty  = btn.getAttribute('data-qty') || '1';
-        openQtyMenu(type, qty, btn);
-    });
-
-    /* ======= Меню вибору об’єму (степпер) ======= */
-    const qtyMenu     = $('#qtyMenu');
+    const qtyMenu = $('#qtyMenu');
     const qtyBackdrop = $('#qtyBackdrop');
     const qtyCloseBtn = $('#qtyClose');
-    const qtyTitle    = $('#qtyTitle');
-    const qtyMinus    = $('#qtyMinus');
-    const qtyPlus     = $('#qtyPlus');
-    const qtyValue    = $('#qtyValue');
-    const qtyPrice    = $('#qtyPrice');
-    const qtyAddBtn   = $('#qtyAddBtn');
-    let currentTypeForQty = null;
+    const qtyTitle = $('#qtyTitle');
+    const qtyMinus = $('#qtyMinus');
+    const qtyPlus = $('#qtyPlus');
+    const qtyValue = $('#qtyValue');
+    const qtyPrice = $('#qtyPrice');
+    const qtyAddBtn = $('#qtyAddBtn');
+    let currentProductId = null;
     let qtyOptions = [];
     let qtyIdx = 0;
     let lastAddBtn = null;
 
-    // Встановити кількість за індексом і оновити відображення
-    function setQtyByIndex(i, priceTable) {
-        qtyIdx = Math.max(0, Math.min(i, qtyOptions.length - 1));
-        const q = qtyOptions[qtyIdx];
-        if (qtyValue) qtyValue.textContent = q + ' л';
-        if (qtyPrice) qtyPrice.textContent = formatUAH(priceTable[q]);
+    function setQtyByIndex(index, priceTable) {
+        qtyIdx = Math.max(0, Math.min(index, qtyOptions.length - 1));
+        const qty = qtyOptions[qtyIdx];
+        if (qtyValue) qtyValue.textContent = `${qty} л`;
+        if (qtyPrice) qtyPrice.textContent = formatUAH(priceTable[qty]);
     }
 
-    function openQtyMenu(type, defaultQty, fromBtn) {
-        const priceTable = PRICES?.[type];
-        if (!priceTable) {
-            alert('Немає інформації про ціни для цього меду.');
-            return;
-        }
-        currentTypeForQty = type;
-        lastAddBtn = fromBtn instanceof Element ? fromBtn : null;
-        // Заголовок
-        if (qtyTitle) qtyTitle.textContent = type;
-        // Список об’ємів за зростанням
-        qtyOptions = Object.keys(priceTable)
-            .map((x) => parseFloat(x))
-            .sort((a, b) => a - b)
-            .map((x) => String(x));
-        // Відновити останній вибір для цього виду або взяти defaultQty
-        const lastMap = loadLastQty();
-        const preferred = String(lastMap[type] ?? defaultQty ?? qtyOptions[0]);
-        const startIdx = Math.max(0, qtyOptions.indexOf(preferred));
-        setQtyByIndex(startIdx, priceTable);
-        // Показати меню
-        if (qtyMenu) qtyMenu.style.display = 'block';
-        // Підписатись на ±
-        const onMinus = () => setQtyByIndex(qtyIdx - 1, priceTable);
-        const onPlus  = () => setQtyByIndex(qtyIdx + 1, priceTable);
-        if (qtyMinus) qtyMinus.addEventListener('click', onMinus);
-        if (qtyPlus)  qtyPlus.addEventListener('click', onPlus);
-        // Зберегти функцію для очищення
-        qtyMenu._cleanup = () => {
-            if (qtyMinus) qtyMinus.removeEventListener('click', onMinus);
-            if (qtyPlus)  qtyPlus.removeEventListener('click', onPlus);
-        };
-    }
     function closeQtyMenu() {
-        if (qtyMenu && qtyMenu._cleanup) qtyMenu._cleanup();
-        if (qtyMenu) qtyMenu.style.display = 'none';
-        currentTypeForQty = null;
+        if (qtyMenu?._cleanup) qtyMenu._cleanup();
+        if (qtyMenu) {
+            qtyMenu.style.display = 'none';
+            qtyMenu.setAttribute('aria-hidden', 'true');
+        }
+        currentProductId = null;
         lastAddBtn = null;
     }
-    // Закриття через фон або кнопку
-    qtyBackdrop && qtyBackdrop.addEventListener('click', closeQtyMenu);
-    qtyCloseBtn && qtyCloseBtn.addEventListener('click', closeQtyMenu);
-    // Додати у кошик і запам’ятати вибір
-    qtyAddBtn && qtyAddBtn.addEventListener('click', () => {
-        if (!currentTypeForQty) return;
-        const q = qtyOptions[qtyIdx];
-        const priceTable = PRICES[currentTypeForQty];
-        addToCart(currentTypeForQty, q);
-        // Запам’ятати останній вибір
+
+    function openQtyMenu(productId, defaultQty, fromBtn) {
+        const product = catalog?.getProduct(productId);
+        if (!product || !product.inStock) {
+            alert('Цього меду зараз немає в наявності.');
+            return;
+        }
+        if (!qtyMenu || !product.prices) return;
+        if (qtyMenu._cleanup) qtyMenu._cleanup();
+
+        currentProductId = product.id;
+        lastAddBtn = fromBtn instanceof Element ? fromBtn : null;
+        if (qtyTitle) qtyTitle.textContent = product.name;
+
+        qtyOptions = Object.keys(product.prices)
+            .map(Number)
+            .sort((a, b) => a - b)
+            .map(String);
+        const lastMap = loadLastQty();
+        const preferred = String(lastMap[product.id] || defaultQty || qtyOptions[0]);
+        setQtyByIndex(Math.max(0, qtyOptions.indexOf(preferred)), product.prices);
+
+        qtyMenu.style.display = 'block';
+        qtyMenu.setAttribute('aria-hidden', 'false');
+
+        const onMinus = () => setQtyByIndex(qtyIdx - 1, product.prices);
+        const onPlus = () => setQtyByIndex(qtyIdx + 1, product.prices);
+        qtyMinus?.addEventListener('click', onMinus);
+        qtyPlus?.addEventListener('click', onPlus);
+        qtyMenu._cleanup = () => {
+            qtyMinus?.removeEventListener('click', onMinus);
+            qtyPlus?.removeEventListener('click', onPlus);
+        };
+    }
+
+    document.addEventListener('click', (event) => {
+        const btn = event.target.closest('.addToCart');
+        if (!btn) return;
+        if (btn.disabled || btn.getAttribute('aria-disabled') === 'true') return;
+        openQtyMenu(btn.dataset.productId || btn.dataset.type, btn.dataset.qty || '1', btn);
+    });
+
+    qtyBackdrop?.addEventListener('click', closeQtyMenu);
+    qtyCloseBtn?.addEventListener('click', closeQtyMenu);
+    qtyAddBtn?.addEventListener('click', () => {
+        if (!currentProductId) return;
+        const qty = qtyOptions[qtyIdx];
+        const product = catalog.getProduct(currentProductId);
+        if (!addToCart(currentProductId, qty)) return;
+
         const map = loadLastQty();
-        map[currentTypeForQty] = q;
+        map[currentProductId] = qty;
         saveLastQty(map);
-        // Оновити текст кнопки, з якої відкрили (показати суму)
-        if (lastAddBtn) {
-            lastAddBtn.setAttribute('data-qty', q);
-            lastAddBtn.textContent = 'У кошик — ' + formatUAH(priceTable[q]);
+        if (lastAddBtn && product) {
+            lastAddBtn.dataset.qty = qty;
+            lastAddBtn.textContent = `У кошик — ${formatUAH(product.prices[qty])}`;
         }
         closeQtyMenu();
     });
+
+    initYear();
+    initMobileMenu();
+    initHeroSlider();
+    initReveal();
+    initYearsCounter();
+    hydrateProducts();
+    injectProductJsonLd();
 })();
-// Підвантажити фони інших слайдів після onload/idle
+
 window.addEventListener('load', () => {
     const late = [
-        ['[data-flavor="linden"]',    'assets/hero-linden.webp'],
+        ['[data-flavor="linden"]', 'assets/hero-linden.webp'],
         ['[data-flavor="sunflower"]', 'assets/hero-sunflower.webp']
     ];
     const setBg = ([sel, url]) => {
