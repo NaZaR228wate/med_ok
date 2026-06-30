@@ -140,12 +140,14 @@
     }
 
     function productJsonLd() {
+        const eligibleProducts = products.filter((product) => minPrice(product) !== null);
+
         return {
             '@context': 'https://schema.org',
             '@type': 'ItemList',
             name: 'Натуральний мед з пасіки Medok',
             description: 'Свіжі сорти меду з сімейної пасіки в Бориспільському районі.',
-            itemListElement: products.map((product, index) => ({
+            itemListElement: eligibleProducts.map((product, index) => ({
                 '@type': 'ListItem',
                 position: index + 1,
                 item: {
