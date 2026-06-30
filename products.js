@@ -135,6 +135,38 @@
         if (price !== null) {
             offer.price = String(price);
             offer.priceCurrency = 'UAH';
+            offer.shippingDetails = {
+                '@type': 'OfferShippingDetails',
+                shippingDestination: {
+                    '@type': 'DefinedRegion',
+                    addressCountry: 'UA'
+                },
+                shippingRate: {
+                    '@type': 'MonetaryAmount',
+                    maxValue: 500,
+                    currency: 'UAH'
+                },
+                deliveryTime: {
+                    '@type': 'ShippingDeliveryTime',
+                    handlingTime: {
+                        '@type': 'QuantitativeValue',
+                        minValue: 0,
+                        maxValue: 1,
+                        unitCode: 'DAY'
+                    },
+                    transitTime: {
+                        '@type': 'QuantitativeValue',
+                        minValue: 1,
+                        maxValue: 3,
+                        unitCode: 'DAY'
+                    }
+                }
+            };
+            offer.hasMerchantReturnPolicy = {
+                '@type': 'MerchantReturnPolicy',
+                applicableCountry: 'UA',
+                returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted'
+            };
         }
         return offer;
     }
