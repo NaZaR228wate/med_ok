@@ -202,7 +202,7 @@
                 badge.textContent = product.inStock ? 'В НАЯВНОСТІ' : 'НЕМАЄ В НАЯВНОСТІ';
                 badge.classList.toggle('badge--out', !product.inStock);
             }
-            if (priceBadge) priceBadge.textContent = product.inStock ? `від ${formatUAH(catalog.minPrice(product))}` : 'немає';
+            if (priceBadge) priceBadge.textContent = product.inStock ? `від ${formatUAH(catalog.minPrice(product))}` : 'Немає в наявності';
             if (title) title.textContent = product.name;
             if (bullets) bullets.innerHTML = product.bullets.map((text) => `<li>${text}</li>`).join('');
             if (button) {

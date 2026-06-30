@@ -14,7 +14,7 @@
             alt: 'Банка меду різнотрав’я з сімейної пасіки Medok',
             description: 'Квітковий букет із лугів і гаїв Бориспільського району. Збалансований універсальний смак.',
             bullets: ['Квітковий букет із лугів і гаїв', 'Збалансований смак, універсальний'],
-            prices: { '0.5': 190, '1': 340, '2': 650, '3': 960, '4': 1250, '5': 1500 },
+            prices: { '0.5': 150, '1': 299, '3': 897 },
             reviewCount: 24
         },
         {
@@ -27,7 +27,7 @@
             alt: 'Банка липового меду Medok',
             description: 'Запашний аромат липи. Добрий вибір для чаю та сезонної профілактики.',
             bullets: ['Запашний аромат липи', 'Добрий для чаю та профілактики'],
-            prices: { '0.5': 260, '1': 480, '2': 920, '3': 1350, '4': 1750, '5': 2100 },
+            prices: { '0.5': 200, '1': 399, '3': 1197 },
             reviewCount: 18
         },
         {
@@ -40,7 +40,7 @@
             alt: 'Банка акацієвого меду Medok',
             description: 'Ніжний акацієвий мед, який довго залишається рідким і добре смакує з чаєм.',
             bullets: ['Довго лишається рідким', 'Ніжний смак для щоденного чаю'],
-            prices: { '0.5': 300, '1': 560, '2': 1080, '3': 1600, '4': 2100, '5': 2500 },
+            prices: { '0.5': 275, '1': 549, '3': 1647 },
             reviewCount: 32
         },
         {
@@ -48,12 +48,12 @@
             name: 'Соняшниковий',
             fullName: 'Соняшниковий мед',
             sku: 'honey-sun-04',
-            inStock: true,
+            inStock: false,
             image: 'assets/prod-sunflower.webp',
             alt: 'Банка соняшникового меду Medok',
             description: 'Насичений смак і швидка кристалізація. Добре підходить до тостів і випічки.',
             bullets: ['Виразний смак, швидка кристалізація', 'Круто до тостів і випічки'],
-            prices: { '0.5': 150, '1': 280, '2': 540, '3': 780, '4': 1020, '5': 1250 },
+            prices: {},
             reviewCount: 15
         }
     ];
@@ -84,6 +84,7 @@
     }
 
     function minPrice(product) {
+        if (!product?.inStock) return null;
         const values = Object.values(product.prices).map(Number).filter(Boolean);
         return values.length ? Math.min(...values) : 0;
     }
@@ -123,6 +124,21 @@
         return JSON.stringify(original || []) !== JSON.stringify(normalized || []);
     }
 
+    function productOfferJsonLd(product) {
+        const offer = {
+            '@type': 'Offer',
+            availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            url: `${SITE_URL}/order.html`,
+            priceValidUntil: '2026-12-31'
+        };
+        const price = minPrice(product);
+        if (price !== null) {
+            offer.price = String(price);
+            offer.priceCurrency = 'UAH';
+        }
+        return offer;
+    }
+
     function productJsonLd() {
         return {
             '@context': 'https://schema.org',
@@ -144,14 +160,7 @@
                         ratingValue: '5',
                         reviewCount: String(product.reviewCount)
                     },
-                    offers: {
-                        '@type': 'Offer',
-                        price: String(minPrice(product)),
-                        priceCurrency: 'UAH',
-                        availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-                        url: `${SITE_URL}/order.html`,
-                        priceValidUntil: '2026-12-31'
-                    }
+                    offers: productOfferJsonLd(product)
                 }
             }))
         };
