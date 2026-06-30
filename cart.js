@@ -1,56 +1,62 @@
-/* cart.js — Універсальний файл (Кошик + Мобільне меню) */
-
 const CART_KEY = 'medok_cart_v1';
-const $ = (s, r=document) => r.querySelector(s);
-const formatUAH = (n) => '₴' + Number(n||0).toLocaleString('uk-UA');
+const $ = (s, r = document) => r.querySelector(s);
+const formatUAH = (n) => '₴' + Number(n || 0).toLocaleString('uk-UA');
+const catalog = window.MEDOK_CATALOG;
 
-// --- 1. ЛОГІКА МОБІЛЬНОГО МЕНЮ (БУРГЕР) ---
+function loadCart() {
+    try {
+        const raw = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+        const normalized = catalog ? catalog.normalizeCart(raw) : raw;
+        if (catalog && catalog.hasCartChanged(raw, normalized)) {
+            localStorage.setItem(CART_KEY, JSON.stringify(normalized));
+        }
+        return normalized;
+    } catch {
+        return [];
+    }
+}
+
+function saveCart(items) {
+    localStorage.setItem(CART_KEY, JSON.stringify(items));
+    updateCartBadge();
+    window.dispatchEvent(new CustomEvent('cart:changed'));
+}
+
+function updateCartBadge() {
+    const badge = $('#cartQtyBadge');
+    const totalHeader = $('#cartTotalHeader');
+    const items = loadCart();
+    const qty = items.reduce((sum, item) => sum + (Number(item.count) || 0), 0);
+    const total = items.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.count) || 0), 0);
+
+    if (badge) {
+        badge.textContent = qty;
+        badge.style.display = qty ? 'inline-block' : 'none';
+    }
+    if (totalHeader) {
+        totalHeader.textContent = formatUAH(total);
+        totalHeader.style.display = qty ? 'flex' : 'none';
+    }
+}
+
 function initMobileMenu() {
     const burger = $('#burgerBtn');
     const close = $('#closeMenuBtn');
     const menu = $('#mobileMenu');
     const backdrop = $('#mobileBackdrop');
     const links = document.querySelectorAll('.mobile-link');
-
     if (!burger || !menu) return;
 
     const toggle = (show) => {
-        if (show) {
-            menu.classList.add('active');
-            if (backdrop) backdrop.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        } else {
-            menu.classList.remove('active');
-            if (backdrop) backdrop.classList.remove('active');
-            document.body.style.overflow = '';
-        }
+        menu.classList.toggle('active', show);
+        backdrop?.classList.toggle('active', show);
+        document.body.style.overflow = show ? 'hidden' : '';
     };
 
     burger.onclick = () => toggle(true);
     if (close) close.onclick = () => toggle(false);
     if (backdrop) backdrop.onclick = () => toggle(false);
-
-    links.forEach(link => {
-        link.onclick = () => toggle(false);
-    });
-}
-
-// --- 2. РОБОТА З КОШИКОМ ---
-function loadCart(){
-    try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
-    catch { return []; }
-}
-function saveCart(items){
-    localStorage.setItem(CART_KEY, JSON.stringify(items));
-    updateCartBadge();
-}
-function updateCartBadge(){
-    const badge = $('#cartQtyBadge');
-    if (!badge) return;
-    const items = loadCart();
-    const qty = items.reduce((s,i)=> s + (Number(i.count)||0), 0);
-    badge.textContent = qty;
-    badge.style.display = qty ? 'inline-block' : 'none';
+    links.forEach((link) => { link.onclick = () => toggle(false); });
 }
 
 function injectCartStyles() {
@@ -72,26 +78,28 @@ function injectCartStyles() {
 }
 
 window.closeCart = () => {
-    const o = $('#cartOverlay'), d = $('#cartDrawer');
-    if (o) o.classList.remove('active');
-    if (d) d.classList.remove('active');
+    $('#cartOverlay')?.classList.remove('active');
+    $('#cartDrawer')?.classList.remove('active');
     document.body.classList.remove('cart-open');
     document.body.style.overflow = '';
 };
 
 window.openCart = () => {
-    ensureCartUI(); 
+    ensureCartUI();
     renderCart();
-    $('#cartOverlay').classList.add('active');
-    $('#cartDrawer').classList.add('active');
+    $('#cartOverlay')?.classList.add('active');
+    $('#cartDrawer')?.classList.add('active');
     document.body.classList.add('cart-open');
 };
 
-function ensureCartUI(){
+function ensureCartUI() {
     if ($('#cartDrawer')) return;
     injectCartStyles();
-    const overlay = document.createElement('div'); overlay.id = 'cartOverlay';
-    const drawer = document.createElement('div'); drawer.id = 'cartDrawer';
+
+    const overlay = document.createElement('div');
+    overlay.id = 'cartOverlay';
+    const drawer = document.createElement('div');
+    drawer.id = 'cartDrawer';
     drawer.innerHTML = `
         <div class="cart-header"><b style="font-size:20px;">🛒 Кошик</b><button onclick="closeCart()" style="border:none;background:#eee;width:36px;height:36px;border-radius:50%;cursor:pointer;">✕</button></div>
         <div id="cartBody" class="cart-body"></div>
@@ -102,32 +110,35 @@ function ensureCartUI(){
                 <a href="order.html" style="flex:2;text-align:center;text-decoration:none;background:#087B04;color:#fff;padding:12px;border-radius:12px;font-weight:900;">Оформити</a>
             </div>
         </div>`;
-    document.body.appendChild(overlay); document.body.appendChild(drawer);
+    document.body.append(overlay, drawer);
     overlay.onclick = closeCart;
 }
 
-function renderCart(){
-    const body = $('#cartBody'), totalEl = $('#cartTotal'), footer = $('#cartFooter');
+function renderCart() {
+    const body = $('#cartBody');
+    const totalEl = $('#cartTotal');
+    const footer = $('#cartFooter');
     if (!body || !totalEl) return;
+
     const items = loadCart();
-    const sum = items.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.count)||0), 0);
+    const sum = items.reduce((total, item) => total + (Number(item.price) || 0) * (Number(item.count) || 0), 0);
     totalEl.textContent = formatUAH(sum);
 
-    if (!items.length){
-        if(footer) footer.style.display = 'none';
-        body.innerHTML = `<div style="text-align:center;padding:40px 0;"><p>Кошик порожній 🍯</p></div>`;
+    if (!items.length) {
+        if (footer) footer.style.display = 'none';
+        body.innerHTML = '<div style="text-align:center;padding:40px 0;"><p>Кошик порожній 🍯</p></div>';
         return;
     }
-    
-    if(footer) footer.style.display = 'block';
-    body.innerHTML = items.map((i, idx) => `
+
+    if (footer) footer.style.display = 'block';
+    body.innerHTML = items.map((item, idx) => `
         <div class="cart-item">
-            <div style="display:flex;justify-content:space-between;font-weight:800;">
-                <span>${i.type} (${i.qty}л)</span>
-                <span>${formatUAH(i.price * i.count)}</span>
+            <div style="display:flex;justify-content:space-between;font-weight:800;gap:10px;">
+                <span>${item.type} (${item.qty} л)</span>
+                <span>${formatUAH(item.price * item.count)}</span>
             </div>
             <div style="display:flex;justify-content:space-between;margin-top:10px;align-items:center;">
-                <div>К-сть: ${i.count}</div>
+                <div>${formatUAH(item.price)} / шт · К-сть: ${item.count}</div>
                 <button onclick="removeItem(${idx})" style="border:none;background:none;color:red;cursor:pointer;">Видалити</button>
             </div>
         </div>
@@ -135,33 +146,35 @@ function renderCart(){
 }
 
 window.removeItem = (idx) => {
-    let items = loadCart();
+    const items = loadCart();
     items.splice(idx, 1);
     saveCart(items);
     renderCart();
 };
 
 window.clearAll = () => {
-    if(confirm('Очистити кошик?')) {
-        saveCart([]);
-        renderCart();
-    }
+    if (!confirm('Очистити кошик?')) return;
+    saveCart([]);
+    renderCart();
 };
 
-// --- 3. ІНІЦІАЛІЗАЦІЯ ПРИ ЗАВАНТАЖЕННІ СТОРІНКИ ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Ініціалізуємо бургер-меню
+    const year = $('#y');
+    if (year) year.textContent = new Date().getFullYear();
+
     initMobileMenu();
-    
-    // Оновлюємо значок кількості товарів
     updateCartBadge();
 
-    // Навішуємо відкриття кошика на кнопку
     const cartBtn = $('#cartBtn');
     if (cartBtn) {
-        cartBtn.onclick = (e) => {
-            e.preventDefault();
+        cartBtn.onclick = (event) => {
+            event.preventDefault();
             window.openCart();
         };
     }
+});
+
+window.addEventListener('cart:changed', () => {
+    updateCartBadge();
+    if ($('#cartDrawer')?.classList.contains('active')) renderCart();
 });
