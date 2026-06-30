@@ -104,7 +104,7 @@ function ensureCartUI() {
         <div class="cart-header"><b style="font-size:20px;">🛒 Кошик</b><button onclick="closeCart()" style="border:none;background:#eee;width:36px;height:36px;border-radius:50%;cursor:pointer;">✕</button></div>
         <div id="cartBody" class="cart-body"></div>
         <div class="cart-footer" id="cartFooter">
-            <div style="display:flex;justify-content:space-between;margin-bottom:15px;"><b>Разом</b><b id="cartTotal" style="color:#087B04;font-size:22px;">₴0</b></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:15px;"><b>Разом</b><b id="cartTotal" style="color:#087B04;font-size:22px;">—</b></div>
             <div style="display:flex; gap:10px;">
                 <button onclick="clearAll()" style="flex:1;border:none;background:#f3f3f3;padding:12px;border-radius:12px;font-weight:700;">Очистити</button>
                 <a href="order.html" style="flex:2;text-align:center;text-decoration:none;background:#087B04;color:#fff;padding:12px;border-radius:12px;font-weight:900;">Оформити</a>
