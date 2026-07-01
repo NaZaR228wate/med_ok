@@ -11,6 +11,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://medok.ink/about.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://medok.ink/faq.html</loc>
+    <lastmod>2026-07-01</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://medok.ink/order.html</loc>
     <lastmod>2026-06-30</lastmod>
     <priority>0.7</priority>
