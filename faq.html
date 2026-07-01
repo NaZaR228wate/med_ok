@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FAQ про мед і доставку | Medok</title>
+    <meta name="description" content="Відповіді Medok про натуральний мед, доставку Новою поштою, вибір меду для чаю, замовлення у Києві та Бориспільському районі.">
+    <link rel="canonical" href="https://medok.ink/faq.html">
+    <meta property="og:title" content="FAQ про мед і доставку | Medok">
+    <meta property="og:description" content="Поширені питання про натуральний мед Medok, доставку, оплату і замовлення.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://medok.ink/faq.html">
+    <meta property="og:image" content="https://medok.ink/assets/prod-mixed.webp">
+    <link rel="stylesheet" href="styles.css?v=16">
+    <link rel="icon" href="assets/medok-wordmark.png">
+    <meta name="theme-color" content="#087B04">
+    <link rel="manifest" href="manifest.webmanifest">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Де купити натуральний мед у Києві?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Натуральний мед Medok можна замовити на сайті з доставкою Новою поштою по Києву та Україні. Пасіка знаходиться в Бориспільському районі Київської області."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чи доставляє Medok мед Новою поштою?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Так, Medok відправляє мед Новою поштою по Україні. Вартість доставки оплачує покупець за тарифами перевізника."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Який мед краще обрати для чаю?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Для чаю часто обирають липовий або акацієвий мед. Липовий має виразний аромат, а акацієвий ніжніший і довше залишається рідким."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чим відрізняється акацієвий мед від липового?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Акацієвий мед має ніжний смак і довго залишається рідким. Липовий мед більш ароматний, з характерним липовим смаком."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Який мед зараз є в наявності?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Зараз у наявності мед різнотрав’я, липовий мед та акацієвий мед. Соняшниковий мед наразі не в наявності."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Чи можна замовити мед у Бориспільському районі?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Так, Medok працює в Бориспільському районі Київської області. Замовлення можна оформити через сайт, телефоном або у Viber."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Як оформити замовлення?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Оберіть мед на головній сторінці, додайте потрібний об’єм у кошик і перейдіть на сторінку оформлення. Також можна зателефонувати або написати у Viber."
+          }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+<a class="visually-hidden" href="#main">Перейти до контенту</a>
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="header-logo" aria-label="На головну">
+            <img src="assets/medok-wordmark.png" alt="Логотип Medok">
+        </a>
+        <nav class="header-nav">
+            <a href="index.html#products" class="header-link">Продукція</a>
+            <a href="about.html" class="header-link">Про пасіку</a>
+            <a href="faq.html" class="header-link">FAQ</a>
+            <a href="reviews.html" class="header-link">Відгуки</a>
+        </nav>
+        <div class="header-actions">
+            <button id="cartBtn" class="cart-icon-btn" aria-label="Кошик">
+                🛒 <span id="cartQtyBadge" class="cart-badge" style="display:none">0</span>
+            </button>
+            <a href="order.html" class="btn-header-cta">Замовити мед</a>
+            <button id="burgerBtn" class="burger-menu" aria-label="Меню">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<div id="mobileBackdrop" class="mobile-nav-overlay"></div>
+<div id="mobileMenu" class="mobile-nav-drawer">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <span style="font-weight:800;font-size:20px;">Меню</span>
+        <button id="closeMenuBtn" style="background:none;border:none;font-size:24px;cursor:pointer;">✕</button>
+    </div>
+    <a href="index.html" class="mobile-link">🏠 На головну</a>
+    <a href="index.html#products" class="mobile-link">🍯 Продукція</a>
+    <a href="about.html" class="mobile-link">🐝 Про пасіку</a>
+    <a href="faq.html" class="mobile-link">❓ FAQ</a>
+    <a href="reviews.html" class="mobile-link">💬 Відгуки</a>
+    <a href="order.html" class="btn-header-cta" style="display:block;text-align:center;margin-top:20px;">Оформити замовлення</a>
+</div>
+
+<main id="main" class="container">
+    <h1>Питання та відповіді про Medok</h1>
+    <p class="section-subtitle">Коротко про натуральний мед, доставку, оплату і замовлення.</p>
+
+    <section class="card">
+        <details open>
+            <summary>Де купити натуральний мед у Києві?</summary>
+            <p>Натуральний мед Medok можна замовити на сайті з доставкою Новою поштою по Києву та Україні. Пасіка знаходиться в Бориспільському районі Київської області.</p>
+        </details>
+        <details>
+            <summary>Чи доставляє Medok мед Новою поштою?</summary>
+            <p>Так, Medok відправляє мед Новою поштою по Україні. Вартість доставки оплачує покупець за тарифами перевізника.</p>
+        </details>
+        <details>
+            <summary>Який мед краще обрати для чаю?</summary>
+            <p>Для чаю часто обирають липовий або акацієвий мед. Липовий має виразний аромат, а акацієвий ніжніший і довше залишається рідким.</p>
+        </details>
+        <details>
+            <summary>Чим відрізняється акацієвий мед від липового?</summary>
+            <p>Акацієвий мед має ніжний смак і довго залишається рідким. Липовий мед більш ароматний, з характерним липовим смаком.</p>
+        </details>
+        <details>
+            <summary>Який мед зараз є в наявності?</summary>
+            <p>Зараз у наявності мед різнотрав’я, липовий мед та акацієвий мед. Соняшниковий мед наразі не в наявності.</p>
+        </details>
+        <details>
+            <summary>Чи можна замовити мед у Бориспільському районі?</summary>
+            <p>Так, Medok працює в Бориспільському районі Київської області. Замовлення можна оформити через сайт, телефоном або у Viber.</p>
+        </details>
+        <details>
+            <summary>Як оформити замовлення?</summary>
+            <p>Оберіть мед на головній сторінці, додайте потрібний об’єм у кошик і перейдіть на сторінку оформлення. Також можна зателефонувати або написати у Viber.</p>
+        </details>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+            <a class="btn" href="order.html" style="width:auto;">Оформити замовлення</a>
+            <a class="btn-secondary" href="index.html" style="display:inline-flex;align-items:center;">На головну</a>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container footer-bottom">
+        <div>© <span id="y"></span> Medok. Натуральний мед з пасіки.</div>
+        <div class="footer-bottom__right"><a href="about.html">Про пасіку</a> · <a href="order.html">Замовити мед</a></div>
+    </div>
+</footer>
+<script src="products.js?v=1" defer></script>
+<script src="app.js?v=203" defer></script>
+<script src="cart.js?v=206" defer></script>
+</body>
+</html>
