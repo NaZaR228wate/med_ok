@@ -235,19 +235,58 @@
         document.head.appendChild(script);
     }
 
-    const qtyMenu = $('#qtyMenu');
-    const qtyBackdrop = $('#qtyBackdrop');
-    const qtyCloseBtn = $('#qtyClose');
-    const qtyTitle = $('#qtyTitle');
-    const qtyMinus = $('#qtyMinus');
-    const qtyPlus = $('#qtyPlus');
-    const qtyValue = $('#qtyValue');
-    const qtyPrice = $('#qtyPrice');
-    const qtyAddBtn = $('#qtyAddBtn');
+    let qtyMenu = $('#qtyMenu');
+    let qtyBackdrop = $('#qtyBackdrop');
+    let qtyCloseBtn = $('#qtyClose');
+    let qtyTitle = $('#qtyTitle');
+    let qtyMinus = $('#qtyMinus');
+    let qtyPlus = $('#qtyPlus');
+    let qtyValue = $('#qtyValue');
+    let qtyPrice = $('#qtyPrice');
+    let qtyAddBtn = $('#qtyAddBtn');
     let currentProductId = null;
     let qtyOptions = [];
     let qtyIdx = 0;
     let lastAddBtn = null;
+
+    function ensureQtyMenu() {
+        if (!qtyMenu) {
+            const wrapper = document.createElement('div');
+            wrapper.id = 'qtyMenu';
+            wrapper.setAttribute('aria-hidden', 'true');
+            wrapper.style.display = 'none';
+            wrapper.innerHTML = `
+                <div id="qtyBackdrop"></div>
+                <div class="qty-dialog">
+                    <div class="qty-head">
+                        <div id="qtyTitle"></div>
+                        <button id="qtyClose" class="btn-secondary" title="Закрити">✕</button>
+                    </div>
+                    <label class="muted" style="display:block; margin-bottom:6px;">Кількість літрів</label>
+                    <div class="qty-stepper">
+                        <button id="qtyMinus" class="qty-step">−</button>
+                        <div id="qtyValue" class="qty-value">1 л</div>
+                        <button id="qtyPlus" class="qty-step">+</button>
+                    </div>
+                    <div class="qty-price">
+                        Ціна: <b id="qtyPrice">—</b>
+                    </div>
+                    <button id="qtyAddBtn" class="btn" style="width:100%; margin-top:10px;">Додати в кошик</button>
+                </div>
+            `;
+            document.body.appendChild(wrapper);
+        }
+
+        qtyMenu = $('#qtyMenu');
+        qtyBackdrop = $('#qtyBackdrop');
+        qtyCloseBtn = $('#qtyClose');
+        qtyTitle = $('#qtyTitle');
+        qtyMinus = $('#qtyMinus');
+        qtyPlus = $('#qtyPlus');
+        qtyValue = $('#qtyValue');
+        qtyPrice = $('#qtyPrice');
+        qtyAddBtn = $('#qtyAddBtn');
+    }
 
     function setQtyByIndex(index, priceTable) {
         qtyIdx = Math.max(0, Math.min(index, qtyOptions.length - 1));
@@ -272,12 +311,18 @@
             alert('Цього меду зараз немає в наявності.');
             return;
         }
+        ensureQtyMenu();
         if (!qtyMenu || !product.prices) return;
         if (qtyMenu._cleanup) qtyMenu._cleanup();
 
         currentProductId = product.id;
         lastAddBtn = fromBtn instanceof Element ? fromBtn : null;
         if (qtyTitle) qtyTitle.textContent = product.name;
+        if (qtyAddBtn) {
+            qtyAddBtn.textContent = lastAddBtn?.dataset.orderAfterAdd === 'true'
+                ? 'Додати і оформити замовлення'
+                : 'Додати в кошик';
+        }
 
         qtyOptions = Object.keys(product.prices)
             .map(Number)
@@ -307,22 +352,27 @@
         openQtyMenu(btn.dataset.productId || btn.dataset.type, btn.dataset.qty || '1', btn);
     });
 
+    ensureQtyMenu();
     qtyBackdrop?.addEventListener('click', closeQtyMenu);
     qtyCloseBtn?.addEventListener('click', closeQtyMenu);
     qtyAddBtn?.addEventListener('click', () => {
         if (!currentProductId) return;
         const qty = qtyOptions[qtyIdx];
         const product = catalog.getProduct(currentProductId);
+        const shouldRedirectToOrder = lastAddBtn?.dataset.orderAfterAdd === 'true';
         if (!addToCart(currentProductId, qty)) return;
 
         const map = loadLastQty();
         map[currentProductId] = qty;
         saveLastQty(map);
-        if (lastAddBtn && product) {
+        if (lastAddBtn && product && !shouldRedirectToOrder) {
             lastAddBtn.dataset.qty = qty;
             lastAddBtn.textContent = `У кошик — ${formatUAH(product.prices[qty])}`;
         }
         closeQtyMenu();
+        if (shouldRedirectToOrder) {
+            window.location.href = 'order.html';
+        }
     });
 
     initYear();
