@@ -356,6 +356,26 @@ textarea { min-height: 96px; resize: vertical; }
 .btn:active { transform: scale(.98); }
 .btn:disabled,
 .btn[aria-disabled="true"] { background: #777; color: #fff; cursor: not-allowed; box-shadow: none; }
+.product-detail-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #087B04;
+    color: #087B04;
+    background: #fff;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-weight: 800;
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 8px;
+    transition: background .15s ease, color .15s ease, transform .15s ease;
+}
+.product-detail-link:hover {
+    background: #087B04;
+    color: #fff;
+    transform: translateY(-1px);
+}
 .radios { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 6px; }
 
 /* ===== UTILITIES ===== */
@@ -411,6 +431,10 @@ textarea { min-height: 96px; resize: vertical; }
 
 
 @media (max-width: 640px) {
+    .product-detail-link {
+        width: 100%;
+        text-align: center;
+    }
     .sticky-cta {
         display: flex !important;
         position: fixed;
