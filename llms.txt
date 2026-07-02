@@ -4,12 +4,18 @@ Medok — сімейна пасіка в Бориспільському райо
 
 ## Основні сторінки
 
-- Головна: https://medok.ink/
-- Про пасіку: https://medok.ink/about.html
-- FAQ: https://medok.ink/faq.html
-- Оформлення замовлення: https://medok.ink/order.html
-- Відгуки: https://medok.ink/reviews.html
-- Сторінка для запиту "купити мед Київ": https://medok.ink/kyiv-med.html
+- [Головна](https://medok.ink/)
+- [Про пасіку](https://medok.ink/about.html)
+- [FAQ](https://medok.ink/faq.html)
+- [Оформлення замовлення](https://medok.ink/order.html)
+- [Відгуки](https://medok.ink/reviews.html)
+- [Купити мед Київ](https://medok.ink/kyiv-med.html)
+
+## Сторінки сортів меду
+
+- [Мед різнотрав’я](https://medok.ink/riznotravya-med.html)
+- [Липовий мед](https://medok.ink/lypovyi-med.html)
+- [Акацієвий мед](https://medok.ink/akatsiievyi-med.html)
 
 ## Товари
 
