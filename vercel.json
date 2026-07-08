@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/order",
+      "destination": "https://medok-proxy.veter010709.workers.dev/order"
+    },
+    {
+      "source": "/np/cities",
+      "destination": "https://medok-proxy.veter010709.workers.dev/np/cities"
+    },
+    {
+      "source": "/np/warehouses",
+      "destination": "https://medok-proxy.veter010709.workers.dev/np/warehouses"
+    }
+  ]
+}
