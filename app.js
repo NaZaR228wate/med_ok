@@ -83,56 +83,48 @@
         const bg = $('#mobileBackdrop');
         if (!burger || !menu) return;
 
+        let lastFocused = null;
+
         const toggleMenu = (show) => {
+            lastFocused = show ? document.activeElement : lastFocused;
             menu.classList.toggle('active', show);
             bg?.classList.toggle('active', show);
+            menu.setAttribute('aria-hidden', String(!show));
+            burger.setAttribute('aria-expanded', String(show));
             document.body.style.overflow = show ? 'hidden' : '';
+            if (show) requestAnimationFrame(() => close?.focus());
+            else if (lastFocused instanceof HTMLElement) lastFocused.focus();
         };
 
         burger.addEventListener('click', () => toggleMenu(true));
         close?.addEventListener('click', () => toggleMenu(false));
         bg?.addEventListener('click', () => toggleMenu(false));
         $$('.mobile-link', menu).forEach((link) => link.addEventListener('click', () => toggleMenu(false)));
-    }
-
-    function initHeroSlider() {
-        const slides = $$('.hero-slider .slide');
-        const prevBtn = $('#prev');
-        const nextBtn = $('#next');
-        if (!slides.length || !prevBtn || !nextBtn) return;
-
-        const autoplayMs = 3000;
-        const animMs = 650;
-        let current = Math.max(0, slides.findIndex((slide) => slide.classList.contains('active')));
-        let isAnimating = false;
-        let autoplayId = null;
-
-        const show = (idx) => {
-            if (isAnimating || idx === current) return;
-            isAnimating = true;
-            slides.forEach((slide, index) => slide.classList.toggle('active', index === idx));
-            current = idx;
-            setTimeout(() => { isAnimating = false; }, animMs);
-        };
-        const next = () => show((current + 1) % slides.length);
-        const prev = () => show((current - 1 + slides.length) % slides.length);
-        const schedule = () => {
-            clearTimeout(autoplayId);
-            autoplayId = setTimeout(function tick() {
-                next();
-                autoplayId = setTimeout(tick, autoplayMs);
-            }, autoplayMs);
-        };
-
-        prevBtn.addEventListener('click', () => { prev(); schedule(); });
-        nextBtn.addEventListener('click', () => { next(); schedule(); });
-        schedule();
+        document.addEventListener('keydown', (event) => {
+            if (!menu.classList.contains('active')) return;
+            if (event.key === 'Escape') {
+                toggleMenu(false);
+                return;
+            }
+            if (event.key !== 'Tab') return;
+            const focusable = $$('a[href], button:not([disabled])', menu);
+            if (!focusable.length) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        });
     }
 
     function initReveal() {
         const els = $$('.reveal');
         if (!els.length) return;
-        if (!('IntersectionObserver' in window)) {
+        if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             els.forEach((el) => el.classList.add('in'));
             return;
         }
@@ -212,7 +204,7 @@
                 button.dataset.productId = product.id;
                 button.dataset.qty = button.dataset.qty || '1';
                 button.disabled = !product.inStock;
-                button.textContent = product.inStock ? 'У кошик' : 'Немає в наявності';
+                button.textContent = product.inStock ? 'Обрати об’єм' : 'Немає в наявності';
                 button.setAttribute('aria-disabled', String(!product.inStock));
             }
             if (miniPrice) {
@@ -257,21 +249,21 @@
             wrapper.style.display = 'none';
             wrapper.innerHTML = `
                 <div id="qtyBackdrop"></div>
-                <div class="qty-dialog">
+                <div class="qty-dialog" role="dialog" aria-modal="true" aria-labelledby="qtyTitle">
                     <div class="qty-head">
                         <div id="qtyTitle"></div>
-                        <button id="qtyClose" class="btn-secondary" title="Закрити">✕</button>
+                        <button id="qtyClose" class="btn-secondary" type="button" aria-label="Закрити вибір об’єму">✕</button>
                     </div>
                     <label class="muted" style="display:block; margin-bottom:6px;">Кількість літрів</label>
                     <div class="qty-stepper">
-                        <button id="qtyMinus" class="qty-step">−</button>
+                        <button id="qtyMinus" class="qty-step" type="button" aria-label="Зменшити об’єм">−</button>
                         <div id="qtyValue" class="qty-value">1 л</div>
-                        <button id="qtyPlus" class="qty-step">+</button>
+                        <button id="qtyPlus" class="qty-step" type="button" aria-label="Збільшити об’єм">+</button>
                     </div>
                     <div class="qty-price">
                         Ціна: <b id="qtyPrice">—</b>
                     </div>
-                    <button id="qtyAddBtn" class="btn" style="width:100%; margin-top:10px;">Додати в кошик</button>
+                    <button id="qtyAddBtn" class="btn" type="button" style="width:100%; margin-top:10px;">Додати в кошик</button>
                 </div>
             `;
             document.body.appendChild(wrapper);
@@ -296,6 +288,7 @@
     }
 
     function closeQtyMenu() {
+        const restoreTarget = lastAddBtn;
         if (qtyMenu?._cleanup) qtyMenu._cleanup();
         if (qtyMenu) {
             qtyMenu.style.display = 'none';
@@ -303,6 +296,7 @@
         }
         currentProductId = null;
         lastAddBtn = null;
+        if (restoreTarget instanceof HTMLElement) restoreTarget.focus();
     }
 
     function openQtyMenu(productId, defaultQty, fromBtn) {
@@ -334,6 +328,7 @@
 
         qtyMenu.style.display = 'block';
         qtyMenu.setAttribute('aria-hidden', 'false');
+        requestAnimationFrame(() => qtyCloseBtn?.focus());
 
         const onMinus = () => setQtyByIndex(qtyIdx - 1, product.prices);
         const onPlus = () => setQtyByIndex(qtyIdx + 1, product.prices);
@@ -355,6 +350,9 @@
     ensureQtyMenu();
     qtyBackdrop?.addEventListener('click', closeQtyMenu);
     qtyCloseBtn?.addEventListener('click', closeQtyMenu);
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && qtyMenu?.getAttribute('aria-hidden') === 'false') closeQtyMenu();
+    });
     qtyAddBtn?.addEventListener('click', () => {
         if (!currentProductId) return;
         const qty = qtyOptions[qtyIdx];
@@ -377,21 +375,8 @@
 
     initYear();
     initMobileMenu();
-    initHeroSlider();
     initReveal();
     initYearsCounter();
     hydrateProducts();
     injectProductJsonLd();
 })();
-
-window.addEventListener('load', () => {
-    const late = [
-        ['[data-flavor="linden"]', 'assets/hero-linden.webp'],
-        ['[data-flavor="sunflower"]', 'assets/hero-sunflower.webp']
-    ];
-    const setBg = ([sel, url]) => {
-        const el = document.querySelector('.hero-slider ' + sel);
-        if (el && !el.style.backgroundImage) el.style.backgroundImage = `url("${url}")`;
-    };
-    (window.requestIdleCallback || setTimeout)(() => late.forEach(setBg), 150);
-});

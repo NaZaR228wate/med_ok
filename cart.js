@@ -2,6 +2,8 @@ const CART_KEY = 'medok_cart_v1';
 const $ = (s, r = document) => r.querySelector(s);
 const formatUAH = (n) => '₴' + Number(n || 0).toLocaleString('uk-UA');
 const catalog = window.MEDOK_CATALOG;
+const EMPTY_CHECKOUT_MESSAGE = 'Спочатку оберіть мед, а потім переходьте до оформлення.';
+const CHECKOUT_NOTICE_KEY = 'medok_checkout_notice';
 
 function loadCart() {
     try {
@@ -20,6 +22,74 @@ function saveCart(items) {
     localStorage.setItem(CART_KEY, JSON.stringify(items));
     updateCartBadge();
     window.dispatchEvent(new CustomEvent('cart:changed'));
+}
+
+function hasCartItems() {
+    return loadCart().some((item) => item && Number(item.count) > 0);
+}
+
+function isCheckoutLink(link) {
+    if (!(link instanceof HTMLAnchorElement)) return false;
+    try {
+        const url = new URL(link.href, window.location.href);
+        return url.origin === window.location.origin && /\/order\.html$/i.test(url.pathname);
+    } catch {
+        return false;
+    }
+}
+
+function showCheckoutNotice(message = EMPTY_CHECKOUT_MESSAGE) {
+    injectCartStyles();
+    let notice = $('#checkoutGuardNotice');
+    if (!notice) {
+        notice = document.createElement('div');
+        notice.id = 'checkoutGuardNotice';
+        notice.className = 'checkout-guard-notice';
+        notice.setAttribute('role', 'status');
+        notice.setAttribute('aria-live', 'polite');
+        document.body.appendChild(notice);
+    }
+    notice.textContent = message;
+    notice.classList.remove('show');
+    requestAnimationFrame(() => notice.classList.add('show'));
+    clearTimeout(notice._hideTimer);
+    notice._hideTimer = setTimeout(() => notice.classList.remove('show'), 3200);
+}
+
+function guideToProducts() {
+    window.closeCart?.();
+    const mobileMenu = $('#mobileMenu');
+    const mobileBackdrop = $('#mobileBackdrop');
+    mobileMenu?.classList.remove('active');
+    mobileMenu?.setAttribute('aria-hidden', 'true');
+    mobileBackdrop?.classList.remove('active');
+    $('#burgerBtn')?.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+
+    const products = document.getElementById('products');
+    if (products) {
+        showCheckoutNotice();
+        products.scrollIntoView({
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+            block: 'start'
+        });
+        window.history.replaceState(null, '', '#products');
+        return;
+    }
+
+    try {
+        sessionStorage.setItem(CHECKOUT_NOTICE_KEY, EMPTY_CHECKOUT_MESSAGE);
+    } catch {
+        // Navigation still works when storage is unavailable.
+    }
+    window.location.assign('index.html#products');
+}
+
+function guardCheckoutNavigation(event) {
+    const link = event.target.closest('a[href]');
+    if (!isCheckoutLink(link) || hasCartItems()) return;
+    event.preventDefault();
+    guideToProducts();
 }
 
 function updateCartBadge() {
@@ -73,6 +143,9 @@ function injectCartStyles() {
         .cart-footer { padding: 20px; border-top: 1px solid #eee; background: #fff; flex-shrink: 0; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
         .cart-item { background: #f9f9f9; border-radius: 16px; padding: 14px; margin-bottom: 12px; border: 1px solid #eee; }
         body.cart-open { overflow: hidden !important; }
+        .checkout-guard-notice { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 100100; width: min(calc(100% - 32px), 520px); padding: 14px 18px; border: 1px solid rgba(255,255,255,.16); border-radius: 16px; background: #17261d; color: #fff; box-shadow: 0 18px 55px rgba(23,38,29,.28); font-weight: 700; line-height: 1.45; text-align: center; opacity: 0; pointer-events: none; transform: translate(-50%, 14px); transition: opacity .2s ease, transform .25s ease; }
+        .checkout-guard-notice.show { opacity: 1; transform: translate(-50%, 0); }
+        @media (prefers-reduced-motion: reduce) { .checkout-guard-notice { transition: none; } }
     `;
     document.head.appendChild(style);
 }
@@ -172,7 +245,25 @@ document.addEventListener('DOMContentLoaded', () => {
             window.openCart();
         };
     }
+
+    try {
+        const pendingNotice = sessionStorage.getItem(CHECKOUT_NOTICE_KEY);
+        if (pendingNotice) {
+            sessionStorage.removeItem(CHECKOUT_NOTICE_KEY);
+            showCheckoutNotice(pendingNotice);
+        }
+    } catch {
+        // The checkout guard does not depend on session storage.
+    }
 });
+
+document.addEventListener('click', guardCheckoutNavigation);
+
+window.MEDOK_CART = {
+    hasItems: hasCartItems,
+    guideToProducts,
+    emptyCheckoutMessage: EMPTY_CHECKOUT_MESSAGE
+};
 
 window.addEventListener('cart:changed', () => {
     updateCartBadge();

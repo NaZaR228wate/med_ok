@@ -133,6 +133,20 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        const initialItems = readCart();
+        if (!initialItems.length) {
+            try {
+                sessionStorage.setItem(
+                    'medok_checkout_notice',
+                    window.MEDOK_CART?.emptyCheckoutMessage || 'Спочатку оберіть мед, а потім переходьте до оформлення.'
+                );
+            } catch {
+                // Redirect does not depend on session storage.
+            }
+            window.location.replace('index.html#products');
+            return;
+        }
+
         updateTotals();
         initPhoneMask($('#phone'));
         initPhoneMask($('#oneclickPhone'));
