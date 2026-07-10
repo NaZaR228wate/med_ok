@@ -2,12 +2,12 @@
   "name": "medok — натуральний мед",
   "short_name": "medok",
   "lang": "uk",
-  "description": "Натуральний мед із власної пасіки. Без антибіотиків, прямо з вулика до баночки.",
+  "description": "Натуральний мед із сімейної пасіки на Київщині з доставкою по Україні.",
   "start_url": "./",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#087B04",
+  "background_color": "#F6F0E3",
+  "theme_color": "#23372B",
   "icons": [
     { "src": "assets/medok-wordmark.png", "sizes": "192x192", "type": "image/png" },
     { "src": "assets/medok-wordmark.png", "sizes": "512x512", "type": "image/png" }
