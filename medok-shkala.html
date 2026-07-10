@@ -1,0 +1,1125 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medok — шкала меду. Чотири сорти з сімейної пасіки</title>
+<meta name="description" content="Мед читають за кольором: від майже білої акації до темного бурштину різнотрав’я. Сімейна пасіка в Бориспільському районі, понад 40 років. Доставка Новою поштою за 1–2 дні.">
+<link rel="icon" href="assets/medok-wordmark.png">
+<meta name="theme-color" content="#FBF4E4">
+<link rel="preload" as="image" href="assets/prod-acacia.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Piazzolla:opsz,wght@8..30,400..800&family=IBM+Plex+Sans:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+
+<style>
+/* ============ ТОКЕНИ ============ */
+:root{
+    --wax:#FBF4E4;          /* віск — стартове тло */
+    --c-acacia:#F6ECD2;     /* відтінок I */
+    --c-linden:#EFD9A4;     /* відтінок II */
+    --c-sun:#E2AC49;        /* відтінок III */
+    --c-mixed:#C07526;      /* відтінок IV */
+    --propolis:#2E1D0C;     /* прополіс — темна смуга */
+    --ink:#2A1806;
+    --ink-soft:#6E4E22;
+    --cream:#FFF6E3;
+    --amber:#A85E14;        /* кнопки */
+    --amber-deep:#8C4C0E;
+    --gold:#E9B453;         /* акцент на темному */
+    --line:rgba(42,24,6,.18);
+    --font-display:'Piazzolla',Georgia,'Times New Roman',serif;
+    --font-body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --font-hand:'Caveat',cursive;
+    --header-h:64px;
+}
+
+/* ============ БАЗА ============ */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0;padding:0}
+body{
+    font-family:var(--font-body);
+    color:var(--ink);
+    background:var(--wax);
+    line-height:1.6;
+    font-size:16.5px;
+    overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+[hidden]{display:none!important}
+a{color:inherit}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea,button{font-size:16px}
+
+:focus-visible{outline:3px solid var(--amber-deep);outline-offset:3px;border-radius:2px}
+.band--dark :focus-visible{outline-color:var(--gold)}
+
+.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip-link{position:absolute;left:12px;top:-48px;z-index:200;background:var(--ink);color:var(--cream);padding:10px 16px;border-radius:4px;text-decoration:none;transition:top .2s}
+.skip-link:focus{top:12px}
+
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+
+/* тло, що глибшає під час прокрутки */
+#bgWash{position:fixed;inset:0;z-index:-1;background:var(--wax);transition:background-color .9s ease}
+
+section{scroll-margin-top:calc(var(--header-h) + 16px)}
+
+/* ============ ТИПОГРАФІКА ============ */
+.eyebrow{
+    font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-soft);margin:0 0 14px;
+}
+.band--dark .eyebrow{color:var(--gold)}
+h1,h2,h3{font-family:var(--font-display);line-height:1.08;margin:0;font-weight:640;letter-spacing:-.01em}
+
+/* ============ ХЕДЕР ============ */
+.site-head{
+    position:sticky;top:0;z-index:90;height:var(--header-h);
+    display:flex;align-items:center;
+    background:rgba(251,244,228,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+}
+.site-head .wrap{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand-swatch{width:26px;height:16px;border-radius:3px;flex:none;
+    background:linear-gradient(90deg,var(--c-acacia),var(--c-linden),var(--c-sun),var(--c-mixed));
+    box-shadow:inset 0 0 0 1px rgba(42,24,6,.25)}
+.brand-name{font-family:var(--font-display);font-weight:700;font-size:24px;letter-spacing:.01em}
+.head-nav{display:flex;gap:4px}
+.head-nav a{
+    text-decoration:none;font-weight:500;font-size:15px;padding:8px 12px;border-radius:4px;
+    color:var(--ink);transition:background .2s;
+}
+.head-nav a:hover{background:rgba(42,24,6,.07)}
+.cart-btn{
+    display:flex;align-items:center;gap:8px;background:none;border:1.5px solid var(--ink);
+    border-radius:4px;padding:8px 14px;font-weight:600;font-size:15px;color:var(--ink);
+    transition:background .2s,color .2s;position:relative;
+}
+.cart-btn:hover{background:var(--ink);color:var(--cream)}
+.cart-btn svg{width:18px;height:18px;flex:none}
+.cart-count{
+    min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--amber);color:#fff;
+    font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;
+}
+.cart-count.bump{animation:bump .45s ease}
+@keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
+
+/* ============ ГЕРОЙ ============ */
+.hero{padding:clamp(56px,10vh,120px) 0 clamp(48px,8vh,88px)}
+.hero h1{font-size:clamp(2.7rem,6.8vw,5.4rem);max-width:12ch}
+.hero-sub{max-width:52ch;font-size:clamp(17px,1.6vw,19px);color:var(--ink-soft);margin:22px 0 0}
+.hero-sub strong{color:var(--ink);font-weight:600}
+
+/* шкала — підпис сорту + смуга градієнта */
+.scale{margin-top:clamp(40px,6vh,64px)}
+.scale-bar{
+    height:18px;border-radius:9px;
+    background:linear-gradient(90deg,var(--c-acacia) 0%,var(--c-linden) 34%,var(--c-sun) 67%,var(--c-mixed) 100%);
+    box-shadow:inset 0 0 0 1px rgba(42,24,6,.28);
+    transform-origin:left center;
+}
+.scale-stops{display:grid;grid-template-columns:repeat(4,1fr);margin-top:14px;gap:8px}
+.scale-stop{
+    text-decoration:none;padding:6px 4px;border-radius:4px;
+    display:flex;flex-direction:column;gap:2px;transition:transform .25s ease;
+}
+.scale-stop:hover{transform:translateY(-3px)}
+.scale-stop b{font-family:var(--font-display);font-size:clamp(15px,1.8vw,19px);font-weight:640}
+.scale-stop span{font-size:12.5px;color:var(--ink-soft);letter-spacing:.04em}
+
+/* поява героя при завантаженні */
+@media (prefers-reduced-motion: no-preference){
+    .rise{opacity:0;transform:translateY(26px);animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards}
+    .rise-1{animation-delay:.05s}.rise-2{animation-delay:.17s}.rise-3{animation-delay:.29s}
+    @keyframes rise{to{opacity:1;transform:none}}
+    .scale-bar{transform:scaleX(0);animation:draw 1s cubic-bezier(.25,.8,.25,1) .5s forwards}
+    @keyframes draw{to{transform:scaleX(1)}}
+    .scale-stops{opacity:0;animation:fadeIn .7s ease 1.15s forwards}
+    @keyframes fadeIn{to{opacity:1}}
+}
+
+/* ============ РОЗДІЛИ-СОРТИ ============ */
+.chapter{padding:clamp(64px,11vh,120px) 0}
+.chapter-grid{
+    display:grid;grid-template-columns:minmax(260px,5fr) 7fr;
+    gap:clamp(32px,5vw,72px);align-items:center;
+}
+.chapter-grid.flip{grid-template-columns:7fr minmax(260px,5fr)}
+.chapter-grid.flip .chapter-photo{order:2}
+
+.chapter-photo{position:relative}
+.chapter-photo img{
+    width:min(100%,380px);margin:0 auto;border-radius:6px;
+    box-shadow:0 24px 48px -18px rgba(42,24,6,.45);
+    transition:transform .4s ease,box-shadow .4s ease;
+}
+.chapter-photo img:hover{transform:translateY(-6px);box-shadow:0 34px 56px -20px rgba(42,24,6,.5)}
+
+.shade-chip{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.shade-chip i{width:22px;height:22px;border-radius:4px;flex:none;box-shadow:inset 0 0 0 1px rgba(42,24,6,.3)}
+.shade-chip span{font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+
+.chapter h2{font-size:clamp(2.1rem,4.4vw,3.4rem)}
+.chapter-desc{max-width:46ch;margin:16px 0 0;color:var(--ink)}
+.hand-note{
+    font-family:var(--font-hand);font-size:clamp(21px,2.4vw,25px);line-height:1.25;
+    color:var(--amber-deep);transform:rotate(-1.2deg);display:inline-block;margin:18px 0 0;
+}
+.band--warm .hand-note{color:#5d3608}
+
+/* вибір об'єму */
+.buy{margin-top:26px}
+.vol-picker{display:flex;flex-wrap:wrap;gap:10px;border:0;padding:0;margin:0}
+.vol-picker legend{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;padding:0}
+.vol-opt input{position:absolute;opacity:0;pointer-events:none}
+.vol-opt span{
+    display:flex;flex-direction:column;gap:1px;padding:10px 16px;border:1.5px solid var(--line);
+    border-radius:4px;background:rgba(255,246,227,.5);transition:border-color .2s,background .2s;
+}
+.vol-opt b{font-weight:600;font-size:15px}
+.vol-opt small{font-size:13px;color:var(--ink-soft)}
+.vol-opt input:checked + span{border-color:var(--ink);background:var(--cream);box-shadow:inset 0 0 0 1px var(--ink)}
+.vol-opt input:focus-visible + span{outline:3px solid var(--amber-deep);outline-offset:3px}
+.vol-opt{cursor:pointer;position:relative}
+
+.buy-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;align-items:stretch}
+.stepper{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:4px;background:rgba(255,246,227,.5)}
+.stepper button{width:42px;height:100%;min-height:48px;background:none;border:0;font-size:20px;color:var(--ink);border-radius:4px}
+.stepper button:hover{background:rgba(42,24,6,.07)}
+.stepper output{min-width:34px;text-align:center;font-weight:600}
+
+.btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    border:0;border-radius:4px;padding:13px 24px;font-weight:600;font-size:15.5px;
+    text-decoration:none;transition:background .2s,transform .15s;
+}
+.btn:active{transform:translateY(1px)}
+.btn-amber{background:var(--amber);color:#fff}
+.btn-amber:hover{background:var(--amber-deep)}
+.btn-ink{background:var(--ink);color:var(--cream)}
+.btn-ink:hover{background:#452c10}
+.btn-ghost{background:none;border:1.5px solid currentColor;color:var(--ink)}
+.band--dark .btn-ghost{color:var(--cream)}
+.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold:hover{background:#f2c46a}
+.btn.added{background:#3f6b1f}
+
+.soldout{
+    display:inline-flex;align-items:center;gap:8px;margin-top:24px;padding:9px 14px;border-radius:4px;
+    background:rgba(42,24,6,.10);font-weight:600;font-size:14px;
+}
+.soldout::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ink-soft)}
+
+/* ============ ТЕМНІ / ТЕПЛІ СМУГИ ============ */
+.band--warm{color:var(--ink);--ink-soft:#4a3210;--line:rgba(42,24,6,.32)}
+.band--dark{color:var(--cream)}
+.band--dark .chapter-desc{color:var(--cream)}
+
+.pasika{padding:clamp(72px,12vh,130px) 0}
+.pasika-grid{display:grid;grid-template-columns:6fr 5fr;gap:clamp(32px,5vw,72px);align-items:center}
+.pasika h2{font-size:clamp(2.1rem,4.4vw,3.2rem)}
+.pasika p{max-width:50ch;margin:18px 0 0;color:rgba(255,246,227,.88)}
+.pasika-photo img{border-radius:6px;box-shadow:0 26px 52px -20px rgba(0,0,0,.6)}
+.facts{display:flex;gap:clamp(20px,4vw,48px);margin-top:34px;flex-wrap:wrap}
+.fact b{font-family:var(--font-display);font-size:clamp(1.9rem,3.4vw,2.6rem);font-weight:700;display:block;color:var(--gold)}
+.fact span{font-size:14px;color:rgba(255,246,227,.75)}
+
+/* ============ ДОСТАВКА ============ */
+.delivery{padding:clamp(64px,10vh,110px) 0}
+.delivery h2{font-size:clamp(1.9rem,3.8vw,2.8rem)}
+.delivery-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:34px}
+.d-card{
+    border:1.5px solid var(--line);border-radius:6px;padding:26px 26px 28px;
+    background:rgba(255,246,227,.55);
+}
+.d-card h3{font-size:22px;font-weight:640}
+.d-card p{margin:10px 0 0;color:var(--ink-soft);font-size:15.5px}
+.d-card .hand-note{margin-top:12px}
+
+/* ============ ОФОРМЛЕННЯ ============ */
+.checkout{padding:clamp(64px,10vh,110px) 0 clamp(80px,12vh,130px)}
+.checkout h2{font-size:clamp(1.9rem,3.8vw,2.8rem)}
+.checkout-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(28px,4vw,56px);margin-top:36px;align-items:start}
+
+.summary{border:1.5px solid var(--line);border-radius:6px;background:rgba(255,246,227,.55);padding:22px}
+.summary h3{font-size:19px;font-weight:640;margin-bottom:6px}
+.cart-lines{list-style:none;margin:0;padding:0}
+.cart-line{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.cart-line:last-child{border-bottom:0}
+.cart-line-info{flex:1;min-width:0}
+.cart-line-info b{font-weight:600;font-size:15px;display:block}
+.cart-line-info span{font-size:13px;color:var(--ink-soft)}
+.cart-line .stepper{transform:scale(.88);transform-origin:right center}
+.cart-line .stepper button{min-height:38px;width:34px}
+.line-total{font-weight:600;min-width:74px;text-align:right;font-size:15px}
+.line-remove{background:none;border:0;color:var(--ink-soft);font-size:17px;padding:6px;border-radius:4px;line-height:1}
+.line-remove:hover{color:var(--ink);background:rgba(42,24,6,.07)}
+.cart-empty{color:var(--ink-soft);font-size:15px;margin:8px 0 4px}
+.summary-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;padding-top:16px;border-top:1.5px solid var(--ink)}
+.summary-total b{font-family:var(--font-display);font-size:26px;font-weight:700}
+.summary-note{font-size:13px;color:var(--ink-soft);margin-top:10px}
+
+/* форма */
+.order-form{display:grid;gap:18px}
+.field label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.field input,.field select,.field textarea{
+    width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:4px;
+    background:var(--cream);color:var(--ink);font-family:inherit;
+    transition:border-color .2s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ink);outline:none}
+.field input:focus-visible,.field select:focus-visible,.field textarea:focus-visible{outline:3px solid var(--amber-deep);outline-offset:2px}
+.field textarea{resize:vertical;min-height:84px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field .hint{font-size:13px;color:var(--ink-soft);margin-top:6px}
+
+.choice-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;border:0;margin:0;padding:0}
+.choice-cards legend{font-weight:600;font-size:14px;margin-bottom:8px;padding:0}
+.choice-card input{position:absolute;opacity:0;pointer-events:none}
+.choice-card span{
+    display:block;padding:14px 16px;border:1.5px solid var(--line);border-radius:4px;
+    background:var(--cream);transition:border-color .2s,box-shadow .2s;height:100%;
+}
+.choice-card b{display:block;font-weight:600;font-size:15px}
+.choice-card small{color:var(--ink-soft);font-size:13px}
+.choice-card input:checked + span{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.choice-card input:focus-visible + span{outline:3px solid var(--amber-deep);outline-offset:3px}
+.choice-card{cursor:pointer;position:relative}
+
+.form-error{
+    display:none;background:#f6dcc8;border:1.5px solid var(--amber-deep);color:#6b3400;
+    padding:12px 16px;border-radius:4px;font-size:14.5px;
+}
+.form-error.show{display:block}
+
+.order-success{display:none;border:1.5px solid var(--ink);border-radius:6px;background:var(--cream);padding:34px;text-align:center}
+.order-success.show{display:block}
+.order-success h3{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700}
+.order-success p{color:var(--ink-soft);max-width:44ch;margin:14px auto 0}
+.order-success .btn{margin-top:22px}
+
+/* ============ КОШИК-ШУХЛЯДА ============ */
+.drawer-overlay{
+    position:fixed;inset:0;background:rgba(42,24,6,.45);z-index:100;
+    opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{
+    position:fixed;top:0;right:0;bottom:0;width:min(430px,100%);z-index:110;
+    background:var(--wax);border-left:1.5px solid var(--line);
+    transform:translateX(102%);transition:transform .38s cubic-bezier(.25,.8,.25,1);
+    display:flex;flex-direction:column;
+}
+.drawer.open{transform:none}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}
+.drawer-head h2{font-size:22px;font-weight:700}
+.drawer-close{background:none;border:0;font-size:22px;padding:8px;border-radius:4px;color:var(--ink);line-height:1}
+.drawer-close:hover{background:rgba(42,24,6,.07)}
+.drawer-body{flex:1;overflow-y:auto;padding:10px 22px}
+.drawer-foot{padding:18px 22px calc(18px + env(safe-area-inset-bottom,0));border-top:1.5px solid var(--ink)}
+.drawer-foot .summary-total{margin-top:0;padding-top:0;border-top:0}
+.drawer-foot .btn{width:100%;margin-top:14px}
+
+/* ============ БІЧНА ШКАЛА ============ */
+.rail{
+    position:fixed;right:26px;top:50%;transform:translateY(-50%);z-index:80;
+    height:min(46vh,420px);width:6px;border-radius:3px;
+    background:linear-gradient(180deg,var(--c-acacia),var(--c-linden),var(--c-sun),var(--c-mixed));
+    box-shadow:inset 0 0 0 1px rgba(42,24,6,.3);
+    opacity:0;transition:opacity .5s;
+}
+.rail.show{opacity:1}
+.rail-marker{
+    position:absolute;left:50%;top:0;width:15px;height:15px;border-radius:50%;
+    transform:translate(-50%,-50%);background:var(--cream);border:2.5px solid var(--ink);
+    pointer-events:none;
+}
+.rail-stop{
+    position:absolute;left:50%;transform:translate(-50%,-50%);
+    width:22px;height:22px;border-radius:50%;display:block;
+}
+.rail-stop::after{
+    content:"";position:absolute;inset:7px;border-radius:50%;
+    background:var(--ink);opacity:.35;transition:opacity .2s,transform .2s;
+}
+.rail-stop:hover::after,.rail-stop.active::after{opacity:.9;transform:scale(1.35)}
+@media(max-width:1240px){.rail{display:none}}
+
+/* ============ ФУТЕР ============ */
+.foot{background:var(--propolis);color:var(--cream);padding:44px 0 56px}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:26px;align-items:baseline;justify-content:space-between}
+.foot-brand{font-family:var(--font-display);font-size:26px;font-weight:700}
+.foot p{margin:6px 0 0;color:rgba(255,246,227,.72);font-size:14.5px;max-width:44ch}
+.foot a{color:var(--gold);text-decoration-thickness:1px;text-underline-offset:3px}
+.foot-phone{font-family:var(--font-display);font-size:22px;font-weight:640;text-decoration:none;color:var(--cream)}
+.foot-phone:hover{color:var(--gold)}
+
+/* ============ ПОЯВА ПРИ СКРОЛІ ============ */
+.reveal{opacity:1}
+@media (prefers-reduced-motion: no-preference){
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.2,1)}
+    .reveal.is-in{opacity:1;transform:none}
+    .reveal-photo{transition-delay:.1s}
+}
+@media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* ============ АДАПТИВ ============ */
+@media(max-width:900px){
+    .chapter-grid,.chapter-grid.flip{grid-template-columns:1fr;gap:30px}
+    .chapter-grid.flip .chapter-photo{order:0}
+    .chapter-photo img{width:min(72%,320px)}
+    .pasika-grid{grid-template-columns:1fr}
+    .checkout-grid{grid-template-columns:1fr}
+    .summary{order:2}
+}
+@media(max-width:760px){
+    .head-nav{display:none}
+    .delivery-cards{grid-template-columns:1fr}
+    .field-row{grid-template-columns:1fr}
+    .choice-cards{grid-template-columns:1fr}
+    .scale-stop span{display:none}
+    .foot .wrap{flex-direction:column;gap:18px}
+}
+@media(max-width:420px){
+    .brand-name{font-size:21px}
+    .cart-btn{padding:8px 11px}
+    .cart-btn .cart-btn-label{display:none}
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Перейти до вмісту</a>
+<div id="bgWash" aria-hidden="true"></div>
+
+<header class="site-head">
+    <div class="wrap">
+        <a class="brand" href="#top" aria-label="Medok — на початок сторінки">
+            <span class="brand-swatch" aria-hidden="true"></span>
+            <span class="brand-name">Medok</span>
+        </a>
+        <nav class="head-nav" aria-label="Розділи сторінки">
+            <a href="#shkala">Сорти</a>
+            <a href="#pasika">Пасіка</a>
+            <a href="#dostavka">Доставка</a>
+            <a href="#zamovlennia">Замовлення</a>
+        </nav>
+        <button class="cart-btn" id="cartOpen" aria-haspopup="dialog" aria-controls="cartDrawer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M7 8h10l1.2 2v9a2 2 0 0 1-2 2H7.8a2 2 0 0 1-2-2v-9L7 8Z"/>
+                <path d="M8.5 8V6.2A1.2 1.2 0 0 1 9.7 5h4.6a1.2 1.2 0 0 1 1.2 1.2V8"/>
+                <path d="M5.8 13h12.4"/>
+            </svg>
+            <span class="cart-btn-label">Кошик</span>
+            <span class="cart-count" id="cartCount" hidden>0</span>
+        </button>
+    </div>
+</header>
+
+<main id="main">
+
+<!-- ГЕРОЙ -->
+<section class="hero" id="top">
+    <div class="wrap">
+        <p class="eyebrow rise rise-1">Сімейна пасіка · Бориспільський район · понад 40 років</p>
+        <h1 class="rise rise-2">Мед читають за&nbsp;кольором</h1>
+        <p class="hero-sub rise rise-3">
+            Чотири сорти цього сезону — на одній шкалі, від найсвітлішого до найтемнішого.
+            <strong>Світлий — делікатний і тихий, темніший — щільний і виразний.</strong>
+            Оберіть свій відтінок, а решту зробимо ми: відкачаємо, наллємо, надішлемо.
+        </p>
+
+        <nav class="scale" id="shkala" aria-label="Шкала сортів меду">
+            <div class="scale-bar" aria-hidden="true"></div>
+            <div class="scale-stops">
+                <a class="scale-stop" href="#sort-akatsiia"><b>Акація</b><span>майже білий</span></a>
+                <a class="scale-stop" href="#sort-lypa"><b>Липа</b><span>світлий бурштин</span></a>
+                <a class="scale-stop" href="#sort-soniashnyk"><b>Соняшник</b><span>золотий</span></a>
+                <a class="scale-stop" href="#sort-riznotravia"><b>Різнотрав’я</b><span>темний бурштин</span></a>
+            </div>
+        </nav>
+    </div>
+</section>
+
+<!-- ВІДТІНОК I · АКАЦІЯ -->
+<section class="chapter" id="sort-akatsiia" data-bg="#F6ECD2" data-stop="0">
+    <div class="wrap chapter-grid">
+        <div class="chapter-photo reveal reveal-photo">
+            <img src="assets/prod-acacia.webp" alt="Банка акацієвого меду Medok" loading="lazy" width="380" height="380">
+        </div>
+        <div class="reveal">
+            <div class="shade-chip"><i style="background:#F6ECD2"></i><span>Відтінок I · майже білий</span></div>
+            <h2>Акацієвий</h2>
+            <p class="chapter-desc">
+                Найсвітліший мед на нашій полиці. Ніжний, без різких нот — той, що беруть до чаю
+                щодня. Довго залишається рідким: банка спокійно достоїть до весни й не зацукрується.
+            </p>
+            <p class="hand-note">з усіх сортів кристалізується найповільніше — беріть про запас</p>
+
+            <form class="buy" data-product="acacia">
+                <fieldset class="vol-picker">
+                    <legend>Об’єм банки</legend>
+                    <label class="vol-opt"><input type="radio" name="vol-acacia" value="0.5"><span><b>0,5 л</b><small>275 ₴</small></span></label>
+                    <label class="vol-opt"><input type="radio" name="vol-acacia" value="1" checked><span><b>1 л</b><small>549 ₴</small></span></label>
+                    <label class="vol-opt"><input type="radio" name="vol-acacia" value="3"><span><b>3 л</b><small>1 647 ₴</small></span></label>
+                </fieldset>
+                <div class="buy-row">
+                    <div class="stepper">
+                        <button type="button" data-step="-1" aria-label="Менше банок">−</button>
+                        <output aria-live="polite">1</output>
+                        <button type="button" data-step="1" aria-label="Більше банок">+</button>
+                    </div>
+                    <button type="submit" class="btn btn-amber">У кошик · <span data-price>549 ₴</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ВІДТІНОК II · ЛИПА -->
+<section class="chapter" id="sort-lypa" data-bg="#EFD9A4" data-stop="1">
+    <div class="wrap chapter-grid flip">
+        <div class="chapter-photo reveal reveal-photo">
+            <img src="assets/prod-linden.webp" alt="Банка липового меду Medok" loading="lazy" width="380" height="380">
+        </div>
+        <div class="reveal">
+            <div class="shade-chip"><i style="background:#EFD9A4"></i><span>Відтінок II · світлий бурштин</span></div>
+            <h2>Липовий</h2>
+            <p class="chapter-desc">
+                Пахне липневим цвітом — аромат чути, щойно знімаєш кришку. Класика для чаю
+                і перших осінніх застуд: тепле молоко, ложка липового — і вечір врятовано.
+            </p>
+            <p class="hand-note">той самий, «як у бабусі»</p>
+
+            <form class="buy" data-product="linden">
+                <fieldset class="vol-picker">
+                    <legend>Об’єм банки</legend>
+                    <label class="vol-opt"><input type="radio" name="vol-linden" value="0.5"><span><b>0,5 л</b><small>200 ₴</small></span></label>
+                    <label class="vol-opt"><input type="radio" name="vol-linden" value="1" checked><span><b>1 л</b><small>399 ₴</small></span></label>
+                    <label class="vol-opt"><input type="radio" name="vol-linden" value="3"><span><b>3 л</b><small>1 197 ₴</small></span></label>
+                </fieldset>
+                <div class="buy-row">
+                    <div class="stepper">
+                        <button type="button" data-step="-1" aria-label="Менше банок">−</button>
+                        <output aria-live="polite">1</output>
+                        <button type="button" data-step="1" aria-label="Більше банок">+</button>
+                    </div>
+                    <button type="submit" class="btn btn-amber">У кошик · <span data-price>399 ₴</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ВІДТІНОК III · СОНЯШНИК -->
+<section class="chapter band--warm" id="sort-soniashnyk" data-bg="#E2AC49" data-stop="2">
+    <div class="wrap chapter-grid">
+        <div class="chapter-photo reveal reveal-photo">
+            <img src="assets/prod-sunflower.webp" alt="Банка соняшникового меду Medok" loading="lazy" width="380" height="380">
+        </div>
+        <div class="reveal">
+            <div class="shade-chip"><i style="background:#E2AC49"></i><span>Відтінок III · золотий</span></div>
+            <h2>Соняшниковий</h2>
+            <p class="chapter-desc">
+                Насичений і густий, з виразним солодким тілом. Швидко кристалізується
+                в дрібнозернисту пасту — саме таку добре мазати на тости й додавати у випічку.
+            </p>
+            <p class="hand-note">розлетівся першим — такий сезон</p>
+
+            <p class="soldout">Сезон завершено — банок не лишилося</p>
+            <div class="buy-row">
+                <a class="btn btn-ink" href="tel:+380632369027">Подзвонити про новий збір</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ВІДТІНОК IV · РІЗНОТРАВ'Я -->
+<section class="chapter band--warm" id="sort-riznotravia" data-bg="#C07526" data-stop="3">
+    <div class="wrap chapter-grid flip">
+        <div class="chapter-photo reveal reveal-photo">
+            <img src="assets/prod-mixed.webp" alt="Банка меду різнотрав’я Medok" loading="lazy" width="380" height="380">
+        </div>
+        <div class="reveal">
+            <div class="shade-chip"><i style="background:#C07526"></i><span>Відтінок IV · темний бурштин</span></div>
+            <h2>Різнотрав’я</h2>
+            <p class="chapter-desc">
+                Усе літо в одній банці: луки й гаї Бориспільського району, які бджоли облітали
+                без розбору сортів. Найповніший букет і найглибший колір на нашій шкалі.
+            </p>
+            <p class="hand-note">якщо не знаєте, з чого почати — починайте звідси</p>
+
+            <form class="buy" data-product="mixed">
+                <fieldset class="vol-picker">
+                    <legend>Об’єм банки</legend>
+                    <label class="vol-opt"><input type="radio" name="vol-mixed" value="0.5"><span><b>0,5 л</b><small>150 ₴</small></span></label>
+                    <label class="vol-opt"><input type="radio" name="vol-mixed" value="1" checked><span><b>1 л</b><small>299 ₴</small></span></label>
+                    <label class="vol-opt"><input type="radio" name="vol-mixed" value="3"><span><b>3 л</b><small>897 ₴</small></span></label>
+                </fieldset>
+                <div class="buy-row">
+                    <div class="stepper">
+                        <button type="button" data-step="-1" aria-label="Менше банок">−</button>
+                        <output aria-live="polite">1</output>
+                        <button type="button" data-step="1" aria-label="Більше банок">+</button>
+                    </div>
+                    <button type="submit" class="btn btn-amber">У кошик · <span data-price>299 ₴</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ПАСІКА -->
+<section class="pasika band--dark" id="pasika" data-bg="#2E1D0C">
+    <div class="wrap pasika-grid">
+        <div class="reveal">
+            <p class="eyebrow">Хто за цим стоїть</p>
+            <h2>Сорок років біля вуликів</h2>
+            <p>
+                Medok — це одна родина й одна пасіка в Бориспільському районі Київської області.
+                Понад сорок років ми робимо те саме: доглядаємо бджіл, чекаємо цвіту
+                й відкачуємо мед власноруч.
+            </p>
+            <p>
+                У банках — лише те, що принесли бджоли. Без цукру, без домішок,
+                без «покращень». Тому колір і смак щороку трохи різні — і це нормально:
+                так виглядає справжній мед.
+            </p>
+            <div class="facts" role="list">
+                <div class="fact" role="listitem"><b>40+</b><span>років справи</span></div>
+                <div class="fact" role="listitem"><b>4</b><span>сорти сезону</span></div>
+                <div class="fact" role="listitem"><b>0</b><span>домішок і цукру</span></div>
+            </div>
+        </div>
+        <div class="pasika-photo reveal reveal-photo">
+            <img src="assets/beekeepers.webp" alt="Пасічники Medok біля вуликів" loading="lazy">
+        </div>
+    </div>
+</section>
+
+<!-- ДОСТАВКА -->
+<section class="delivery" id="dostavka" data-bg="#FBF4E4">
+    <div class="wrap">
+        <p class="eyebrow reveal">Як мед дістанеться вас</p>
+        <h2 class="reveal">Два шляхи від вулика до столу</h2>
+        <div class="delivery-cards">
+            <article class="d-card reveal">
+                <h3>Нова пошта — по всій Україні</h3>
+                <p>Надсилаємо в день замовлення або наступного дня. У дорозі банка проводить
+                   1–2 дні — пакуємо так, щоб доїхала ціла.</p>
+            </article>
+            <article class="d-card reveal">
+                <h3>Самовивіз із пасіки</h3>
+                <p>Приїздіть у Бориспільський район — покажемо пасіку й наллємо скуштувати
+                   кожен сорт, перш ніж ви оберете свій.</p>
+                <p class="hand-note">дегустація — обов’язкова частина програми</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- ОФОРМЛЕННЯ -->
+<section class="checkout" id="zamovlennia" data-bg="#FBF4E4">
+    <div class="wrap">
+        <p class="eyebrow reveal">Останній крок</p>
+        <h2 class="reveal">Оформлення замовлення</h2>
+
+        <div class="checkout-grid">
+            <aside class="summary reveal" aria-label="Вміст кошика">
+                <h3>Ваш кошик</h3>
+                <ul class="cart-lines" data-cart-list></ul>
+                <p class="cart-empty" data-cart-empty>Поки порожньо. <a href="#shkala">Оберіть відтінок на шкалі</a> — і банки з’являться тут.</p>
+                <div class="summary-total" data-cart-total-row hidden>
+                    <span>Разом</span><b data-cart-total>0 ₴</b>
+                </div>
+                <p class="summary-note">Доставка Новою поштою — за тарифами перевізника, при отриманні.</p>
+            </aside>
+
+            <div class="reveal">
+                <form class="order-form" id="orderForm" novalidate>
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="fName">Ім’я</label>
+                            <input id="fName" name="name" type="text" autocomplete="name" required placeholder="Як до вас звертатися">
+                        </div>
+                        <div class="field">
+                            <label for="fPhone">Телефон</label>
+                            <input id="fPhone" name="phone" type="tel" autocomplete="tel" required inputmode="tel" placeholder="+38 (0__) ___-__-__">
+                        </div>
+                    </div>
+
+                    <fieldset class="choice-cards">
+                        <legend>Спосіб отримання</legend>
+                        <label class="choice-card">
+                            <input type="radio" name="delivery" value="np" checked>
+                            <span><b>Нова пошта</b><small>1–2 дні по Україні</small></span>
+                        </label>
+                        <label class="choice-card">
+                            <input type="radio" name="delivery" value="pickup">
+                            <span><b>Самовивіз із пасіки</b><small>з дегустацією сортів</small></span>
+                        </label>
+                    </fieldset>
+
+                    <div id="npFields">
+                        <div class="field">
+                            <label for="fCitySearch">Місто</label>
+                            <input id="fCitySearch" type="text" placeholder="Почніть вводити назву…" autocomplete="address-level2">
+                            <p class="hint" id="cityHint">Введіть 2+ літери — підкажемо міста з довідника Нової пошти.</p>
+                        </div>
+                        <div class="field">
+                            <label for="fCity" class="visually-hidden">Оберіть місто зі списку</label>
+                            <select id="fCity" disabled><option value="">Спершу знайдіть місто вище</option></select>
+                        </div>
+                        <div class="field" style="margin-top:14px">
+                            <label for="fWarehouse">Відділення Нової пошти</label>
+                            <select id="fWarehouse" disabled><option value="">Спершу оберіть місто</option></select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="fComment">Коментар до замовлення <small style="font-weight:400;color:var(--ink-soft)">— не обов’язково</small></label>
+                        <textarea id="fComment" name="comment" placeholder="Наприклад: зателефонуйте після 18:00"></textarea>
+                    </div>
+
+                    <p class="form-error" id="formError" role="alert"></p>
+
+                    <button type="submit" class="btn btn-ink" id="submitBtn" style="justify-self:start">
+                        Замовити · <span data-order-total>0 ₴</span>
+                    </button>
+                </form>
+
+                <div class="order-success" id="orderSuccess" tabindex="-1">
+                    <h3>Замовлення прийнято 🍯</h3>
+                    <p id="orderSuccessText">Дякуємо! Ми зателефонуємо, щоб підтвердити деталі — зазвичай упродовж дня.</p>
+                    <a class="btn btn-amber" href="#top">Повернутися до меду</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<!-- ФУТЕР -->
+<footer class="foot">
+    <div class="wrap">
+        <div>
+            <div class="foot-brand">Medok</div>
+            <p>Сімейна пасіка, Бориспільський район, Київська область.
+               Дзвоніть — розкажемо про мед більше, ніж вміщує сайт.</p>
+        </div>
+        <a class="foot-phone" href="tel:+380632369027">+380 63 236 9027</a>
+    </div>
+</footer>
+
+<!-- БІЧНА ШКАЛА -->
+<nav class="rail" id="rail" aria-label="Положення на шкалі меду">
+    <span class="rail-marker" id="railMarker" aria-hidden="true"></span>
+    <a class="rail-stop" style="top:12%" href="#sort-akatsiia" data-stop="0" aria-label="Акація — майже білий"></a>
+    <a class="rail-stop" style="top:38%" href="#sort-lypa" data-stop="1" aria-label="Липа — світлий бурштин"></a>
+    <a class="rail-stop" style="top:63%" href="#sort-soniashnyk" data-stop="2" aria-label="Соняшник — золотий"></a>
+    <a class="rail-stop" style="top:88%" href="#sort-riznotravia" data-stop="3" aria-label="Різнотрав’я — темний бурштин"></a>
+</nav>
+
+<!-- КОШИК -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-label="Кошик">
+    <div class="drawer-head">
+        <h2>Кошик</h2>
+        <button class="drawer-close" id="cartClose" aria-label="Закрити кошик">✕</button>
+    </div>
+    <div class="drawer-body">
+        <ul class="cart-lines" data-cart-list></ul>
+        <p class="cart-empty" data-cart-empty>Поки порожньо — оберіть відтінок на шкалі, і банки з’являться тут.</p>
+    </div>
+    <div class="drawer-foot">
+        <div class="summary-total"><span>Разом</span><b data-cart-total>0 ₴</b></div>
+        <button class="btn btn-amber" id="toCheckout">Оформити замовлення</button>
+    </div>
+</aside>
+
+<noscript>
+    <p style="max-width:640px;margin:20px auto;padding:16px;border:1.5px solid #A85E14;border-radius:6px;text-align:center">
+        Для роботи кошика потрібен JavaScript. Або просто зателефонуйте нам:
+        <a href="tel:+380632369027">+380 63 236 9027</a> — приймемо замовлення голосом.
+    </p>
+</noscript>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- каталог (ціни — як в основному магазині) ---------- */
+const PRODUCTS = {
+    acacia: { name: 'Акація', full: 'Акацієвий мед', prices: { '0.5': 275, '1': 549, '3': 1647 } },
+    linden: { name: 'Липовий', full: 'Липовий мед', prices: { '0.5': 200, '1': 399, '3': 1197 } },
+    mixed:  { name: 'Різнотрав’я', full: 'Мед різнотрав’я', prices: { '0.5': 150, '1': 299, '3': 897 } }
+};
+const CART_KEY = 'medok_cart_shkala_v1';
+const fmt = (n) => Number(n || 0).toLocaleString('uk-UA') + ' ₴';
+const volLabel = (v) => v === '0.5' ? '0,5 л' : v + ' л';
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = (s, root) => (root || document).querySelector(s);
+const $$ = (s, root) => Array.from((root || document).querySelectorAll(s));
+
+/* ---------- кошик ---------- */
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { cart = []; }
+cart = cart.filter((i) => PRODUCTS[i.productId] && PRODUCTS[i.productId].prices[i.qty]);
+
+function saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+function cartTotal() { return cart.reduce((s, i) => s + i.price * i.count, 0); }
+function cartQty() { return cart.reduce((s, i) => s + i.count, 0); }
+
+function addToCart(productId, qty, count) {
+    const product = PRODUCTS[productId];
+    if (!product || !product.prices[qty]) return;
+    const key = productId + '|' + qty;
+    const existing = cart.find((i) => i.key === key);
+    if (existing) existing.count += count;
+    else cart.push({ key, productId, type: product.name, qty, price: product.prices[qty], count });
+    saveCart(); renderCart();
+}
+
+function changeCount(key, delta) {
+    const item = cart.find((i) => i.key === key);
+    if (!item) return;
+    item.count += delta;
+    if (item.count <= 0) cart = cart.filter((i) => i.key !== key);
+    saveCart(); renderCart();
+}
+
+function removeItem(key) {
+    cart = cart.filter((i) => i.key !== key);
+    saveCart(); renderCart();
+}
+
+function lineHTML(item) {
+    const product = PRODUCTS[item.productId];
+    return `<li class="cart-line" data-key="${item.key}">
+        <div class="cart-line-info">
+            <b>${product.full}</b>
+            <span>${volLabel(item.qty)} · ${fmt(item.price)} за банку</span>
+        </div>
+        <div class="stepper">
+            <button type="button" data-cart-step="-1" aria-label="Менше банок">−</button>
+            <output>${item.count}</output>
+            <button type="button" data-cart-step="1" aria-label="Більше банок">+</button>
+        </div>
+        <span class="line-total">${fmt(item.price * item.count)}</span>
+        <button type="button" class="line-remove" data-cart-remove aria-label="Прибрати ${product.full} з кошика">✕</button>
+    </li>`;
+}
+
+function renderCart() {
+    const html = cart.map(lineHTML).join('');
+    $$('[data-cart-list]').forEach((el) => { el.innerHTML = html; });
+    $$('[data-cart-empty]').forEach((el) => { el.style.display = cart.length ? 'none' : ''; });
+    $$('[data-cart-total]').forEach((el) => { el.textContent = fmt(cartTotal()); });
+    const totalRow = $('[data-cart-total-row]');
+    if (totalRow) totalRow.hidden = !cart.length;
+    $$('[data-order-total]').forEach((el) => { el.textContent = fmt(cartTotal()); });
+
+    const badge = $('#cartCount');
+    const qty = cartQty();
+    badge.hidden = qty === 0;
+    badge.textContent = qty;
+}
+
+document.addEventListener('click', (event) => {
+    const line = event.target.closest('.cart-line');
+    if (!line) return;
+    if (event.target.closest('[data-cart-step]')) {
+        changeCount(line.dataset.key, Number(event.target.closest('[data-cart-step]').dataset.cartStep));
+    } else if (event.target.closest('[data-cart-remove]')) {
+        removeItem(line.dataset.key);
+    }
+});
+
+/* ---------- форми «У кошик» ---------- */
+$$('.buy').forEach((form) => {
+    const productId = form.dataset.product;
+    const product = PRODUCTS[productId];
+    const output = $('output', form);
+    let count = 1;
+
+    const update = () => {
+        const vol = $('input[type=radio]:checked', form).value;
+        const priceEl = $('[data-price]', form);
+        if (priceEl) priceEl.textContent = fmt(product.prices[vol] * count);
+        output.textContent = count;
+    };
+
+    form.addEventListener('change', update);
+    $$('[data-step]', form).forEach((btn) => btn.addEventListener('click', () => {
+        count = Math.min(20, Math.max(1, count + Number(btn.dataset.step)));
+        update();
+    }));
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const vol = $('input[type=radio]:checked', form).value;
+        addToCart(productId, vol, count);
+        count = 1; update();
+
+        const btn = $('button[type=submit]', form);
+        const badge = $('#cartCount');
+        badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump');
+        if (!btn.dataset.busy) {
+            btn.dataset.busy = '1';
+            const original = btn.innerHTML;
+            btn.classList.add('added');
+            btn.innerHTML = 'Додано ✓';
+            setTimeout(() => { btn.classList.remove('added'); btn.innerHTML = original; delete btn.dataset.busy; update(); }, 1100);
+        }
+    });
+});
+
+/* ---------- шухляда кошика ---------- */
+const drawer = $('#cartDrawer');
+const overlay = $('#drawerOverlay');
+let lastFocus = null;
+
+function openDrawer() {
+    lastFocus = document.activeElement;
+    drawer.classList.add('open'); overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    $('#cartClose').focus();
+}
+function closeDrawer() {
+    drawer.classList.remove('open'); overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    if (lastFocus) lastFocus.focus();
+}
+$('#cartOpen').addEventListener('click', openDrawer);
+$('#cartClose').addEventListener('click', closeDrawer);
+overlay.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
+    if (event.key === 'Tab' && drawer.classList.contains('open')) {
+        const focusable = $$('button, a, input, [tabindex]', drawer).filter((el) => !el.disabled && el.offsetParent !== null);
+        if (!focusable.length) return;
+        const first = focusable[0], last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) { last.focus(); event.preventDefault(); }
+        else if (!event.shiftKey && document.activeElement === last) { first.focus(); event.preventDefault(); }
+    }
+});
+$('#toCheckout').addEventListener('click', () => {
+    closeDrawer();
+    $('#zamovlennia').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+});
+
+/* ---------- тло, що глибшає + бічна шкала ---------- */
+const wash = $('#bgWash');
+const rail = $('#rail');
+const marker = $('#railMarker');
+const sections = $$('[data-bg]');
+const chapters = $$('.chapter');
+
+let ticking = false;
+function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+        ticking = false;
+        const mid = window.innerHeight * 0.55;
+        let current = null;
+        for (const sec of sections) {
+            const r = sec.getBoundingClientRect();
+            if (r.top <= mid && r.bottom > mid) { current = sec; break; }
+        }
+        wash.style.backgroundColor = current ? current.dataset.bg : 'var(--wax)';
+
+        // маркер: прогрес прокрутки крізь зону сортів
+        const first = chapters[0].offsetTop;
+        const last = chapters[chapters.length - 1];
+        const zone = last.offsetTop + last.offsetHeight - first - window.innerHeight * 0.5;
+        const progress = Math.min(1, Math.max(0, (window.scrollY - first + window.innerHeight * 0.5) / zone));
+        rail.classList.toggle('show', progress > 0.001 && progress < 1);
+        marker.style.top = (12 + progress * 76) + '%';
+
+        const active = current ? current.dataset.stop : null;
+        $$('.rail-stop').forEach((stop) => stop.classList.toggle('active', stop.dataset.stop === active));
+    });
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', onScroll);
+onScroll();
+
+/* ---------- поява при прокрутці ---------- */
+if (!reduceMotion && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) { entry.target.classList.add('is-in'); io.unobserve(entry.target); }
+        });
+    }, { threshold: 0.18 });
+    $$('.reveal').forEach((el) => io.observe(el));
+} else {
+    $$('.reveal').forEach((el) => el.classList.add('is-in'));
+}
+
+/* ---------- маска телефону (формат основного магазину) ---------- */
+const phoneInput = $('#fPhone');
+phoneInput.addEventListener('focus', () => { if (phoneInput.value.length < 5) phoneInput.value = '+38 ('; });
+phoneInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Backspace' && phoneInput.value.length <= 5) event.preventDefault();
+});
+phoneInput.addEventListener('input', (event) => {
+    let digits = event.target.value.replace(/\D/g, '');
+    if (digits.startsWith('380')) digits = digits.substring(2);
+    else if (digits.startsWith('38') && digits.length > 2 && digits[2] !== '0') digits = '0' + digits.substring(2);
+    else if (digits.length > 0 && digits[0] !== '0') digits = '0' + digits;
+    digits = digits.substring(0, 10);
+    let formatted = '+38 (';
+    if (digits.length > 0) formatted += digits.substring(0, 3);
+    if (digits.length >= 4) formatted += ') ' + digits.substring(3, 6);
+    if (digits.length >= 7) formatted += '-' + digits.substring(6, 8);
+    if (digits.length >= 9) formatted += '-' + digits.substring(8, 10);
+    phoneInput.value = formatted;
+});
+
+/* ---------- Нова пошта: довідник міст/відділень, з ручним запасним варіантом ---------- */
+const citySearch = $('#fCitySearch');
+const citySelect = $('#fCity');
+const whSelect = $('#fWarehouse');
+const cityHint = $('#cityHint');
+let npManual = false;
+let cityTimer = null;
+
+function switchToManual() {
+    if (npManual) return;
+    npManual = true;
+    citySelect.parentElement.hidden = true;
+    citySearch.placeholder = 'Місто';
+    cityHint.textContent = 'Довідник Нової пошти зараз недоступний — впишіть місто й відділення вручну.';
+    const whWrap = whSelect.parentElement;
+    whSelect.hidden = true;
+    const manual = document.createElement('input');
+    manual.type = 'text'; manual.id = 'fWarehouseManual';
+    manual.placeholder = 'Наприклад: Відділення №1';
+    whWrap.querySelector('label').htmlFor = 'fWarehouseManual';
+    whWrap.appendChild(manual);
+}
+
+citySearch.addEventListener('input', () => {
+    if (npManual || citySearch.value.trim().length < 2) return;
+    clearTimeout(cityTimer);
+    cityTimer = setTimeout(async () => {
+        try {
+            const response = await fetch('/np/cities?q=' + encodeURIComponent(citySearch.value.trim()));
+            const json = await response.json();
+            if (json.ok && json.data.length) {
+                citySelect.disabled = false;
+                citySelect.innerHTML = '<option value="">Оберіть місто зі списку…</option>' +
+                    json.data.map((c) => `<option value="${c.Description}">${c.Description}</option>`).join('');
+            }
+        } catch { switchToManual(); }
+    }, 350);
+});
+
+citySelect.addEventListener('change', async () => {
+    if (!citySelect.value) return;
+    whSelect.disabled = false;
+    whSelect.innerHTML = '<option>Завантаження…</option>';
+    try {
+        const response = await fetch('/np/warehouses?city=' + encodeURIComponent(citySelect.value));
+        const json = await response.json();
+        if (json.ok) {
+            whSelect.innerHTML = '<option value="">Оберіть відділення…</option>' +
+                json.data.map((w) => `<option value="${w.Description}">${w.Description}</option>`).join('');
+        }
+    } catch { switchToManual(); }
+});
+
+/* ---------- спосіб отримання ---------- */
+const npFields = $('#npFields');
+$$('input[name=delivery]').forEach((radio) => radio.addEventListener('change', () => {
+    npFields.hidden = radio.value === 'pickup' && radio.checked;
+}));
+
+/* ---------- надсилання замовлення ---------- */
+const orderForm = $('#orderForm');
+const formError = $('#formError');
+const submitBtn = $('#submitBtn');
+
+function showError(msg) {
+    formError.textContent = msg;
+    formError.classList.add('show');
+    formError.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+}
+
+orderForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    formError.classList.remove('show');
+
+    if (!cart.length) { showError('Кошик порожній — спершу оберіть мед на шкалі вище.'); return; }
+    if (!$('#fName').value.trim()) { showError('Підкажіть, як до вас звертатися.'); $('#fName').focus(); return; }
+    if (phoneInput.value.length < 19) { showError('Введіть повний номер телефону — без нього не зможемо підтвердити замовлення.'); phoneInput.focus(); return; }
+
+    const pickup = $('input[name=delivery]:checked').value === 'pickup';
+    let npCity = 'Самовивіз', npWarehouse = 'Самовивіз із пасіки (з дегустацією)';
+    if (!pickup) {
+        if (npManual) {
+            npCity = citySearch.value.trim();
+            npWarehouse = ($('#fWarehouseManual')?.value || '').trim();
+        } else {
+            npCity = citySelect.value;
+            npWarehouse = whSelect.value;
+        }
+        if (!npCity) { showError('Вкажіть місто доставки.'); citySearch.focus(); return; }
+        if (!npWarehouse) { showError('Оберіть відділення Нової пошти.'); return; }
+    }
+
+    const payload = {
+        name: $('#fName').value.trim(),
+        phone: phoneInput.value,
+        np_city: npCity,
+        np_warehouse: npWarehouse,
+        cart,
+        cart_total: cartTotal(),
+        pay: 'cod',
+        comment: ($('#fComment').value.trim() + ' [версія: шкала]').trim()
+    };
+
+    submitBtn.disabled = true;
+    const originalLabel = submitBtn.innerHTML;
+    submitBtn.innerHTML = 'Надсилаємо…';
+
+    try {
+        const response = await fetch('/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (result.ok) {
+            cart = []; saveCart(); renderCart();
+            orderForm.hidden = true;
+            const success = $('#orderSuccess');
+            $('#orderSuccessText').textContent =
+                'Дякуємо! Замовлення №' + result.order_id + ' прийнято. ' +
+                'Ми зателефонуємо, щоб підтвердити деталі — зазвичай упродовж дня.';
+            success.classList.add('show');
+            success.focus();
+            return;
+        }
+        showError('Не вдалося прийняти замовлення: ' + (result.error || 'спробуйте ще раз за хвилину.'));
+    } catch {
+        showError('Немає зв’язку з сервером. Зателефонуйте нам — приймемо замовлення голосом: +380 63 236 9027.');
+    }
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalLabel;
+});
+
+renderCart();
+})();
+</script>
+</body>
+</html>

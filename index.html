@@ -151,7 +151,7 @@
                     <p class="eyebrow">Колекція сезону</p>
                     <h2 id="products-title">Оберіть мед під свій смак</h2>
                 </div>
-                <p>Від делікатної акації до виразного різнотрав’я. Натисніть «Обрати об’єм», щоб побачити доступні формати й точну ціну.</p>
+                <p>Від делікатної акації до виразного різнотрав’я. Порівняйте смак, одразу оберіть об’єм і додайте мед у кошик.</p>
             </header>
 
             <div class="products-grid">
@@ -163,14 +163,18 @@
                     </figure>
                     <div class="product-body">
                         <p class="product-kicker">01 · Квітковий і збалансований</p>
-                        <h3 class="product-title">Різнотрав’я</h3>
+                        <h3 class="product-title">Мед різнотрав’я</h3>
                         <ul class="p-bullets">
                             <li>Квітковий букет із лугів і гаїв</li>
                             <li>Збалансований смак, універсальний</li>
                         </ul>
-                        <div class="mini-price" data-product-id="mixed"></div>
+                        <div class="volume-options" data-product-id="mixed" role="group" aria-label="Оберіть об’єм меду різнотрав’я">
+                            <button class="volume-option" type="button" data-qty="0.5" aria-pressed="false"><span>0,5 л</span><strong>₴150</strong></button>
+                            <button class="volume-option is-selected" type="button" data-qty="1" aria-pressed="true"><span>1 л</span><strong>₴299</strong></button>
+                            <button class="volume-option" type="button" data-qty="3" aria-pressed="false"><span>3 л</span><strong>₴897</strong></button>
+                        </div>
                         <div class="product-actions">
-                            <button class="btn addToCart" type="button" data-product-id="mixed" data-qty="1">Обрати об’єм</button>
+                            <button class="btn addToCart" type="button" data-product-id="mixed" data-qty="1" data-direct-add="true">Додати 1 л · ₴299</button>
                             <a class="product-detail-link" href="riznotravya-med.html">Про різнотрав’я</a>
                         </div>
                     </div>
@@ -184,14 +188,18 @@
                     </figure>
                     <div class="product-body">
                         <p class="product-kicker">02 · Запашний і теплий</p>
-                        <h3 class="product-title">Липовий</h3>
+                        <h3 class="product-title">Липовий мед</h3>
                         <ul class="p-bullets">
                             <li>Виразний аромат квітів липи</li>
                             <li>Теплий смак до чаю та сніданку</li>
                         </ul>
-                        <div class="mini-price" data-product-id="linden"></div>
+                        <div class="volume-options" data-product-id="linden" role="group" aria-label="Оберіть об’єм липового меду">
+                            <button class="volume-option" type="button" data-qty="0.5" aria-pressed="false"><span>0,5 л</span><strong>₴200</strong></button>
+                            <button class="volume-option is-selected" type="button" data-qty="1" aria-pressed="true"><span>1 л</span><strong>₴399</strong></button>
+                            <button class="volume-option" type="button" data-qty="3" aria-pressed="false"><span>3 л</span><strong>₴1 197</strong></button>
+                        </div>
                         <div class="product-actions">
-                            <button class="btn addToCart" type="button" data-product-id="linden" data-qty="1">Обрати об’єм</button>
+                            <button class="btn addToCart" type="button" data-product-id="linden" data-qty="1" data-direct-add="true">Додати 1 л · ₴399</button>
                             <a class="product-detail-link" href="lypovyi-med.html">Про липовий мед</a>
                         </div>
                     </div>
@@ -205,14 +213,18 @@
                     </figure>
                     <div class="product-body">
                         <p class="product-kicker">03 · Ніжний і прозорий</p>
-                        <h3 class="product-title">Акація</h3>
+                        <h3 class="product-title">Акацієвий мед</h3>
                         <ul class="p-bullets">
                             <li>Довго лишається рідким</li>
                             <li>Ніжний смак для щоденного чаю</li>
                         </ul>
-                        <div class="mini-price" data-product-id="acacia"></div>
+                        <div class="volume-options" data-product-id="acacia" role="group" aria-label="Оберіть об’єм акацієвого меду">
+                            <button class="volume-option" type="button" data-qty="0.5" aria-pressed="false"><span>0,5 л</span><strong>₴275</strong></button>
+                            <button class="volume-option is-selected" type="button" data-qty="1" aria-pressed="true"><span>1 л</span><strong>₴549</strong></button>
+                            <button class="volume-option" type="button" data-qty="3" aria-pressed="false"><span>3 л</span><strong>₴1 647</strong></button>
+                        </div>
                         <div class="product-actions">
-                            <button class="btn addToCart" type="button" data-product-id="acacia" data-qty="1">Обрати об’єм</button>
+                            <button class="btn addToCart" type="button" data-product-id="acacia" data-qty="1" data-direct-add="true">Додати 1 л · ₴549</button>
                             <a class="product-detail-link" href="akatsiievyi-med.html">Про акацієвий мед</a>
                         </div>
                     </div>
@@ -226,14 +238,14 @@
                     </figure>
                     <div class="product-body">
                         <p class="product-kicker">04 · Насичений і кремовий</p>
-                        <h3 class="product-title">Соняшниковий</h3>
+                        <h3 class="product-title">Соняшниковий мед</h3>
                         <ul class="p-bullets">
                             <li>Виразний смак, швидка кристалізація</li>
                             <li>Добре смакує з тостами й випічкою</li>
                         </ul>
-                        <div class="mini-price" data-product-id="sunflower"></div>
+                        <p class="product-unavailable-note">Наразі цього сорту немає в наявності.</p>
                         <div class="product-actions">
-                            <button class="btn addToCart" type="button" data-product-id="sunflower" data-qty="1">Немає в наявності</button>
+                            <button class="btn addToCart" type="button" data-product-id="sunflower" data-qty="1" data-direct-add="true">Немає в наявності</button>
                         </div>
                     </div>
                 </article>
@@ -347,7 +359,7 @@
 </footer>
 
 <script src="products.js?v=2" defer></script>
-<script src="app.js?v=204" defer></script>
-<script src="cart.js?v=207" defer></script>
+<script src="app.js?v=205" defer></script>
+<script src="cart.js?v=208" defer></script>
 </body>
 </html>

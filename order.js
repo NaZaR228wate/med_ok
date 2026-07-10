@@ -6,6 +6,7 @@
     const catalog = window.MEDOK_CATALOG;
     const $ = (selector) => document.querySelector(selector);
     const formatUAH = (n) => '₴' + Number(n || 0).toLocaleString('uk-UA');
+    const formatVolume = (qty) => `${String(qty).replace('.', ',')} л`;
 
     function readCart() {
         try {
@@ -25,10 +26,43 @@
         return items.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.count) || 0), 0);
     }
 
-    function updateTotals() {
-        const total = cartTotal();
+    function renderOrderSummary(items) {
+        const container = $('#orderItems');
+        if (!container) return;
+        if (!items.length) {
+            container.innerHTML = `
+                <div class="order-summary-empty">
+                    Кошик порожній.<br>
+                    <a href="index.html#products">Повернутися до вибору меду</a>
+                </div>
+            `;
+            return;
+        }
+        container.innerHTML = items.map((item) => {
+            const product = catalog?.getProduct(item.productId);
+            return `
+                <article class="order-summary-item">
+                    <img src="${product?.image || 'assets/medok-wordmark.png'}" alt="" width="58" height="64">
+                    <div>
+                        <h3>${product?.fullName || item.type}</h3>
+                        <p>${formatVolume(item.qty)} · ${item.count} шт. · ${formatUAH(item.price)} за банку</p>
+                    </div>
+                    <strong>${formatUAH(item.price * item.count)}</strong>
+                </article>
+            `;
+        }).join('');
+    }
+
+    function updateTotals(items = readCart()) {
+        const total = cartTotal(items);
         const payTotal = $('#payTotal');
+        const summaryTotal = $('#orderSummaryTotal');
         if (payTotal) payTotal.textContent = formatUAH(total);
+        if (summaryTotal) summaryTotal.textContent = formatUAH(total);
+        renderOrderSummary(items);
+        const empty = !items.length;
+        if ($('#submitBtn')) $('#submitBtn').disabled = empty;
+        if ($('#oneclickBtn')) $('#oneclickBtn').disabled = empty;
         return total;
     }
 
@@ -147,12 +181,13 @@
             return;
         }
 
-        updateTotals();
+        updateTotals(initialItems);
         initPhoneMask($('#phone'));
         initPhoneMask($('#oneclickPhone'));
         initNP();
 
-        window.addEventListener('cart:changed', updateTotals);
+        window.addEventListener('cart:changed', () => updateTotals(readCart()));
+        $('#editCartBtn')?.addEventListener('click', () => window.MEDOK_CART?.open());
 
         $('#oneclickBtn')?.addEventListener('click', () => {
             const items = readCart();

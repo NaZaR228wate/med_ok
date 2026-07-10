@@ -7,16 +7,23 @@
     const CART_KEY = 'medok_cart_v1';
     const LAST_QTY_KEY = 'medok_last_qty_v1';
     const formatUAH = (n) => '₴' + Number(n || 0).toLocaleString('uk-UA');
+    const formatVolume = (qty) => `${String(qty).replace('.', ',')} л`;
 
     function showToast(text) {
-        const toast = document.createElement('div');
-        toast.className = 'toast show';
+        let toast = $('.toast[data-cart-toast]');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.dataset.cartToast = 'true';
+            toast.setAttribute('role', 'status');
+            toast.setAttribute('aria-live', 'polite');
+            document.body.appendChild(toast);
+        }
         toast.textContent = text;
-        document.body.appendChild(toast);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 200);
-        }, 1000);
+        toast.classList.remove('show');
+        requestAnimationFrame(() => toast.classList.add('show'));
+        clearTimeout(toast._hideTimer);
+        toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 1800);
     }
 
     function loadCart() {
@@ -172,6 +179,33 @@
         io.observe(yearsEl);
     }
 
+    function cardCtaLabel(product, qty) {
+        return `Додати ${formatVolume(qty)} · ${formatUAH(product.prices[qty])}`;
+    }
+
+    function selectCardVolume(card, product, qty, persist = true) {
+        const normalizedQty = String(qty);
+        if (!product.prices[normalizedQty]) return;
+        $$('.volume-option', card).forEach((option) => {
+            const selected = option.dataset.qty === normalizedQty;
+            option.classList.toggle('is-selected', selected);
+            option.setAttribute('aria-pressed', String(selected));
+        });
+        const button = $('.addToCart', card);
+        if (button) {
+            clearTimeout(button._feedbackTimer);
+            button.classList.remove('is-added');
+            button.dataset.qty = normalizedQty;
+            button.textContent = cardCtaLabel(product, normalizedQty);
+            button.setAttribute('aria-label', `${cardCtaLabel(product, normalizedQty)} — ${product.fullName}`);
+        }
+        if (persist) {
+            const map = loadLastQty();
+            map[product.id] = normalizedQty;
+            saveLastQty(map);
+        }
+    }
+
     function hydrateProducts() {
         if (!catalog) return;
 
@@ -184,7 +218,7 @@
             const title = $('.product-title', card);
             const bullets = $('.p-bullets', card);
             const button = $('.addToCart', card);
-            const miniPrice = $('.mini-price', card);
+            const volumeOptions = $('.volume-options', card);
 
             if (img) {
                 img.src = product.image;
@@ -198,22 +232,31 @@
                 priceBadge.textContent = product.inStock ? `від ${formatUAH(catalog.minPrice(product))}` : '';
                 priceBadge.style.display = product.inStock ? '' : 'none';
             }
-            if (title) title.textContent = product.name;
+            if (title) title.textContent = product.fullName;
             if (bullets) bullets.innerHTML = product.bullets.map((text) => `<li>${text}</li>`).join('');
             if (button) {
                 button.dataset.productId = product.id;
                 button.dataset.qty = button.dataset.qty || '1';
                 button.disabled = !product.inStock;
-                button.textContent = product.inStock ? 'Обрати об’єм' : 'Немає в наявності';
+                button.textContent = product.inStock
+                    ? (button.dataset.directAdd === 'true' ? cardCtaLabel(product, button.dataset.qty) : 'Обрати об’єм')
+                    : 'Немає в наявності';
                 button.setAttribute('aria-disabled', String(!product.inStock));
             }
-            if (miniPrice) {
-                miniPrice.dataset.productId = product.id;
-                miniPrice.innerHTML = Object.entries(product.prices)
-                    .filter(([qty]) => qty === '0.5' || qty === '1')
+            if (volumeOptions && product.inStock) {
+                volumeOptions.dataset.productId = product.id;
+                volumeOptions.setAttribute('aria-label', `Оберіть об’єм — ${product.fullName}`);
+                volumeOptions.innerHTML = Object.entries(product.prices)
                     .sort(([a], [b]) => Number(a) - Number(b))
-                    .map(([qty, price]) => `<span class="pill">${qty} л — ${formatUAH(price)}</span>`)
-                    .join(' ');
+                    .map(([qty, price]) => `
+                        <button class="volume-option" type="button" data-qty="${qty}" aria-pressed="false">
+                            <span>${formatVolume(qty)}</span>
+                            <strong>${formatUAH(price)}</strong>
+                        </button>
+                    `).join('');
+                const savedQty = String(loadLastQty()[product.id] || button?.dataset.qty || '1');
+                const initialQty = product.prices[savedQty] ? savedQty : Object.keys(product.prices)[0];
+                selectCardVolume(card, product, initialQty, false);
             }
         });
     }
@@ -341,9 +384,33 @@
     }
 
     document.addEventListener('click', (event) => {
+        const volumeOption = event.target.closest('.volume-option');
+        if (volumeOption) {
+            const card = volumeOption.closest('.product-card[data-product-id]');
+            const product = catalog?.getProduct(card?.dataset.productId);
+            if (card && product?.inStock) selectCardVolume(card, product, volumeOption.dataset.qty);
+            return;
+        }
+
         const btn = event.target.closest('.addToCart');
         if (!btn) return;
         if (btn.disabled || btn.getAttribute('aria-disabled') === 'true') return;
+        if (btn.dataset.directAdd === 'true') {
+            const product = catalog?.getProduct(btn.dataset.productId || btn.dataset.type);
+            const qty = String(btn.dataset.qty || '1');
+            if (!product || !addToCart(product.id, qty)) return;
+            const map = loadLastQty();
+            map[product.id] = qty;
+            saveLastQty(map);
+            btn.classList.add('is-added');
+            btn.textContent = 'Додано до кошика ✓';
+            clearTimeout(btn._feedbackTimer);
+            btn._feedbackTimer = setTimeout(() => {
+                btn.classList.remove('is-added');
+                btn.textContent = cardCtaLabel(product, btn.dataset.qty || qty);
+            }, 1200);
+            return;
+        }
         openQtyMenu(btn.dataset.productId || btn.dataset.type, btn.dataset.qty || '1', btn);
     });
 
