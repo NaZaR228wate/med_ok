@@ -7,16 +7,23 @@
     const CART_KEY = 'medok_cart_v1';
     const LAST_QTY_KEY = 'medok_last_qty_v1';
     const formatUAH = (n) => '₴' + Number(n || 0).toLocaleString('uk-UA');
+    const formatVolume = (qty) => `${String(qty).replace('.', ',')} л`;
 
     function showToast(text) {
-        const toast = document.createElement('div');
-        toast.className = 'toast show';
+        let toast = $('.toast[data-cart-toast]');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.dataset.cartToast = 'true';
+            toast.setAttribute('role', 'status');
+            toast.setAttribute('aria-live', 'polite');
+            document.body.appendChild(toast);
+        }
         toast.textContent = text;
-        document.body.appendChild(toast);
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 200);
-        }, 1000);
+        toast.classList.remove('show');
+        requestAnimationFrame(() => toast.classList.add('show'));
+        clearTimeout(toast._hideTimer);
+        toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 1800);
     }
 
     function loadCart() {
@@ -47,7 +54,8 @@
         localStorage.setItem(LAST_QTY_KEY, JSON.stringify(map));
     }
 
-    function addToCart(productId, qtyLiters) {
+    function addToCart(productId, qtyLiters, options = {}) {
+        const { silent = false } = options;
         const product = catalog?.getProduct(productId);
         const qty = String(qtyLiters);
         const price = product?.prices?.[qty];
@@ -67,7 +75,7 @@
         if (existing) existing.count += 1;
         else items.push({ key, productId: product.id, type: product.name, qty, price: Number(price), count: 1 });
         saveCart(items);
-        showToast('Додано в кошик');
+        if (!silent) showToast('Додано в кошик');
         return true;
     }
 
@@ -83,56 +91,48 @@
         const bg = $('#mobileBackdrop');
         if (!burger || !menu) return;
 
+        let lastFocused = null;
+
         const toggleMenu = (show) => {
+            lastFocused = show ? document.activeElement : lastFocused;
             menu.classList.toggle('active', show);
             bg?.classList.toggle('active', show);
+            menu.setAttribute('aria-hidden', String(!show));
+            burger.setAttribute('aria-expanded', String(show));
             document.body.style.overflow = show ? 'hidden' : '';
+            if (show) requestAnimationFrame(() => close?.focus());
+            else if (lastFocused instanceof HTMLElement) lastFocused.focus();
         };
 
         burger.addEventListener('click', () => toggleMenu(true));
         close?.addEventListener('click', () => toggleMenu(false));
         bg?.addEventListener('click', () => toggleMenu(false));
         $$('.mobile-link', menu).forEach((link) => link.addEventListener('click', () => toggleMenu(false)));
-    }
-
-    function initHeroSlider() {
-        const slides = $$('.hero-slider .slide');
-        const prevBtn = $('#prev');
-        const nextBtn = $('#next');
-        if (!slides.length || !prevBtn || !nextBtn) return;
-
-        const autoplayMs = 3000;
-        const animMs = 650;
-        let current = Math.max(0, slides.findIndex((slide) => slide.classList.contains('active')));
-        let isAnimating = false;
-        let autoplayId = null;
-
-        const show = (idx) => {
-            if (isAnimating || idx === current) return;
-            isAnimating = true;
-            slides.forEach((slide, index) => slide.classList.toggle('active', index === idx));
-            current = idx;
-            setTimeout(() => { isAnimating = false; }, animMs);
-        };
-        const next = () => show((current + 1) % slides.length);
-        const prev = () => show((current - 1 + slides.length) % slides.length);
-        const schedule = () => {
-            clearTimeout(autoplayId);
-            autoplayId = setTimeout(function tick() {
-                next();
-                autoplayId = setTimeout(tick, autoplayMs);
-            }, autoplayMs);
-        };
-
-        prevBtn.addEventListener('click', () => { prev(); schedule(); });
-        nextBtn.addEventListener('click', () => { next(); schedule(); });
-        schedule();
+        document.addEventListener('keydown', (event) => {
+            if (!menu.classList.contains('active')) return;
+            if (event.key === 'Escape') {
+                toggleMenu(false);
+                return;
+            }
+            if (event.key !== 'Tab') return;
+            const focusable = $$('a[href], button:not([disabled])', menu);
+            if (!focusable.length) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        });
     }
 
     function initReveal() {
         const els = $$('.reveal');
         if (!els.length) return;
-        if (!('IntersectionObserver' in window)) {
+        if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             els.forEach((el) => el.classList.add('in'));
             return;
         }
@@ -180,6 +180,33 @@
         io.observe(yearsEl);
     }
 
+    function cardCtaLabel(product, qty) {
+        return `Додати ${formatVolume(qty)} · ${formatUAH(product.prices[qty])}`;
+    }
+
+    function selectCardVolume(card, product, qty, persist = true) {
+        const normalizedQty = String(qty);
+        if (!product.prices[normalizedQty]) return;
+        $$('.volume-option', card).forEach((option) => {
+            const selected = option.dataset.qty === normalizedQty;
+            option.classList.toggle('is-selected', selected);
+            option.setAttribute('aria-pressed', String(selected));
+        });
+        const button = $('.addToCart', card);
+        if (button) {
+            clearTimeout(button._feedbackTimer);
+            button.classList.remove('is-added');
+            button.dataset.qty = normalizedQty;
+            button.textContent = cardCtaLabel(product, normalizedQty);
+            button.setAttribute('aria-label', `${cardCtaLabel(product, normalizedQty)} — ${product.fullName}`);
+        }
+        if (persist) {
+            const map = loadLastQty();
+            map[product.id] = normalizedQty;
+            saveLastQty(map);
+        }
+    }
+
     function hydrateProducts() {
         if (!catalog) return;
 
@@ -192,7 +219,7 @@
             const title = $('.product-title', card);
             const bullets = $('.p-bullets', card);
             const button = $('.addToCart', card);
-            const miniPrice = $('.mini-price', card);
+            const volumeOptions = $('.volume-options', card);
 
             if (img) {
                 img.src = product.image;
@@ -206,22 +233,31 @@
                 priceBadge.textContent = product.inStock ? `від ${formatUAH(catalog.minPrice(product))}` : '';
                 priceBadge.style.display = product.inStock ? '' : 'none';
             }
-            if (title) title.textContent = product.name;
+            if (title) title.textContent = product.fullName;
             if (bullets) bullets.innerHTML = product.bullets.map((text) => `<li>${text}</li>`).join('');
             if (button) {
                 button.dataset.productId = product.id;
                 button.dataset.qty = button.dataset.qty || '1';
                 button.disabled = !product.inStock;
-                button.textContent = product.inStock ? 'У кошик' : 'Немає в наявності';
+                button.textContent = product.inStock
+                    ? (button.dataset.directAdd === 'true' ? cardCtaLabel(product, button.dataset.qty) : 'Обрати об’єм')
+                    : 'Немає в наявності';
                 button.setAttribute('aria-disabled', String(!product.inStock));
             }
-            if (miniPrice) {
-                miniPrice.dataset.productId = product.id;
-                miniPrice.innerHTML = Object.entries(product.prices)
-                    .filter(([qty]) => qty === '0.5' || qty === '1')
+            if (volumeOptions && product.inStock) {
+                volumeOptions.dataset.productId = product.id;
+                volumeOptions.setAttribute('aria-label', `Оберіть об’єм — ${product.fullName}`);
+                volumeOptions.innerHTML = Object.entries(product.prices)
                     .sort(([a], [b]) => Number(a) - Number(b))
-                    .map(([qty, price]) => `<span class="pill">${qty} л — ${formatUAH(price)}</span>`)
-                    .join(' ');
+                    .map(([qty, price]) => `
+                        <button class="volume-option" type="button" data-qty="${qty}" aria-pressed="false">
+                            <span>${formatVolume(qty)}</span>
+                            <strong>${formatUAH(price)}</strong>
+                        </button>
+                    `).join('');
+                const savedQty = String(loadLastQty()[product.id] || button?.dataset.qty || '1');
+                const initialQty = product.prices[savedQty] ? savedQty : Object.keys(product.prices)[0];
+                selectCardVolume(card, product, initialQty, false);
             }
         });
     }
@@ -257,21 +293,21 @@
             wrapper.style.display = 'none';
             wrapper.innerHTML = `
                 <div id="qtyBackdrop"></div>
-                <div class="qty-dialog">
+                <div class="qty-dialog" role="dialog" aria-modal="true" aria-labelledby="qtyTitle">
                     <div class="qty-head">
                         <div id="qtyTitle"></div>
-                        <button id="qtyClose" class="btn-secondary" title="Закрити">✕</button>
+                        <button id="qtyClose" class="btn-secondary" type="button" aria-label="Закрити вибір об’єму">✕</button>
                     </div>
                     <label class="muted" style="display:block; margin-bottom:6px;">Кількість літрів</label>
                     <div class="qty-stepper">
-                        <button id="qtyMinus" class="qty-step">−</button>
+                        <button id="qtyMinus" class="qty-step" type="button" aria-label="Зменшити об’єм">−</button>
                         <div id="qtyValue" class="qty-value">1 л</div>
-                        <button id="qtyPlus" class="qty-step">+</button>
+                        <button id="qtyPlus" class="qty-step" type="button" aria-label="Збільшити об’єм">+</button>
                     </div>
                     <div class="qty-price">
                         Ціна: <b id="qtyPrice">—</b>
                     </div>
-                    <button id="qtyAddBtn" class="btn" style="width:100%; margin-top:10px;">Додати в кошик</button>
+                    <button id="qtyAddBtn" class="btn" type="button" style="width:100%; margin-top:10px;">Додати в кошик</button>
                 </div>
             `;
             document.body.appendChild(wrapper);
@@ -296,6 +332,7 @@
     }
 
     function closeQtyMenu() {
+        const restoreTarget = lastAddBtn;
         if (qtyMenu?._cleanup) qtyMenu._cleanup();
         if (qtyMenu) {
             qtyMenu.style.display = 'none';
@@ -303,6 +340,7 @@
         }
         currentProductId = null;
         lastAddBtn = null;
+        if (restoreTarget instanceof HTMLElement) restoreTarget.focus();
     }
 
     function openQtyMenu(productId, defaultQty, fromBtn) {
@@ -334,6 +372,7 @@
 
         qtyMenu.style.display = 'block';
         qtyMenu.setAttribute('aria-hidden', 'false');
+        requestAnimationFrame(() => qtyCloseBtn?.focus());
 
         const onMinus = () => setQtyByIndex(qtyIdx - 1, product.prices);
         const onPlus = () => setQtyByIndex(qtyIdx + 1, product.prices);
@@ -346,21 +385,49 @@
     }
 
     document.addEventListener('click', (event) => {
+        const volumeOption = event.target.closest('.volume-option');
+        if (volumeOption) {
+            const card = volumeOption.closest('.product-card[data-product-id]');
+            const product = catalog?.getProduct(card?.dataset.productId);
+            if (card && product?.inStock) selectCardVolume(card, product, volumeOption.dataset.qty);
+            return;
+        }
+
         const btn = event.target.closest('.addToCart');
         if (!btn) return;
         if (btn.disabled || btn.getAttribute('aria-disabled') === 'true') return;
+        if (btn.dataset.directAdd === 'true') {
+            const product = catalog?.getProduct(btn.dataset.productId || btn.dataset.type);
+            const qty = String(btn.dataset.qty || '1');
+            if (!product || !addToCart(product.id, qty, { silent: true })) return;
+            const map = loadLastQty();
+            map[product.id] = qty;
+            saveLastQty(map);
+            btn.classList.add('is-added');
+            btn.textContent = 'Додано до кошика ✓';
+            clearTimeout(btn._feedbackTimer);
+            btn._feedbackTimer = setTimeout(() => {
+                btn.classList.remove('is-added');
+                btn.textContent = cardCtaLabel(product, btn.dataset.qty || qty);
+            }, 1200);
+            window.openCart?.();
+            return;
+        }
         openQtyMenu(btn.dataset.productId || btn.dataset.type, btn.dataset.qty || '1', btn);
     });
 
     ensureQtyMenu();
     qtyBackdrop?.addEventListener('click', closeQtyMenu);
     qtyCloseBtn?.addEventListener('click', closeQtyMenu);
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && qtyMenu?.getAttribute('aria-hidden') === 'false') closeQtyMenu();
+    });
     qtyAddBtn?.addEventListener('click', () => {
         if (!currentProductId) return;
         const qty = qtyOptions[qtyIdx];
         const product = catalog.getProduct(currentProductId);
         const shouldRedirectToOrder = lastAddBtn?.dataset.orderAfterAdd === 'true';
-        if (!addToCart(currentProductId, qty)) return;
+        if (!addToCart(currentProductId, qty, { silent: true })) return;
 
         const map = loadLastQty();
         map[currentProductId] = qty;
@@ -372,26 +439,15 @@
         closeQtyMenu();
         if (shouldRedirectToOrder) {
             window.location.href = 'order.html';
+        } else {
+            window.openCart?.();
         }
     });
 
     initYear();
     initMobileMenu();
-    initHeroSlider();
     initReveal();
     initYearsCounter();
     hydrateProducts();
     injectProductJsonLd();
 })();
-
-window.addEventListener('load', () => {
-    const late = [
-        ['[data-flavor="linden"]', 'assets/hero-linden.webp'],
-        ['[data-flavor="sunflower"]', 'assets/hero-sunflower.webp']
-    ];
-    const setBg = ([sel, url]) => {
-        const el = document.querySelector('.hero-slider ' + sel);
-        if (el && !el.style.backgroundImage) el.style.backgroundImage = `url("${url}")`;
-    };
-    (window.requestIdleCallback || setTimeout)(() => late.forEach(setBg), 150);
-});

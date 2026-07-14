@@ -1,70 +1,81 @@
 <!doctype html>
 <html lang="uk">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Купити натуральний мед з пасіки Medok | Київ, Бориспіль, Україна</title>
-    <meta name="description" content="Натуральний мед Medok з пасіки в Бориспільському районі: різнотрав’я, липовий та акацієвий. Доставка Новою поштою.">
-    <meta name="keywords" content="купити мед, натуральний мед з пасіки, мед бориспіль, мед київ, липовий мед, акацієвий мед, ціна на мед">
-    <link rel="canonical" href="https://medok.ink/" />
-    <link rel="stylesheet" href="styles.css?v=20" /> <!-- Оновили версію стилів -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Натуральний мед з пасіки Medok — купити з доставкою по Україні</title>
+    <meta name="description" content="Купуйте натуральний мед Medok із сімейної пасіки на Київщині: акацієвий, липовий і різнотрав’я. Відправка Новою поштою по Україні.">
+    <link rel="canonical" href="https://medok.ink/">
+    <link rel="stylesheet" href="styles.css?v=22">
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="Medok — натуральний мед з сімейної пасіки">
-    <meta property="og:description" content="Акацієвий, липовий, різнотрав’я та соняшниковий мед із Бориспільського району. Доставка по Україні.">
+    <meta property="og:title" content="Medok — натуральний мед із сімейної пасіки">
+    <meta property="og:description" content="Акацієвий, липовий мед і різнотрав’я з Київщини. Оберіть свій смак із доставкою по Україні.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://medok.ink/">
     <meta property="og:site_name" content="Medok">
     <meta property="og:locale" content="uk_UA">
-    <meta property="og:image" content="https://medok.ink/assets/prod-mixed.webp">
+    <meta property="og:image" content="https://medok.ink/assets/hero-linden.webp">
+    <meta property="og:image:alt" content="Липовий мед Medok серед квітів липи">
     <meta name="twitter:card" content="summary_large_image">
 
-    <!-- Preload та Favicon -->
-    <link rel="preload" as="image" href="assets/hero-acacia.webp" fetchpriority="high">
+    <link rel="preload" as="image" href="assets/hero-linden.webp" fetchpriority="high">
     <link rel="icon" href="assets/medok-wordmark.png">
-    <meta name="theme-color" content="#087B04">
+    <meta name="theme-color" content="#23372B">
+    <meta name="color-scheme" content="light">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preconnect" href="https://medok-proxy.veter010709.workers.dev" crossorigin>
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "Medok",
-  "image": "https://medok.ink/assets/medok-wordmark.png",
-  "url": "https://medok.ink/",
-  "telephone": "+380632369027",
-  "description": "Сімейна пасіка з натуральним медом у Бориспільському районі Київської області.",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Бориспільський район",
-    "addressRegion": "Київська область",
-    "addressCountry": "UA"
-  },
-  "areaServed": ["Київ", "Бориспіль", "Україна"],
-  "priceRange": "₴₴"
-}
-</script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "@id": "https://medok.ink/#business",
+      "name": "Medok",
+      "image": "https://medok.ink/assets/medok-wordmark.png",
+      "url": "https://medok.ink/",
+      "telephone": "+380632369027",
+      "description": "Сімейна пасіка з натуральним медом у Бориспільському районі Київської області.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Бориспільський район",
+        "addressRegion": "Київська область",
+        "addressCountry": "UA"
+      },
+      "areaServed": ["Київ", "Бориспіль", "Україна"],
+      "priceRange": "₴₴"
+    }
+    </script>
 </head>
-<body>
-<a class="visually-hidden" href="#main">Перейти до контенту</a>
+<body class="home-page">
+<a class="skip-link" href="#main">Перейти до основного вмісту</a>
+
+<div class="announcement" aria-label="Інформація про доставку">
+    <div class="site-shell announcement__inner">
+        <span>Сімейна пасіка · Київщина</span>
+        <span class="announcement__delivery">Відправляємо Новою поштою по Україні</span>
+    </div>
+</div>
+
 <header class="site-header">
     <div class="header-inner">
-        <a href="index.html" class="header-logo" aria-label="На головну">
-            <img src="assets/medok-wordmark.png" alt="Логотип Medok">
+        <a href="index.html" class="header-logo" aria-label="Medok — на головну">
+            <img src="assets/medok-wordmark.png" alt="Medok" width="404" height="178">
         </a>
-        <nav class="header-nav">
-            <a href="index.html#products" class="header-link">Продукція</a>
-            <a href="about.html" class="header-link">Про пасіку</a>
-            <a href="faq.html" class="header-link">FAQ</a>
+        <nav class="header-nav" aria-label="Основна навігація">
+            <a href="#products" class="header-link">Обрати мед</a>
+            <a href="#apiary" class="header-link">Наша пасіка</a>
+            <a href="#delivery" class="header-link">Як замовити</a>
             <a href="reviews.html" class="header-link">Відгуки</a>
         </nav>
         <div class="header-actions">
-            <button id="cartBtn" class="cart-icon-btn" aria-label="Кошик">
-                🛒 <span id="cartQtyBadge" class="cart-badge" style="display:none">0</span>
+            <button id="cartBtn" class="cart-icon-btn" type="button" aria-label="Відкрити кошик">
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+                    <path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L20.2 8H6.1M9.5 20a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm8 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+                </svg>
+                <span id="cartQtyBadge" class="cart-badge" style="display:none">0</span>
             </button>
-            <a href="order.html" class="btn-header-cta">Замовити мед</a>
-            <button id="burgerBtn" class="burger-menu" aria-label="Меню">
+            <a href="#products" class="btn-header-cta">Обрати мед</a>
+            <button id="burgerBtn" class="burger-menu" type="button" aria-label="Відкрити меню" aria-controls="mobileMenu" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
         </div>
@@ -72,254 +83,279 @@
 </header>
 
 <div id="mobileBackdrop" class="mobile-nav-overlay"></div>
-<div id="mobileMenu" class="mobile-nav-drawer">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <span style="font-weight:800; font-size:20px;">Меню</span>
-        <button id="closeMenuBtn" style="background:none; border:none; font-size:24px; cursor:pointer;">✕</button>
+<aside id="mobileMenu" class="mobile-nav-drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" aria-hidden="true">
+    <div class="mobile-nav-head">
+        <span id="mobileMenuTitle">Меню</span>
+        <button id="closeMenuBtn" class="mobile-nav-close" type="button" aria-label="Закрити меню">×</button>
     </div>
-    <a href="index.html#products" class="mobile-link">🍯 Продукція</a>
-    <a href="about.html" class="mobile-link">🐝 Про пасіку</a>
-    <a href="faq.html" class="mobile-link">❓ FAQ</a>
-    <a href="reviews.html" class="mobile-link">💬 Відгуки</a>
-    <a href="order.html" class="btn-header-cta" style="display:block; text-align:center; margin-top:20px;">Оформити замовлення</a>
-</div>
+    <nav class="mobile-nav-links" aria-label="Мобільна навігація">
+        <a href="#products" class="mobile-link">Обрати мед</a>
+        <a href="#apiary" class="mobile-link">Наша пасіка</a>
+        <a href="#delivery" class="mobile-link">Як замовити</a>
+        <a href="reviews.html" class="mobile-link">Відгуки</a>
+        <a href="faq.html" class="mobile-link">Питання та відповіді</a>
+    </nav>
+    <a href="order.html" class="mobile-order-link">Оформити замовлення</a>
+</aside>
 
 <main id="main">
-    <section class="container" style="text-align: center; padding-top: 40px;">
-    <h1 style="font-weight: 900; font-size: clamp(28px, 5vw, 42px); color: var(--brand); margin-bottom: 10px;">
-        Натуральний мед з сімейної пасіки
-    </h1>
-    <p class="section-subtitle">Пряма доставка з Бориспільського району до вашого столу</p>
-</section>
-    
-       <!-- ===== HERO ===== -->
-    <section class="hero-slider" id="hero">
-        <article class="slide active" data-flavor="acacia" aria-label="Акація">
-            <div class="left">
-                <div class="bigword">АКАЦІЯ</div>
-                <div class="subtitle">Ніжний акацієвий мед — довго рідкий, ідеальний для чаю</div>
+    <section class="home-hero" aria-labelledby="hero-title">
+        <div class="site-shell hero-layout">
+            <div class="hero-copy">
+                <p class="eyebrow hero-eyebrow"><span></span> Мед із сімейної пасіки</p>
+                <h1 id="hero-title">Мед із Київщини, у якому відчувається літо.</h1>
+                <p class="hero-lead">Натуральний акацієвий, липовий мед і різнотрав’я з Бориспільського району. Від пасіки — до вашого столу, з доставкою по Україні.</p>
                 <div class="hero-actions">
-                    <a class="ghost" href="tel:+380632369027">📞 +380632369027</a>
-                    <a class="ghost" href="viber://chat?number=%2B380632369027">💬 Viber</a>
+                    <a class="button button--primary" href="#products">Обрати свій мед</a>
+                    <a class="hero-link-quiet" href="#apiary">Познайомитися з пасікою</a>
                 </div>
-            </div>
-        </article>
-        <article class="slide" data-flavor="linden" aria-label="Липовий">
-            <div class="left">
-                <div class="bigword">ЛИПА</div>
-                <div class="subtitle">Запашний липовий мед — класика з дитинства</div>
-                <div class="hero-actions">
-                    <a class="ghost" href="tel:+380632369027">📞 +380632369027</a>
-                    <a class="ghost" href="viber://chat?number=%2B380632369027">💬 Viber</a>
-                </div>
-            </div>
-        </article>
-        <article class="slide" data-flavor="sunflower" aria-label="Соняшниковий">
-            <div class="left">
-                <div class="bigword">СОНЯШНИК</div>
-                <div class="subtitle">Насичений смак та швидка кристалізація</div>
-                <div class="hero-actions">
-                    <a class="ghost" href="tel:+380632369027">📞 +380632369027</a>
-                    <a class="ghost" href="viber://chat?number=%2B380632369027">💬 Viber</a>
-                </div>
-            </div>
-        </article>
-        <button class="navbtn prev" id="prev" aria-label="Попередній">‹</button>
-        <button class="navbtn next" id="next" aria-label="Наступний">›</button>
-        <a class="hero-cta" href="#products">🍯 ХОЧУ БАНОЧКУ!</a>
-    </section>
-
-    <!-- ===== PRODUCTS ===== -->
-    <section class="container" id="products">
-        <h2>Продукція</h2>
-        <p class="section-subtitle">Свіжі сорти меду прямо з нашої пасіки</p>
-        <div class="products-grid">
-            <article class="product-card reveal" data-product-id="mixed">
-                <figure class="prod-figure">
-                    <img class="prod-img" src="assets/prod-mixed.webp" alt="Мед різнотрав’я" loading="lazy" width="800" height="600">
-                    <span class="badge"></span>
-                    <span class="price-badge"></span>
-                </figure>
-                <div class="product-body">
-                    <h3 class="product-title">Різнотрав’я</h3>
-                    <ul class="p-bullets">
-                        <li>Квітковий букет із лугів і гаїв</li>
-                        <li>Збалансований смак, універсальний</li>
-                    </ul>
-                    <div class="product-bottom">
-                        <button class="btn addToCart" data-product-id="mixed" data-qty="1">У кошик</button>
-                    </div>
-                    <div class="mini-price" data-product-id="mixed"></div>
-                    <p style="margin:10px 0 0;"><a class="btn-secondary product-detail-link" href="riznotravya-med.html" style="display:inline-flex;align-items:center;">Детальніше про мед різнотрав’я</a></p>
-                </div>
-            </article>
-            <article class="product-card reveal" data-product-id="linden">
-                <figure class="prod-figure">
-                    <img class="prod-img" src="assets/prod-linden.webp" alt="Липовий мед" loading="lazy" width="800" height="600">
-                    <span class="badge"></span>
-                    <span class="price-badge"></span>
-                </figure>
-                <div class="product-body">
-                    <h3 class="product-title">Липовий</h3>
-                    <ul class="p-bullets">
-                        <li>Запашний аромат липи</li>
-                        <li>Добрий для чаю та профілактики</li>
-                    </ul>
-                    <div class="product-bottom">
-                        <button class="btn addToCart" data-product-id="linden" data-qty="1">У кошик</button>
-                    </div>
-                    <div class="mini-price" data-product-id="linden"></div>
-                    <p style="margin:10px 0 0;"><a class="btn-secondary product-detail-link" href="lypovyi-med.html" style="display:inline-flex;align-items:center;">Детальніше про липовий мед</a></p>
-                </div>
-            </article>
-            <article class="product-card reveal" data-product-id="acacia">
-                <figure class="prod-figure">
-                    <img class="prod-img" src="assets/prod-acacia.webp" alt="Акацієвий мед" loading="lazy" width="800" height="600">
-                    <span class="badge"></span>
-                    <span class="price-badge"></span>
-                </figure>
-                <div class="product-body">
-                    <h3 class="product-title">Акація</h3>
-                    <ul class="p-bullets">
-                        <li>Довго лишається рідким</li>
-                        <li>Ніжний смак для щоденного чаю</li>
-                    </ul>
-                    <div class="product-bottom">
-                        <button class="btn addToCart" data-product-id="acacia" data-qty="1">У кошик</button>
-                    </div>
-                    <div class="mini-price" data-product-id="acacia"></div>
-                    <p style="margin:10px 0 0;"><a class="btn-secondary product-detail-link" href="akatsiievyi-med.html" style="display:inline-flex;align-items:center;">Детальніше про акацієвий мед</a></p>
-                </div>
-            </article>
-            <article class="product-card reveal" data-product-id="sunflower">
-                <figure class="prod-figure">
-                    <img class="prod-img" src="assets/prod-sunflower.webp" alt="Соняшниковий мед" loading="lazy" width="800" height="600">
-                    <span class="badge"></span>
-                    <span class="price-badge"></span>
-                </figure>
-                <div class="product-body">
-                    <h3 class="product-title">Соняшниковий</h3>
-                    <ul class="p-bullets">
-                        <li>Виразний смак, швидка кристалізація</li>
-                        <li>Круто до тостів і випічки</li>
-                    </ul>
-                    <div class="product-bottom">
-                        <button class="btn addToCart" data-product-id="sunflower" data-qty="1">У кошик</button>
-                    </div>
-                    <div class="mini-price" data-product-id="sunflower"></div>
-                </div>
-            </article>
-        </div>
-    </section>
-
-    <!-- ===== ABOUT ===== -->
-    <section class="container" id="about">
-        <h2>Про нашу пасіку</h2>
-        <div class="grid about-grid">
-            <div class="col-6 about-text card">
-                <p><strong>Еко‑пасіка у серці Київщини.</strong> Ми дбайливо ставимося до наших бджілок, збираємо нектар у чистих лугах і садах та відкачуємо мед власноруч, поєднуючи традиційні методи й сучасні знання.</p>
-                <ul class="check">
-                    <li>Натуральний продукт без домішок</li>
-                    <li>Дбайливе ставлення до бджіл та природи</li>
-                    <li>Дегустація при самовивозі й швидка доставка</li>
-                    <li>Підтримка сімейної справи та місцевих бджолярів</li>
+                <ul class="hero-facts" aria-label="Переваги Medok">
+                    <li><strong>40+</strong><span>років досвіду</span></li>
+                    <li><strong>3</strong><span>сорти в наявності</span></li>
+                    <li><strong>1–2 дні</strong><span>типова доставка</span></li>
                 </ul>
-                <div class="years-counter">
-                    <span id="yearsCounter" data-target="40">40</span>
-                    <span class="years-label">років досвіду</span>
-                </div>
+            </div>
+
+            <div class="hero-visual" aria-label="Липовий мед Medok">
+                <figure class="hero-frame">
+                    <img src="assets/hero-linden.webp" alt="Банка золотистого липового меду серед квітів липи" width="2560" height="1600" fetchpriority="high" decoding="async">
+                    <figcaption>
+                        <div class="hero-frame__meta"><span>Смак сезону</span><strong>Липовий мед</strong></div>
+                        <div class="hero-frame__price"><strong>₴200</strong><span>0,5 л</span></div>
+                    </figcaption>
+                </figure>
             </div>
         </div>
     </section>
 
-    <!-- ===== Quantity selection overlay ===== -->
-    <div id="qtyMenu" aria-hidden="true" style="position:fixed; inset:0; z-index:1050; display:none;">
-        <div id="qtyBackdrop" style="position:absolute; inset:0; background:rgba(0,0,0,.45);"></div>
-        <div class="qty-dialog">
-            <div class="qty-head">
-                <div id="qtyTitle"></div>
-                <button id="qtyClose" class="btn-secondary" title="Закрити">✕</button>
-            </div>
-            <label class="muted" style="display:block; margin-bottom:6px;">Кількість літрів</label>
-            <div class="qty-stepper">
-                <button id="qtyMinus" class="qty-step">−</button>
-                <div id="qtyValue" class="qty-value">1 л</div>
-                <button id="qtyPlus" class="qty-step">+</button>
-            </div>
-            <div class="qty-price">
-                Ціна: <b id="qtyPrice">—</b>
-            </div>
-            <button id="qtyAddBtn" class="btn" style="width:100%; margin-top:10px;">Додати в кошик</button>
+    <section class="trust-band" aria-label="Чому обирають Medok">
+        <div class="site-shell trust-band__inner">
+            <p><span aria-hidden="true">01</span> Збираємо й фасуємо самі</p>
+            <p><span aria-hidden="true">02</span> Без домішок</p>
+            <p><span aria-hidden="true">03</span> Доставка по Україні</p>
         </div>
-    </div>
+    </section>
 
-    <!-- ===== FAQ ===== -->
-    <section class="container" id="faq">
-        <h2>Питання та відповіді</h2>
-        <details class="card">
-            <summary>Чи додаєте ви цукор або інші домішки до меду?</summary>
-            <p>Ні, наш мед повністю натуральний. Ми дбаємо про бджіл та не використовуємо цукор під час відкачування меду.</p>
-        </details>
-        <details class="card">
-            <summary>Як швидко ви відправляєте замовлення?</summary>
-            <p>Ми надсилаємо мед Новою поштою щодня. Зазвичай доставка займає 1–2 дні залежно від вашого населеного пункту.</p>
-        </details>
-        <details class="card">
-            <summary>Чи можна самостійно забрати замовлення?</summary>
-            <p>Так, ви можете забрати мед самовивозом з нашої пасіки. Попередньо домовтесь про зручний час по телефону.</p>
-        </details>
+    <section class="home-section home-products" id="products" aria-labelledby="products-title">
+        <div class="site-shell">
+            <header class="section-heading reveal">
+                <div>
+                    <p class="eyebrow">Колекція сезону</p>
+                    <h2 id="products-title">Оберіть мед під свій смак</h2>
+                </div>
+                <p>Від делікатної акації до виразного різнотрав’я. Порівняйте смак, одразу оберіть об’єм і додайте мед у кошик.</p>
+            </header>
+
+            <div class="products-grid">
+                <article class="product-card reveal" data-product-id="mixed">
+                    <figure class="prod-figure">
+                        <img class="prod-img" src="assets/prod-mixed.webp" alt="Банка меду різнотрав’я з сімейної пасіки Medok" loading="lazy" width="1024" height="1536">
+                        <span class="badge"></span>
+                        <span class="price-badge"></span>
+                    </figure>
+                    <div class="product-body">
+                        <p class="product-kicker">01 · Квітковий і збалансований</p>
+                        <h3 class="product-title">Мед різнотрав’я</h3>
+                        <ul class="p-bullets">
+                            <li>Квітковий букет із лугів і гаїв</li>
+                            <li>Збалансований смак, універсальний</li>
+                        </ul>
+                        <div class="volume-options" data-product-id="mixed" role="group" aria-label="Оберіть об’єм меду різнотрав’я">
+                            <button class="volume-option" type="button" data-qty="0.5" aria-pressed="false"><span>0,5 л</span><strong>₴150</strong></button>
+                            <button class="volume-option is-selected" type="button" data-qty="1" aria-pressed="true"><span>1 л</span><strong>₴299</strong></button>
+                            <button class="volume-option" type="button" data-qty="3" aria-pressed="false"><span>3 л</span><strong>₴897</strong></button>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn addToCart" type="button" data-product-id="mixed" data-qty="1" data-direct-add="true">Додати 1 л · ₴299</button>
+                            <a class="product-detail-link" href="riznotravya-med.html">Про різнотрав’я</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card reveal" data-product-id="linden">
+                    <figure class="prod-figure">
+                        <img class="prod-img" src="assets/prod-linden.webp" alt="Банка липового меду Medok серед квітів липи" loading="lazy" width="1024" height="1536">
+                        <span class="badge"></span>
+                        <span class="price-badge"></span>
+                    </figure>
+                    <div class="product-body">
+                        <p class="product-kicker">02 · Запашний і теплий</p>
+                        <h3 class="product-title">Липовий мед</h3>
+                        <ul class="p-bullets">
+                            <li>Виразний аромат квітів липи</li>
+                            <li>Теплий смак до чаю та сніданку</li>
+                        </ul>
+                        <div class="volume-options" data-product-id="linden" role="group" aria-label="Оберіть об’єм липового меду">
+                            <button class="volume-option" type="button" data-qty="0.5" aria-pressed="false"><span>0,5 л</span><strong>₴200</strong></button>
+                            <button class="volume-option is-selected" type="button" data-qty="1" aria-pressed="true"><span>1 л</span><strong>₴399</strong></button>
+                            <button class="volume-option" type="button" data-qty="3" aria-pressed="false"><span>3 л</span><strong>₴1 197</strong></button>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn addToCart" type="button" data-product-id="linden" data-qty="1" data-direct-add="true">Додати 1 л · ₴399</button>
+                            <a class="product-detail-link" href="lypovyi-med.html">Про липовий мед</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card reveal" data-product-id="acacia">
+                    <figure class="prod-figure">
+                        <img class="prod-img" src="assets/prod-acacia.webp" alt="Банка акацієвого меду Medok серед польових квітів" loading="lazy" width="1024" height="1536">
+                        <span class="badge"></span>
+                        <span class="price-badge"></span>
+                    </figure>
+                    <div class="product-body">
+                        <p class="product-kicker">03 · Ніжний і прозорий</p>
+                        <h3 class="product-title">Акацієвий мед</h3>
+                        <ul class="p-bullets">
+                            <li>Довго лишається рідким</li>
+                            <li>Ніжний смак для щоденного чаю</li>
+                        </ul>
+                        <div class="volume-options" data-product-id="acacia" role="group" aria-label="Оберіть об’єм акацієвого меду">
+                            <button class="volume-option" type="button" data-qty="0.5" aria-pressed="false"><span>0,5 л</span><strong>₴275</strong></button>
+                            <button class="volume-option is-selected" type="button" data-qty="1" aria-pressed="true"><span>1 л</span><strong>₴549</strong></button>
+                            <button class="volume-option" type="button" data-qty="3" aria-pressed="false"><span>3 л</span><strong>₴1 647</strong></button>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn addToCart" type="button" data-product-id="acacia" data-qty="1" data-direct-add="true">Додати 1 л · ₴549</button>
+                            <a class="product-detail-link" href="akatsiievyi-med.html">Про акацієвий мед</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card product-card--quiet reveal" data-product-id="sunflower">
+                    <figure class="prod-figure">
+                        <img class="prod-img" src="assets/prod-sunflower.webp" alt="Банка соняшникового меду Medok" loading="lazy" width="1024" height="1536">
+                        <span class="badge"></span>
+                        <span class="price-badge"></span>
+                    </figure>
+                    <div class="product-body">
+                        <p class="product-kicker">04 · Насичений і кремовий</p>
+                        <h3 class="product-title">Соняшниковий мед</h3>
+                        <ul class="p-bullets">
+                            <li>Виразний смак, швидка кристалізація</li>
+                            <li>Добре смакує з тостами й випічкою</li>
+                        </ul>
+                        <p class="product-unavailable-note">Наразі немає в наявності</p>
+                        <div class="product-actions">
+                            <button class="btn addToCart" type="button" data-product-id="sunflower" data-qty="1" data-direct-add="true">Немає в наявності</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-section apiary-story" id="apiary" aria-labelledby="apiary-title">
+        <div class="site-shell story-layout">
+            <figure class="story-image reveal">
+                <img src="assets/founder.webp" alt="Пасічник Medok тримає рамку зі стільниками на сімейній пасіці" loading="lazy" width="1200" height="1200">
+                <figcaption>Бориспільський район · Київщина</figcaption>
+            </figure>
+            <div class="story-copy reveal">
+                <p class="eyebrow">Люди за кожною банкою</p>
+                <h2 id="apiary-title">Мед починається не з етикетки. Він починається з турботи.</h2>
+                <p class="story-lead">Наша сім’я працює з бджолами понад 40 років. Самі доглядаємо пасіку, відкачуємо мед і готуємо його до відправки — спокійно, уважно, без зайвого.</p>
+                <div class="story-note">
+                    <strong><span id="yearsCounter" data-target="40">40</span>+</strong>
+                    <span>років досвіду, переданого в родині</span>
+                </div>
+                <a class="text-link" href="about.html">Дізнатися більше про пасіку <span aria-hidden="true">↗</span></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-section order-path" id="delivery" aria-labelledby="delivery-title">
+        <div class="site-shell">
+            <header class="section-heading section-heading--light reveal">
+                <div>
+                    <p class="eyebrow">Просто замовити</p>
+                    <h2 id="delivery-title">Від пасіки до вашого столу</h2>
+                </div>
+                <p>Обираєте сорт і об’єм — ми підтверджуємо деталі та відправляємо мед Новою поштою.</p>
+            </header>
+            <ol class="order-steps">
+                <li class="reveal"><span>01</span><h3>Оберіть смак</h3><p>Порівняйте сорти, об’єми та ціни.</p></li>
+                <li class="reveal"><span>02</span><h3>Оформіть замовлення</h3><p>Вкажіть контакт і зручне відділення.</p></li>
+                <li class="reveal"><span>03</span><h3>Отримайте мед</h3><p>Надсилаємо Новою поштою по Україні.</p></li>
+            </ol>
+            <a class="button button--honey" href="order.html">Перейти до оформлення</a>
+        </div>
+    </section>
+
+    <section class="home-section home-faq" id="faq" aria-labelledby="faq-title">
+        <div class="site-shell faq-layout">
+            <header class="faq-intro reveal">
+                <p class="eyebrow">Коротко про важливе</p>
+                <h2 id="faq-title">Перед тим, як замовити</h2>
+                <p>Відповіді про склад, доставку й самовивіз. Більше деталей — на окремій сторінці.</p>
+                <a class="text-link" href="faq.html">Усі питання та відповіді <span aria-hidden="true">↗</span></a>
+            </header>
+            <div class="faq-list reveal">
+                <details>
+                    <summary>Чи додаєте ви цукор або інші домішки?</summary>
+                    <p>Ні. У банці — натуральний мед без доданих домішок.</p>
+                </details>
+                <details>
+                    <summary>Як швидко відправляєте замовлення?</summary>
+                    <p>Зазвичай відправляємо щодня. Доставка Новою поштою переважно займає 1–2 дні залежно від міста.</p>
+                </details>
+                <details>
+                    <summary>Чи доступний самовивіз?</summary>
+                    <p>Так, із пасіки в Бориспільському районі за попередньою домовленістю телефоном.</p>
+                </details>
+                <details>
+                    <summary>Як можна оплатити замовлення?</summary>
+                    <p>Приймаємо повну передоплату або післяплату при отриманні у відділенні «Нової пошти».</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <section class="closing-cta" aria-labelledby="closing-title">
+        <div class="site-shell closing-cta__inner reveal">
+            <p class="eyebrow">Смак Київщини</p>
+            <h2 id="closing-title">Знайдіть свій мед.</h2>
+            <p>Три сорти зараз у наявності. Почніть із того, який найбільше схожий на ваш ранок.</p>
+            <div class="closing-cta__actions">
+                <a class="button button--primary" href="#products">Обрати мед</a>
+                <a class="button button--quiet" href="tel:+380632369027">+380 63 236 9027</a>
+            </div>
+        </div>
     </section>
 </main>
-<section class="container" id="why" style="margin-top: 60px; border-top: 1px solid #eee; pt-40px;">
-    <div style="max-width: 800px; margin: 0 auto; color: #555; line-height: 1.8;">
-        <h2 style="color: #111;">Чому варто замовити мед саме у нас?</h2>
-        <p>Наша <strong>сімейна пасіка</strong> розташована в екологічно чистому куточку Київської області (Бориспільський район). Ми займаємося бджільництвом уже понад 40 років, передаючи традиції з покоління в покоління. Кожна баночка меду Medok — це результат дбайливої праці та любові до природи.</p>
-        <p>Ми пропонуємо купити мед різних сортів: від ніжної <strong>акації</strong>, яка довго залишається рідкою, до запашної <strong>липи</strong> та корисного <strong>різнотрав'я</strong>. Весь продукт збирається без використання антибіотиків чи цукрових сиропів. Ми гарантуємо чесну вагу та натуральність кожного грама.</p>
-        <p>Замовляйте мед з доставкою в Київ, Бориспіль, Бровари та по всій Україні Новою поштою. Для мешканців району можливий самовивіз та дегустація.</p>
-    </div>
-</section>
+
 <footer class="footer">
-    <div class="container footer-grid">
+    <div class="site-shell footer-grid">
         <div class="footer-brand">
-            <img src="assets/medok-wordmark.png" alt="Логотип Medok" class="footer-logo">
-            <p class="muted">Натуральний мед із сімейної пасіки в Київській області. Готуємо з любов’ю та чесністю, як для себе.</p>
+            <img src="assets/medok-wordmark.png" alt="Medok" class="footer-logo" width="404" height="178">
+            <p>Натуральний мед із сімейної пасіки в Київській області.</p>
             <div class="footer-tags">
                 <span class="chip">40+ років досвіду</span>
-                <span class="chip">Без домішок</span>
                 <span class="chip">Доставка по Україні</span>
             </div>
         </div>
         <div class="footer-col">
-            <h4>Швидко до розділу</h4>
-            <a href="#products">🍯 Продукція</a>
-            <a href="about.html">🐝 Про пасіку</a>
-            <a href="faq.html">❓ FAQ</a>
-            <a href="#why">👍 Чому нас обирають</a>
+            <h3>Навігація</h3>
+            <a href="#products">Обрати мед</a>
+            <a href="about.html">Про пасіку</a>
+            <a href="reviews.html">Відгуки</a>
+            <a href="faq.html">FAQ</a>
         </div>
         <div class="footer-col">
-            <h4>Зв’язок</h4>
-            <a class="footer-link" href="tel:+380632369027">📞 +380 63 236 9027</a>
-            <a class="footer-link" href="viber://chat?number=%2B380632369027">💬 Написати у Viber</a>
-            <div class="footer-badge">Відправка Новою поштою щодня</div>
+            <h3>Зв’язок</h3>
+            <a href="tel:+380632369027">+380 63 236 9027</a>
+            <a href="viber://chat?number=%2B380632369027">Написати у Viber</a>
+            <p>Бориспільський район,<br>Київська область</p>
         </div>
     </div>
-    <div class="container footer-bottom">
-        <div>© <span id="y"></span> Medok. Натуральний мед з пасіки.</div>
-        <div class="footer-bottom__right">Бориспільський район, Київська область.</div>
+    <div class="site-shell footer-bottom">
+        <span>© <span id="y"></span> Medok</span>
+        <span>Мед із Київщини, зроблений з турботою.</span>
     </div>
 </footer>
-<!-- В самому низу index.html ЗАМІСТЬ ваших скриптів: -->
-<script src="products.js?v=1" defer></script>
-<script src="app.js?v=203" defer></script>
-<script src="cart.js?v=206" defer></script>
 
-<script>
-    // Повне очищення старих воркерів
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            for(let registration of registrations) { registration.unregister(); }
-        });
-    }
-</script>
+<script src="products.js?v=2" defer></script>
+<script src="app.js?v=205" defer></script>
+<script src="cart.js?v=208" defer></script>
 </body>
 </html>
