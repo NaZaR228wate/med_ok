@@ -54,7 +54,8 @@
         localStorage.setItem(LAST_QTY_KEY, JSON.stringify(map));
     }
 
-    function addToCart(productId, qtyLiters) {
+    function addToCart(productId, qtyLiters, options = {}) {
+        const { silent = false } = options;
         const product = catalog?.getProduct(productId);
         const qty = String(qtyLiters);
         const price = product?.prices?.[qty];
@@ -74,7 +75,7 @@
         if (existing) existing.count += 1;
         else items.push({ key, productId: product.id, type: product.name, qty, price: Number(price), count: 1 });
         saveCart(items);
-        showToast('Додано в кошик');
+        if (!silent) showToast('Додано в кошик');
         return true;
     }
 
@@ -398,7 +399,7 @@
         if (btn.dataset.directAdd === 'true') {
             const product = catalog?.getProduct(btn.dataset.productId || btn.dataset.type);
             const qty = String(btn.dataset.qty || '1');
-            if (!product || !addToCart(product.id, qty)) return;
+            if (!product || !addToCart(product.id, qty, { silent: true })) return;
             const map = loadLastQty();
             map[product.id] = qty;
             saveLastQty(map);
@@ -409,6 +410,7 @@
                 btn.classList.remove('is-added');
                 btn.textContent = cardCtaLabel(product, btn.dataset.qty || qty);
             }, 1200);
+            window.openCart?.();
             return;
         }
         openQtyMenu(btn.dataset.productId || btn.dataset.type, btn.dataset.qty || '1', btn);
@@ -425,7 +427,7 @@
         const qty = qtyOptions[qtyIdx];
         const product = catalog.getProduct(currentProductId);
         const shouldRedirectToOrder = lastAddBtn?.dataset.orderAfterAdd === 'true';
-        if (!addToCart(currentProductId, qty)) return;
+        if (!addToCart(currentProductId, qty, { silent: true })) return;
 
         const map = loadLastQty();
         map[currentProductId] = qty;
@@ -437,6 +439,8 @@
         closeQtyMenu();
         if (shouldRedirectToOrder) {
             window.location.href = 'order.html';
+        } else {
+            window.openCart?.();
         }
     });
 

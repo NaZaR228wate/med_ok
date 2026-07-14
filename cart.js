@@ -168,7 +168,7 @@ function injectCartStyles() {
         #cartDrawer:focus { outline: none; }
         .cart-header { min-height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 24px; border-bottom: 1px solid rgba(33,26,20,.12); }
         .cart-title { display: grid; gap: 2px; }
-        .cart-title strong { font-family: Georgia,serif; font-size: 27px; font-weight: 500; line-height: 1; }
+        .cart-title strong { font-family: var(--font-display); font-size: 27px; font-weight: 500; line-height: 1; }
         .cart-title span { color: #6f6255; font-size: 12px; }
         .cart-close { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid rgba(33,26,20,.14); border-radius: 50%; background: transparent; color: #211a14; font-size: 25px; cursor: pointer; transition: transform .18s ease, border-color .18s ease; }
         .cart-close:hover { border-color: #9a5d20; transform: rotate(4deg); }
@@ -178,7 +178,7 @@ function injectCartStyles() {
         .cart-item-image { width: 82px; height: 92px; object-fit: cover; border-radius: 16px; background: #efe1c6; }
         .cart-item-main { min-width: 0; display: grid; gap: 10px; }
         .cart-item-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
-        .cart-item-name { margin: 0; font-family: Georgia,serif; font-size: 20px; font-weight: 500; line-height: 1.15; }
+        .cart-item-name { margin: 0; font-family: var(--font-display); font-size: 20px; font-weight: 500; line-height: 1.15; }
         .cart-item-meta { margin: 3px 0 0; color: #6f6255; font-size: 12px; }
         .cart-item-sum { white-space: nowrap; font-weight: 800; }
         .cart-item-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -190,15 +190,15 @@ function injectCartStyles() {
         .cart-remove { min-height: 38px; padding: 6px 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #74685d; font-size: 12px; cursor: pointer; }
         .cart-remove:hover { border-color: currentColor; color: #8f3229; }
         .cart-empty { min-height: 100%; display: grid; place-content: center; justify-items: center; padding: 48px 18px; text-align: center; }
-        .cart-empty-mark { width: 72px; height: 86px; display: grid; place-items: center; margin-bottom: 22px; border: 1px solid rgba(154,93,32,.22); border-radius: 52% 48% 50% 50% / 58% 58% 42% 42%; background: #f6f0e3; color: #9a5d20; font-family: Georgia,serif; font-size: 30px; }
-        .cart-empty h2 { margin: 0; font-family: Georgia,serif; font-size: 28px; font-weight: 500; }
+        .cart-empty-mark { width: 72px; height: 86px; display: grid; place-items: center; margin-bottom: 22px; border: 1px solid rgba(154,93,32,.22); border-radius: 52% 48% 50% 50% / 58% 58% 42% 42%; background: #f6f0e3; color: #9a5d20; font-family: var(--font-display); font-size: 30px; }
+        .cart-empty h2 { margin: 0; font-family: var(--font-display); font-size: 28px; font-weight: 500; }
         .cart-empty p { max-width: 290px; margin: 10px 0 24px; color: #6f6255; }
         .cart-empty-cta { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; padding: 12px 20px; border-radius: 999px; background: #23372b; color: #fff; font-weight: 750; text-decoration: none; }
         .cart-footer { flex-shrink: 0; padding: 20px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(33,26,20,.12); background: #fffdf8; box-shadow: 0 -14px 36px rgba(61,42,21,.05); }
         .cart-total-row { display: flex; align-items: end; justify-content: space-between; gap: 16px; }
         .cart-total-label { display: grid; color: #6f6255; font-size: 12px; }
         .cart-total-label strong { color: #211a14; font-size: 15px; }
-        #cartTotal { font-family: Georgia,serif; font-size: 32px; font-weight: 500; line-height: 1; }
+        #cartTotal { font-family: var(--font-display); font-size: 32px; font-weight: 500; line-height: 1; }
         .cart-delivery-note { margin: 11px 0 16px; color: #6f6255; font-size: 11px; }
         .cart-footer-actions { display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: 12px; }
         .cart-clear { min-height: 46px; padding: 8px 4px; border: 0; border-bottom: 1px solid rgba(33,26,20,.18); background: transparent; color: #6f6255; font-weight: 650; cursor: pointer; }

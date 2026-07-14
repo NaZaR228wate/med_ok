@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Відгуки покупців про мед | Medok</title>
-    <link rel="stylesheet" href="styles.css?v=14">
+    <link rel="stylesheet" href="styles.css?v=22">
     <meta name="description" content="Відгуки клієнтів про натуральний мед Medok із сімейної пасіки в Бориспільському районі. Читайте досвід покупців і залишайте власний відгук.">
     <link rel="canonical" href="https://medok.ink/reviews.html">
     <!-- Favicons and PWA -->
     <link rel="icon" href="assets/medok-wordmark.png">
-    <meta name="theme-color" content="#087B04">
+    <meta name="theme-color" content="#23372B">
     <link rel="manifest" href="manifest.webmanifest">
     <!-- Social preview image -->
     <meta property="og:title" content="Відгуки покупців про мед | Medok">
@@ -285,8 +285,9 @@
             return true;
         }
 
-        // ---- завантаження з сервера
+        // ---- завантаження з сервера (лише коли задано бекенд; без API_BASE уникаємо 404 на статичному прев'ю та деплої)
         (async () => {
+            if (!API_BASE) return;
             try {
                 const data = await apiGet();
                 // показуємо серверні відгуки ПЕРЕД статичними

@@ -2,50 +2,93 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Купити мед Київ | Натуральний мед з пасіки Бориспіль</title>
-
 <meta name="description" content="Купити натуральний мед у Києві та Бориспільському районі. Липовий, акацієвий, соняшниковий мед з пасіки. Доставка по Україні.">
-
 <link rel="canonical" href="https://medok.ink/kyiv-med.html">
 <meta property="og:title" content="Купити мед Київ | Medok">
 <meta property="og:description" content="Натуральний мед із пасіки в Бориспільському районі з доставкою по Києву та Україні.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://medok.ink/kyiv-med.html">
 <meta property="og:image" content="https://medok.ink/assets/prod-mixed.webp">
-
+<link rel="stylesheet" href="styles.css?v=22">
+<link rel="icon" href="assets/medok-wordmark.png">
+<meta name="theme-color" content="#23372B">
+<link rel="manifest" href="manifest.webmanifest">
 </head>
-
 <body>
-
-<h1>Купити мед у Києві та Бориспільському районі</h1>
-<p>
-Пропонуємо натуральний мед з власної пасіки в Київській області.
-Без домішок, без цукру — тільки чистий продукт.
-</p>
-
-<h2>Який мед можна купити</h2>
-
-<ul>
-<li>🍯 Липовий мед — ароматний, класичний смак</li>
-<li>🍯 Акацієвий мед — світлий, довго не кристалізується</li>
-<li>🍯 Соняшниковий мед — насичений і корисний</li>
-</ul>
-
-<h2>Доставка</h2>
-
-<p>
-Доставляємо мед по Києву, Бориспільському району та всій Україні Новою поштою.
-</p>
-
-<h2>Ціни на мед</h2>
-
-<p>
-Ціни від 130 грн за банку. Є різні обʼєми.
-</p>
-
-<a href="order.html">🛒 Замовити мед</a>
-
+<a class="visually-hidden" href="#main">Перейти до контенту</a>
+<header class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="header-logo" aria-label="На головну">
+            <img src="assets/medok-wordmark.png" alt="Логотип Medok">
+        </a>
+        <nav class="header-nav">
+            <a href="index.html#products" class="header-link">Продукція</a>
+            <a href="about.html" class="header-link">Про пасіку</a>
+            <a href="faq.html" class="header-link">FAQ</a>
+            <a href="reviews.html" class="header-link">Відгуки</a>
+        </nav>
+        <div class="header-actions">
+            <button id="cartBtn" class="cart-icon-btn" aria-label="Кошик">
+                🛒 <span id="cartQtyBadge" class="cart-badge" style="display:none">0</span>
+            </button>
+            <a href="order.html" class="btn-header-cta">Замовити мед</a>
+            <button id="burgerBtn" class="burger-menu" aria-label="Меню">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+<div id="mobileBackdrop" class="mobile-nav-overlay"></div>
+<div id="mobileMenu" class="mobile-nav-drawer">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <span style="font-weight:800;font-size:20px;">Меню</span>
+        <button id="closeMenuBtn" style="background:none;border:none;font-size:24px;cursor:pointer;">✕</button>
+    </div>
+    <a href="index.html" class="mobile-link">🏠 На головну</a>
+    <a href="index.html#products" class="mobile-link">🍯 Продукція</a>
+    <a href="about.html" class="mobile-link">🐝 Про пасіку</a>
+    <a href="faq.html" class="mobile-link">❓ FAQ</a>
+    <a href="reviews.html" class="mobile-link">💬 Відгуки</a>
+    <a href="order.html" class="btn-header-cta" style="display:block;text-align:center;margin-top:20px;">Оформити замовлення</a>
+</div>
+<main id="main" class="container">
+    <h1>Купити мед у Києві та Бориспільському районі</h1>
+    <p class="section-subtitle">Натуральний мед з власної пасіки в Київській області — без домішок і цукру.</p>
+    <section class="card" style="margin-bottom:18px;">
+        <p>Пропонуємо натуральний мед з власної пасіки в Київській області. Без домішок, без цукру — тільки чистий продукт. Замовлення відправляємо Новою поштою по Києву, Бориспільському району та всій Україні.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+            <a class="btn" href="order.html" style="width:auto;">Замовити мед</a>
+            <a class="btn-secondary" href="index.html#products" style="display:inline-flex;align-items:center;">Переглянути продукцію</a>
+        </div>
+    </section>
+    <section class="card" style="margin-bottom:18px;">
+        <h2>Який мед можна купити</h2>
+        <ul class="check">
+            <li>Липовий мед — ароматний, класичний смак.</li>
+            <li>Акацієвий мед — світлий, довго не кристалізується.</li>
+            <li>Соняшниковий мед — наразі немає в наявності.</li>
+        </ul>
+    </section>
+    <section class="card" style="margin-bottom:18px;">
+        <h2>Доставка</h2>
+        <p>Доставляємо мед по Києву, Бориспільському району та всій Україні Новою поштою. Вартість доставки оплачує покупець за тарифами перевізника.</p>
+    </section>
+    <section class="card">
+        <h2>Ціни на мед</h2>
+        <p>Ціни від 150 грн за банку. Доступні різні об’єми — актуальні ціни та об’єми показані в картках товарів на головній сторінці.</p>
+        <p><a class="footer-link" href="index.html#products">Перейти до продукції</a></p>
+    </section>
+</main>
+<footer class="footer">
+    <div class="container footer-bottom">
+        <div>© <span id="y"></span> Medok. Натуральний мед з пасіки.</div>
+        <div class="footer-bottom__right"><a href="about.html">Про пасіку</a> · <a href="order.html">Замовити мед</a></div>
+    </div>
+</footer>
 <script src="products.js?v=2" defer></script>
+<script src="app.js?v=205" defer></script>
 <script src="cart.js?v=208" defer></script>
 </body>
 </html>
