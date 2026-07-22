@@ -57,6 +57,37 @@
       "url": "https://medok.ink/"
     }
     </script>
+
+    <!-- NAZAR → MedOk cross-site handoff ENTRY. Активується ЛИШЕ з
+         ?entry=nazar-medok (перехід з портфоліо nazar): звичайні візити
+         пропускають усе нижче без жодної роботи. Темна бурштинова вуаль
+         малюється до першого кадру, щоб не було білого спалаху; анімацію
+         веде nazar-entry.js, а цей вбудований таймер — незалежний
+         запобіжник, який ніколи не залишить сайт накритим. -->
+    <style id="nazar-entry-style">
+      html[data-nazar-entry]::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 2147483000;
+        pointer-events: none;
+        background:
+          radial-gradient(56% 44% at 50% 46%, rgba(232, 180, 79, .14), rgba(232, 180, 79, 0) 68%),
+          #16100a;
+      }
+    </style>
+    <script>
+      (function () {
+        try {
+          if (new URLSearchParams(location.search).get('entry') === 'nazar-medok') {
+            document.documentElement.setAttribute('data-nazar-entry', '');
+            window.setTimeout(function () {
+              document.documentElement.removeAttribute('data-nazar-entry');
+            }, 2600);
+          }
+        } catch (e) { /* never block a normal visit */ }
+      })();
+    </script>
 </head>
 <body class="home-page">
 <a class="skip-link" href="#main">Перейти до основного вмісту</a>
@@ -393,5 +424,6 @@
 <script src="products.js?v=2" defer></script>
 <script src="app.js?v=205" defer></script>
 <script src="cart.js?v=208" defer></script>
+<script src="nazar-entry.js?v=1" defer></script>
 </body>
 </html>
