@@ -1958,3 +1958,33 @@ body:not(.home-page) .card table a:not(.btn):not(.btn-secondary) {
 body:not(.home-page) .card p a:not(.btn):not(.btn-secondary):hover,
 body:not(.home-page) .card li a:not(.btn):not(.btn-secondary):hover,
 body:not(.home-page) .card table a:not(.btn):not(.btn-secondary):hover { color: var(--brand); }
+
+/* ===== ЗОНА КЛІКУ НА КАРТЦІ ТОВАРУ (головна) =====
+   Фото й верхня частина картки ведуть на сторінку сорту через уже наявне
+   посилання .product-detail-link, тому в розмітці не з’являється жодного
+   нового <a>. Блок вибору об’єму та кнопка «додати в кошик» лежать над
+   накладкою й лишаються самостійними елементами керування; нижній відступ
+   картки навмисно не входить у зону кліку. */
+.home-page .products-grid .product-card { position: relative; }
+
+/* Накладку тримає саме .product-detail-link, тому .product-actions (його
+   батько) навмисно лишається статичним — інакше він став би containing block
+   і обрізав би зону кліку до себе. */
+.home-page .products-grid .product-detail-link::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 clamp(24px, 3.2vw, 42px);
+    z-index: 1;
+}
+
+.home-page .products-grid .volume-options,
+.home-page .products-grid .product-actions .btn,
+.home-page .products-grid .product-unavailable-note {
+    position: relative;
+    z-index: 2;
+}
+
+/* На вузьких екранах нижній відступ картки — 26px (див. правило вище). */
+@media (max-width: 480px) {
+    .home-page .products-grid .product-detail-link::after { bottom: 26px; }
+}
