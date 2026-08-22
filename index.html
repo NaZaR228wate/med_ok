@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Натуральний мед з пасіки Medok — купити з доставкою по Україні</title>
-    <meta name="description" content="Купуйте натуральний мед Medok із сімейної пасіки на Київщині: акацієвий, липовий і різнотрав’я. Відправка Новою поштою по Україні.">
+    <title>Купити натуральний мед з пасіки — доставка по Україні | Medok</title>
+    <meta name="description" content="Натуральний мед із сімейної пасіки на Київщині: липовий, акацієвий і мед різнотрав’я. Ціни від 150 грн за банку, доставка Новою поштою по всій Україні.">
     <link rel="canonical" href="https://medok.ink/">
-    <link rel="stylesheet" href="styles.css?v=23">
+    <link rel="stylesheet" href="styles.css?v=24">
 
-    <meta property="og:title" content="Medok — натуральний мед із сімейної пасіки">
-    <meta property="og:description" content="Акацієвий, липовий мед і різнотрав’я з Київщини. Оберіть свій смак із доставкою по Україні.">
+    <meta property="og:title" content="Купити натуральний мед з сімейної пасіки | Medok">
+    <meta property="og:description" content="Липовий, акацієвий мед і різнотрав’я з Київщини. Ціни від 150 грн, доставка Новою поштою по всій Україні.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://medok.ink/">
     <meta property="og:site_name" content="Medok">
@@ -17,8 +17,8 @@
     <meta property="og:image" content="https://medok.ink/assets/hero-linden.webp">
     <meta property="og:image:alt" content="Липовий мед Medok серед квітів липи">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Medok — натуральний мед із сімейної пасіки">
-    <meta name="twitter:description" content="Акацієвий, липовий мед і різнотрав’я з Київщини. Оберіть свій смак із доставкою по Україні.">
+    <meta name="twitter:title" content="Купити натуральний мед з сімейної пасіки | Medok">
+    <meta name="twitter:description" content="Липовий, акацієвий мед і різнотрав’я з Київщини. Ціни від 150 грн, доставка Новою поштою по всій Україні.">
     <meta name="twitter:image" content="https://medok.ink/assets/hero-linden.webp">
     <meta name="twitter:image:alt" content="Липовий мед Medok серед квітів липи">
 
@@ -36,25 +36,107 @@
       "@id": "https://medok.ink/#business",
       "name": "Medok",
       "image": "https://medok.ink/assets/medok-wordmark.png",
+      "logo": "https://medok.ink/assets/medok-wordmark.png",
       "url": "https://medok.ink/",
       "telephone": "+380632369027",
-      "description": "Сімейна пасіка з натуральним медом у Бориспільському районі Київської області.",
+      "description": "Сімейна пасіка, яка продає натуральний мед власного качання: липовий, акацієвий і різнотрав’я. Відправляємо Новою поштою по всій Україні.",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Бориспільський район",
+        "streetAddress": "вул. Лісова, 33",
+        "addressLocality": "Мала Олександрівка",
         "addressRegion": "Київська область",
         "addressCountry": "UA"
       },
-      "areaServed": ["Київ", "Бориспіль", "Україна"],
-      "priceRange": "₴₴"
+      "areaServed": { "@type": "Country", "name": "Україна" },
+      "priceRange": "₴₴",
+      "currenciesAccepted": "UAH"
     }
     </script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
+      "@id": "https://medok.ink/#website",
       "name": "Medok",
-      "url": "https://medok.ink/"
+      "url": "https://medok.ink/",
+      "inLanguage": "uk-UA",
+      "publisher": { "@id": "https://medok.ink/#business" }
+    }
+    </script>
+    <script type="application/ld+json" id="productJsonLd">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Натуральний мед із сімейної пасіки Medok",
+      "description": "Сорти меду, які зараз можна купити: липовий, акацієвий і різнотрав’я в банках 0,5, 1 і 3 літри.",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "Product",
+            "name": "Мед різнотрав’я",
+            "url": "https://medok.ink/riznotravya-med.html",
+            "image": "https://medok.ink/assets/prod-mixed.webp",
+            "description": "Квітковий букет із лугів і гаїв Київщини. Збалансований універсальний смак.",
+            "brand": { "@type": "Brand", "name": "Medok" },
+            "sku": "honey-mixed-01",
+            "offers": {
+              "@type": "AggregateOffer",
+              "url": "https://medok.ink/riznotravya-med.html",
+              "priceCurrency": "UAH",
+              "lowPrice": "150",
+              "highPrice": "897",
+              "offerCount": 3,
+              "availability": "https://schema.org/InStock"
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "Product",
+            "name": "Липовий мед",
+            "url": "https://medok.ink/lypovyi-med.html",
+            "image": "https://medok.ink/assets/prod-linden.webp",
+            "description": "Запашний аромат квітів липи та теплий смак. Добре пасує до чаю й сніданку.",
+            "brand": { "@type": "Brand", "name": "Medok" },
+            "sku": "honey-linden-02",
+            "offers": {
+              "@type": "AggregateOffer",
+              "url": "https://medok.ink/lypovyi-med.html",
+              "priceCurrency": "UAH",
+              "lowPrice": "200",
+              "highPrice": "1197",
+              "offerCount": 3,
+              "availability": "https://schema.org/InStock"
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "Product",
+            "name": "Акацієвий мед",
+            "url": "https://medok.ink/akatsiievyi-med.html",
+            "image": "https://medok.ink/assets/prod-acacia.webp",
+            "description": "Ніжний акацієвий мед, який довго залишається рідким і добре смакує з чаєм.",
+            "brand": { "@type": "Brand", "name": "Medok" },
+            "sku": "honey-acacia-03",
+            "offers": {
+              "@type": "AggregateOffer",
+              "url": "https://medok.ink/akatsiievyi-med.html",
+              "priceCurrency": "UAH",
+              "lowPrice": "275",
+              "highPrice": "1647",
+              "offerCount": 3,
+              "availability": "https://schema.org/InStock"
+            }
+          }
+        }
+      ]
     }
     </script>
 
@@ -146,8 +228,8 @@
         <div class="site-shell hero-layout">
             <div class="hero-copy">
                 <p class="eyebrow hero-eyebrow"><span></span> Мед із сімейної пасіки</p>
-                <h1 id="hero-title">Мед із Київщини, у якому відчувається літо.</h1>
-                <p class="hero-lead">Натуральний акацієвий, липовий мед і різнотрав’я з Бориспільського району. Від пасіки — до вашого столу, з доставкою по Україні.</p>
+                <h1 id="hero-title">Купити натуральний мед з сімейної пасіки</h1>
+                <p class="hero-lead">Мед із Київщини, у якому відчувається літо. Липовий, акацієвий мед і різнотрав’я — від пасіки до вашого столу, Новою поштою по всій Україні. Ціни від 150 грн за банку.</p>
                 <div class="hero-actions">
                     <a class="button button--primary" href="#products">Обрати свій мед</a>
                     <a class="hero-link-quiet" href="#apiary">Познайомитися з пасікою</a>
@@ -186,7 +268,7 @@
                     <p class="eyebrow">Колекція сезону</p>
                     <h2 id="products-title">Оберіть мед під свій смак</h2>
                 </div>
-                <p>Від делікатної акації до виразного різнотрав’я. Порівняйте смак, одразу оберіть об’єм і додайте мед у кошик.</p>
+                <p>Три сорти натурального меду в наявності — від делікатної акації до виразного різнотрав’я. Кожен доступний у банках 0,5, 1 і 3 літри: оберіть об’єм і додайте мед у кошик.</p>
             </header>
 
             <div class="products-grid">
@@ -210,7 +292,7 @@
                         </div>
                         <div class="product-actions">
                             <button class="btn addToCart" type="button" data-product-id="mixed" data-qty="1" data-direct-add="true">Додати 1 л · ₴299</button>
-                            <a class="product-detail-link" href="riznotravya-med.html">Про різнотрав’я</a>
+                            <a class="product-detail-link" href="riznotravya-med.html">Мед різнотрав’я — ціни й опис</a>
                         </div>
                     </div>
                 </article>
@@ -235,7 +317,7 @@
                         </div>
                         <div class="product-actions">
                             <button class="btn addToCart" type="button" data-product-id="linden" data-qty="1" data-direct-add="true">Додати 1 л · ₴399</button>
-                            <a class="product-detail-link" href="lypovyi-med.html">Про липовий мед</a>
+                            <a class="product-detail-link" href="lypovyi-med.html">Липовий мед — ціни й опис</a>
                         </div>
                     </div>
                 </article>
@@ -260,7 +342,7 @@
                         </div>
                         <div class="product-actions">
                             <button class="btn addToCart" type="button" data-product-id="acacia" data-qty="1" data-direct-add="true">Додати 1 л · ₴549</button>
-                            <a class="product-detail-link" href="akatsiievyi-med.html">Про акацієвий мед</a>
+                            <a class="product-detail-link" href="akatsiievyi-med.html">Акацієвий мед — ціни й опис</a>
                         </div>
                     </div>
                 </article>
@@ -285,6 +367,11 @@
                     </div>
                 </article>
             </div>
+
+            <div class="category-intro">
+                <p>Medok — сімейна пасіка в селі Мала Олександрівка на Київщині. Мед качаємо самі, фасуємо у скляні банки по 0,5, 1 і 3 літри та відправляємо у будь-яке відділення Нової пошти по Україні. Нічого не додаємо й нічого не змішуємо: у банці лише той мед, який дали бджоли цього сезону.</p>
+                <p>Не знаєте, з чого почати? <a href="lypovyi-med.html">Купити липовий мед</a> варто, якщо любите виразний аромат до чаю; <a href="akatsiievyi-med.html">акацієвий мед</a> — найделікатніший і найдовше залишається рідким; <a href="riznotravya-med.html">мед різнотрав’я</a> — найуніверсальніший і найдоступніший за ціною. Різницю між ними ми детально розібрали в <a href="akatsiievyi-lypovyi-riznotravya.html">порівнянні трьох сортів</a>, а умови відправлення — на сторінці <a href="dostavka-i-oplata.html">доставки меду по Україні</a>.</p>
+            </div>
         </div>
     </section>
 
@@ -292,7 +379,7 @@
         <div class="site-shell story-layout">
             <figure class="story-image reveal">
                 <img src="assets/founder.webp" alt="Пасічник Medok тримає рамку зі стільниками на сімейній пасіці" loading="lazy" width="1200" height="1200">
-                <figcaption>Бориспільський район · Київщина</figcaption>
+                <figcaption>Мала Олександрівка · Київщина</figcaption>
             </figure>
             <div class="story-copy reveal">
                 <p class="eyebrow">Люди за кожною банкою</p>
@@ -400,6 +487,9 @@
         <div class="footer-col">
             <h3>Навігація</h3>
             <a href="#products">Обрати мед</a>
+            <a href="lypovyi-med.html">Липовий мед</a>
+            <a href="akatsiievyi-med.html">Акацієвий мед</a>
+            <a href="riznotravya-med.html">Мед різнотрав’я</a>
             <a href="about.html">Про пасіку</a>
             <a href="reviews.html">Відгуки</a>
             <a href="faq.html">FAQ</a>
@@ -412,7 +502,7 @@
             <h3>Зв’язок</h3>
             <a href="tel:+380632369027">+380 63 236 9027</a>
             <a href="viber://chat?number=%2B380632369027">Написати у Viber</a>
-            <p>Бориспільський район,<br>Київська область</p>
+            <p>с. Мала Олександрівка, вул. Лісова, 33<br>Київська область, Україна</p>
         </div>
     </div>
     <div class="site-shell footer-bottom">

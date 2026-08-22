@@ -263,7 +263,9 @@
     }
 
     function injectProductJsonLd() {
-        if (!catalog || $('#productJsonLd')) return;
+        // Розмітку каталогу додаємо лише там, де сторінка справді показує картки
+        // товару. Статичний #productJsonLd у розмітці має пріоритет над цим фолбеком.
+        if (!catalog || $('#productJsonLd') || !$('.product-card[data-product-id]')) return;
         const script = document.createElement('script');
         script.id = 'productJsonLd';
         script.type = 'application/ld+json';

@@ -392,7 +392,7 @@ textarea { min-height: 96px; resize: vertical; }
 .footer-logo { display: block; height: 50px; margin-bottom: 12px; }
 .footer-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 .chip { padding: 6px 12px; border-radius: 20px; background: rgba(35, 55, 43, .1); color: var(--brand-dark); font-weight: 700; font-size: 13px; }
-.footer-col h4 { margin-bottom: 12px; }
+.footer-col h2, .footer-col h4 { margin-bottom: 12px; font-size: 16px; }
 .footer-col a { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
 .footer-col a:hover { color: var(--brand); }
 .footer-badge { display: inline-block; background: #111; color: #fff; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 13px; margin-top: 10px; }
@@ -1861,7 +1861,7 @@ body:not(.home-page) .footer a { color: rgba(255,255,255,.8); }
 body:not(.home-page) .footer a:hover { color: var(--accent); }
 body:not(.home-page) .footer .muted, body:not(.home-page) .footer-brand p { color: rgba(255,255,255,.62); }
 body:not(.home-page) .footer-logo { filter: brightness(0) invert(1); }
-body:not(.home-page) .footer-col h4 { margin: 0 0 14px; color: var(--accent); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-family: var(--font-body); }
+body:not(.home-page) .footer-col h2, body:not(.home-page) .footer-col h4 { margin: 0 0 14px; color: var(--accent); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-family: var(--font-body); }
 body:not(.home-page) .footer-col a { color: rgba(255,255,255,.78); font-weight: 550; }
 body:not(.home-page) .footer .chip { border: 1px solid rgba(255,255,255,.18); background: transparent; color: rgba(255,255,255,.74); }
 body:not(.home-page) .footer-badge { background: rgba(255,255,255,.08); color: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.16); }
@@ -1877,3 +1877,84 @@ body:not(.home-page) .footer :focus-visible { outline-color: var(--accent); }
 body:not(.home-page) input:focus-visible,
 body:not(.home-page) select:focus-visible,
 body:not(.home-page) textarea:focus-visible { outline: 3px solid var(--accent-deep); outline-offset: 2px; }
+
+/* ===== ХЛІБНІ КРИХТИ (сторінки сортів і матеріалів) ===== */
+.breadcrumbs { margin: 0 0 14px; font-size: 13px; }
+.breadcrumbs ol { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.breadcrumbs li { color: var(--muted); }
+.breadcrumbs li + li::before { content: "→"; margin-right: 6px; color: var(--muted); opacity: .55; }
+.breadcrumbs a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.breadcrumbs a:hover { color: var(--accent-deep); }
+.breadcrumbs [aria-current="page"] { color: var(--ink); font-weight: 650; }
+
+/* ===== КАРТКА ПОКУПКИ НА СТОРІНЦІ СОРТУ ===== */
+.buybox { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); margin: 0 0 18px; }
+.buybox:hover { transform: none; box-shadow: var(--shadow); }
+.buybox .prod-figure { margin: 0; height: 100%; aspect-ratio: 4/5; min-height: 0; background: var(--surface-warm); }
+.buybox .product-body { display: flex; flex-direction: column; padding: clamp(20px, 3vw, 30px); }
+.buybox .product-title { margin: 0; font-family: var(--font-display); font-size: clamp(26px, 3.4vw, 38px); font-weight: 500; letter-spacing: -.02em; line-height: 1.06; }
+.buybox .p-bullets { margin: 12px 0 0; }
+.buybox .volume-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 20px; }
+.buybox .volume-option {
+    min-width: 0; min-height: 64px; display: grid; align-content: center; gap: 2px; padding: 9px 10px;
+    border: 1px solid var(--line); border-radius: 16px; background: rgba(255, 253, 248, .5);
+    color: var(--ink); text-align: left; cursor: pointer;
+    transition: border-color var(--duration-fast), background var(--duration-fast), box-shadow var(--duration-fast);
+}
+.buybox .volume-option span { color: var(--muted); font-size: 11px; font-weight: 700; }
+.buybox .volume-option strong { font-family: var(--font-display); font-size: clamp(17px, 2vw, 22px); font-weight: 500; line-height: 1.05; }
+.buybox .volume-option.is-selected { border-color: var(--brand); background: var(--brand); color: #fff; box-shadow: 0 10px 24px rgba(35, 55, 43, .14); }
+.buybox .volume-option.is-selected span { color: rgba(255, 255, 255, .68); }
+@media (hover: hover) {
+    .buybox .volume-option:hover:not(.is-selected) { border-color: var(--accent-deep); background: var(--surface); }
+}
+.buybox .product-actions { flex-wrap: wrap; margin-top: 0; padding-top: 22px; }
+.buybox .product-actions .btn { width: auto; flex: 1 1 200px; min-height: 48px; padding: 12px 20px; font-size: 15px; border-radius: 999px; }
+.buybox .product-actions .product-detail-link { flex: 0 1 auto; }
+.buybox__facts { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 7px; font-size: 14px; color: var(--muted); }
+.buybox__facts strong { color: var(--ink); font-weight: 700; }
+.buybox__facts a { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 820px) {
+    .buybox { grid-template-columns: 1fr; }
+    .buybox .prod-figure { aspect-ratio: 3/2; min-height: 0; }
+}
+/* На вузьких екранах .product-actions стає колонкою (правило вище),
+   тому flex-basis перестає бути шириною кнопки — фіксуємо явно. */
+@media (max-width: 480px) {
+    .buybox .product-actions .btn,
+    .buybox .product-actions .product-detail-link { flex: 0 0 auto; width: 100%; }
+}
+
+/* ===== КОМЕРЦІЙНИЙ БЛОК У СТАТТЯХ ===== */
+.cta-band { margin: 22px 0 0; padding: clamp(18px, 3vw, 26px); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-warm); }
+.cta-band h2, .cta-band h3 { margin: 0 0 8px; }
+.cta-band p { margin: 0 0 14px; color: var(--ink); }
+.cta-band ul { margin: 0 0 16px; padding: 0; list-style: none; display: grid; gap: 8px; }
+.cta-band ul a { color: var(--accent-deep); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+.cta-band .btn { width: auto; display: inline-block; padding: 12px 22px; font-size: 16px; }
+
+/* ===== ВСТУП ДО КАТЕГОРІЇ (головна) ===== */
+.category-intro { max-width: 78ch; margin: clamp(36px, 5vw, 56px) auto 0; display: grid; gap: 14px; }
+.category-intro p { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.72; }
+.category-intro a { color: var(--accent-deep); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+.category-intro a:hover { color: var(--brand); }
+
+/* ===== ТАБЛИЦЯ ЦІН НА СТОРІНКАХ СОРТІВ ===== */
+.price-table { width: 100%; max-width: 420px; margin: 14px 0 16px; border-collapse: collapse; font-size: 16px; }
+.price-table th, .price-table td { padding: 11px 4px; text-align: left; border-bottom: 1px solid var(--line); }
+.price-table thead th { color: var(--muted); font-size: 12px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+.price-table tbody th { font-weight: 650; }
+.price-table tbody td { font-family: var(--font-display); font-size: 19px; font-weight: 500; text-align: right; }
+
+/* Текстові посилання всередині карток на внутрішніх сторінках мають бути видимі
+   не лише кольором (WCAG 1.4.1). */
+body:not(.home-page) .card p a:not(.btn):not(.btn-secondary),
+body:not(.home-page) .card li a:not(.btn):not(.btn-secondary),
+body:not(.home-page) .card table a:not(.btn):not(.btn-secondary) {
+    color: var(--accent-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+body:not(.home-page) .card p a:not(.btn):not(.btn-secondary):hover,
+body:not(.home-page) .card li a:not(.btn):not(.btn-secondary):hover,
+body:not(.home-page) .card table a:not(.btn):not(.btn-secondary):hover { color: var(--brand); }
