@@ -37,7 +37,14 @@
       "description": "Натуральний липовий мед із сімейної пасіки Medok у селі Мала Олександрівка на Київщині. Доступний у банках 0,5, 1 і 3 літри.",
       "brand": { "@type": "Brand", "name": "Medok" },
       "sku": "honey-linden-02",
-      "category": "Мед",
+      "category": [
+        {
+          "@type": "CategoryCode",
+          "inCodeSet": "https://www.google.com/basepages/producttype/taxonomy-with-ids.en-US.txt",
+          "codeValue": "4947"
+        },
+        "Мед"
+      ],
       "offers": [
         {
           "@type": "Offer",
@@ -49,14 +56,13 @@
           "availability": "https://schema.org/InStock",
           "itemCondition": "https://schema.org/NewCondition",
           "seller": { "@id": "https://medok.ink/#business" },
-          "shippingDetails": {
-            "@type": "OfferShippingDetails",
-            "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "UA" }
-          },
           "hasMerchantReturnPolicy": {
             "@type": "MerchantReturnPolicy",
             "applicableCountry": "UA",
-            "returnPolicyCategory": "https://schema.org/MerchantReturnNotSpecified"
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": 14,
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/ReturnFeesCustomerResponsibility"
           }
         },
         {
@@ -69,14 +75,13 @@
           "availability": "https://schema.org/InStock",
           "itemCondition": "https://schema.org/NewCondition",
           "seller": { "@id": "https://medok.ink/#business" },
-          "shippingDetails": {
-            "@type": "OfferShippingDetails",
-            "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "UA" }
-          },
           "hasMerchantReturnPolicy": {
             "@type": "MerchantReturnPolicy",
             "applicableCountry": "UA",
-            "returnPolicyCategory": "https://schema.org/MerchantReturnNotSpecified"
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": 14,
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/ReturnFeesCustomerResponsibility"
           }
         },
         {
@@ -89,14 +94,13 @@
           "availability": "https://schema.org/InStock",
           "itemCondition": "https://schema.org/NewCondition",
           "seller": { "@id": "https://medok.ink/#business" },
-          "shippingDetails": {
-            "@type": "OfferShippingDetails",
-            "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "UA" }
-          },
           "hasMerchantReturnPolicy": {
             "@type": "MerchantReturnPolicy",
             "applicableCountry": "UA",
-            "returnPolicyCategory": "https://schema.org/MerchantReturnNotSpecified"
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": 14,
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/ReturnFeesCustomerResponsibility"
           }
         }
       ]
@@ -108,7 +112,7 @@
 <header class="site-header">
     <div class="header-inner">
         <a href="index.html" class="header-logo" aria-label="На головну">
-            <img src="assets/medok-wordmark.png" alt="Логотип Medok">
+            <img src="assets/medok-wordmark.png" alt="Логотип Medok" width="404" height="178">
         </a>
         <nav class="header-nav">
             <a href="index.html#products" class="header-link">Продукція</a>
@@ -278,6 +282,7 @@
         <div class="footer-col">
             <h2>Замовлення</h2>
             <a href="dostavka-i-oplata.html">Доставка й оплата</a>
+            <a href="kyiv-med.html">Мед у Києві</a>
             <a href="faq.html">Часті запитання</a>
             <a href="about.html">Про пасіку</a>
             <a href="order.html">Оформити замовлення</a>
